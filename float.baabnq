@@ -1,0 +1,210 @@
+"floating point lib
+"using the bfloat16 format https://en.wikipedia.org/wiki/Bfloat16_floating-point_format
+"a float is represented by a sigle 16-bit number
+
+
+use 'libs/math.baabnq';
+use 'libs/stack.baabnq';
+
+put _upper16 = 65280;
+put _posNaN  = 16256;
+
+put _MANTISSA_SIZE = 8;
+put _EXPONENT_SIZE = 8;
+put _SIGN_SIZE     = 15;
+put _MANTISSA_MASK = 127;
+put _EXPONENT_MASK = 255;
+put _SIGN_MASK     = 32768;
+put _MIN_SIGNED_CHAR = 0 - (1 << (8 - 1));
+
+
+
+
+
+jump Floats::Skip;
+
+"float16 fpValue
+lab Floats::GetMantissa;
+    sub Stack::Swap;
+    pull _fpValue; 
+    push ((_fpValue & _MANTISSA_MASK) | (1 << (_MANTISSA_SIZE - 1)));
+    sub Stack::Swap;
+    return;
+
+"float16 fpValue
+lab Floats::GetExponent;
+    sub Stack::Swap;
+    pull _fpValue; 
+    push ((_fpValue >> (_MANTISSA_SIZE - 1)) & _EXPONENT_MASK);
+    sub Stack::Swap;
+    return;
+
+"the MANTISSA_SIZE is the virtual size of the mantissa
+"MANTISSA_SIZE - 1 bits are actually being stored
+
+"float16* fpPtr
+"char     newValue
+lab Floats::SetMantissa;
+    sub Stack::Swap;
+    pull _newValue;
+    sub Stack::Swap;
+    pull _fpPtr;
+
+    "read fpValue
+    put _fpValue <- _fpPtr;
+
+    "clear mantissa
+    put _fpValue = _fpValue & (_MANTISSA_MASK ^ (0 - 1));
+
+    "set new value
+    put _fpValue = _fpValue | _newValue & _MANTISSA_MASK;
+
+    "write back fpValue
+    put _fpValue -> _fpPtr;
+    return;
+
+"float16* fpPtr
+"char     newValue
+lab Floats::SetExponent;
+    sub Stack::Swap;
+    pull _newValue;
+    sub Stack::Swap;
+    pull _fpPtr;
+
+    "read fpValue
+    put _fpValue <- _fpPtr;
+
+    "clear exponent
+    put _fpValue = _fpValue & ((_EXPONENT_MASK << (_MANTISSA_SIZE - 1)) ^ (0 - 1));
+
+    "set new value
+    put _fpValue = _fpValue | (_newValue & _EXPONENT_MASK) << (_MANTISSA_SIZE - 1);
+
+    "write back fpValue
+    put _fpValue -> _fpPtr;
+    return;
+
+"short    valPtr
+lab Floats::Inv;
+    sub Stack::Swap;
+    pull _value;
+    push _value ^ (0 - 1);
+    sub Stack::Swap;
+    return;
+
+"float16* fpPtr
+"short offset
+lab Floats::ShiftSmall;
+    sub Stack::Swap;
+    pull _offset;
+    sub Stack::Swap;
+    sub Stack::Dup; "keep reference to fpPtr for SetExponent call
+    pull _fpPtr;
+    
+    put _fpValue <- _fpPtr;
+    push _fpValue;
+    sub Floats::GetExponent;
+    pull _Exponent;
+
+    push _Exponent >> _offset;
+    sub Floats::SetExponent;
+    
+"float16* fpPtr
+"short offset
+lab Floats::ShiftGreat;
+    sub Stack::Swap;
+    pull _offset;
+    sub Stack::Swap;
+    sub Stack::Dup; "keep reference to fpPtr for SetExponent call
+    pull _fpPtr;
+    
+    put _fpValue <- _fpPtr;
+    push _fpValue;
+    sub Floats::GetExponent;
+    pull _Exponent;
+
+    push _Exponent << _offset;
+    sub Floats::SetExponent;
+    
+
+"float16* fpPtr
+"unsigned char mantissa
+"short exponent
+
+lab Floats::NormalizeAndSet;
+    sub Stack::Swap;         
+    pull _fpPtr;
+    sub Stack::Swap;
+    pull _mantissa;
+    sub Stack::Swap;
+    pull _exponent;
+       
+    jump Floats::NormalizeAndSet::CheckPosNaN;
+    lab Floats::NormalizeAndSet::CheckFallBack;
+    jump Floats::NormalizeAndSet::Man0 ~ _mantissa == 0;
+
+    lab Floats::NormalizeAndSet::NormLoop;
+        jump Floats::NormalizeAndSet::NormExit ~ (_mantissa >> (_MANTISSA_SIZE - 1)) == 0;
+        put _mantissa = _mantissa << 1;
+        put _exponent = _exponent -  1;
+    jump Floats::NormalizeAndSet::NormLoop;
+    lab Floats::NormalizeAndSet::NormExit;
+
+    push _fpPtr;
+    sub Stack::Dup;
+
+    push _mantissa;
+    sub Floats::SetMantissa;
+    push _exponent;
+    sub Floats::SetExponent;
+    
+    return;
+
+    lab Floats::NormalizeAndSet::Man0;
+        push _fpPtr;
+        sub Stack::Dup;
+
+        push 0;
+        sub Floats::SetMantissa;
+        push _MIN_SIGNED_CHAR;
+        sub Floats::SetExponent;
+        
+        return;
+
+    lab Floats::NormalizeAndSet::CheckPosNaN;
+        jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _upper16 == 0;
+        jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _upper16 == _upper16;
+        put _posNaN -> _fpValue;
+        return;
+
+"short value
+lab Floats::Value2fp;
+    sub Stack::Swap;
+    pull _value;
+    put _output = 0;
+    put _exponent = 0;
+    
+    lab Floats::Value2fp::Loop;
+        jump Float::Value2fp::Exit ~ (_value >> _MANTISSA_SIZE) == 0;
+        put _value    = _value >> 1;
+        put _exponent = _exponent + 1;
+    jump Floats::Value2fp::Loop;
+    lab Float::Value2fp::Exit;
+
+    put _fpPtr = 0;
+    push _fpPtr;
+    push _value;
+    push _exponent;
+    sub Floats::NormalizeAndSet;
+
+    put _fpValue <- _fpPtr;    
+    push _fpValue;
+    sub Stack::Swap;
+    return;
+
+
+
+
+
+	
+lab Floats::Skip; 
