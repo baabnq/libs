@@ -17,8 +17,8 @@ put _EXPONENT_MASK = 255;
 put _SIGN_MASK     = 32768;
 put _MIN_SIGNED_CHAR = 128;
 
-
-
+static 1 _outputPtr;
+	
 
 jump Floats::Skip;
 
@@ -84,48 +84,56 @@ lab Floats::SetExponent;
     return;
 
 "short    value
-lab Floats::Inv;
+lab Floats::Inv16;
     sub Stack::Swap;
     pull _value;
     push (_value ^ (0 - 1)) + 1;
     sub Stack::Swap;
     return;
 
-"float16*   fpPtr
+"short    value
+lab Floats::Inv8;
+    sub Stack::Swap;
+    pull _value;
+    push ((_value ^ (0 - 1)) + 1) & 255;
+    sub Stack::Swap;
+    return;
+
+"short    value
+lab Floats::SetSign;
+    pull _temp;
+    pull _value;
+    push _value | _SIGN_MASK;
+    push _temp;
+    return;
+
+"float16   fpValue
 "short     offset
 lab Floats::ShiftSmall;
     sub Stack::Swap;
     pull _offset;
     sub Stack::Swap;
-    sub Stack::Dup; "keep reference to fpPtr for SetExponent call
-    pull _fpPtr;
+    sub Stack::Dup; "keep reference to fpValue for SetExponent call
     
-    put _fpValue <- _fpPtr;
-    push _fpValue;
     sub Floats::GetExponent;
     pull _exponent;
-
     push _exponent - _offset;
     sub Floats::SetExponent;
     return;    
 
-"float16* fpPtr
-"short offset
+"float16 fpValue
+"short   offset
 lab Floats::ShiftGreat;
     sub Stack::Swap;
     pull _offset;
     sub Stack::Swap;
-    sub Stack::Dup; "keep reference to fpPtr for SetExponent call
-    pull _fpPtr;
+    sub Stack::Dup; "keep reference to fpValue for SetExponent call
     
-    put _fpValue <- _fpPtr;
-    push _fpValue;
     sub Floats::GetExponent;
     pull _exponent;
-
     push _exponent + _offset;
     sub Floats::SetExponent;
-    return;
+    return;    
 
 "float16* fpPtr
 "unsigned char mantissa
@@ -287,11 +295,11 @@ lab Floats::Add;
     
     "apply the sign
     push _valLowMantissa;
-    sub Floats::Inv ~ (_valLow & _SIGN_MASK) != 0;
+    sub Floats::Inv8 ~ (_valLow & _SIGN_MASK) != 0;
     pull _valLowMantissa;
 
     push _valBigMantissa;
-    sub Floats::Inv ~ (_valBig & _SIGN_MASK) != 0;
+    sub Floats::Inv8 ~ (_valBig & _SIGN_MASK) != 0;
     pull _valBigMantissa;
 
     "do the addition
@@ -313,9 +321,7 @@ lab Floats::Add;
     lab Floats::Add::SkipCarryCorr;
 
 
-    static 1 _outputPtr;
     put 0 -> _outputPtr;
-
     push _outputPtr;
     sub Stack::Dup; "keep reference
     push _outputMantissa;
@@ -325,13 +331,94 @@ lab Floats::Add;
     put _output <- _outputPtr;
 
 
-    jump Floats::Add::SkipOutSign ~ _outputSign == 0;
-        put _output = _output | _SIGN_MASK;
-    lab Floats::Add::SkipOutSign;
-    
     push _output;
+    sub Floats::SetSign ~ _outputSign != 0;
     sub Stack::Swap;
     return;
+
+
+"float16 val1
+"float16 val2
+lab Floats::Mul;
+    sub Stack::Swap;
+    pull _val2;
+    sub Stack::Swap;
+    pull _val1;
+
+    push _val1;
+    sub Floats::GetMantissa;
+    push _val2;
+    sub Floats::GetMantissa;
+    sub Math::Mul;
+
+    push _val1;
+    sub Floats::GetExponent;
+    push _val2;
+    sub Floats::GetExponent;    
+    sub Math::Add;
+    pull _outputExponent;
+    pull _outputMantissa;
+
+    put _outputSign = (_val1 & _SIGN_MASK) ^ (_val2 & _SIGN_MASK);
+
+    "move the outputMantissa back till it fit back into the char, in the process discarding the precision the we can't keep
+    lab Floats::Mul::Loop;
+        put _outputMantissa = _outputMantissa >> 1;
+        put _outputExponent = _outputExponent  + 1;
+
+    jump Floats::Mul::Loop ~ _outputMantissa > (1 << _MANTISSA_SIZE) - 1;
+
+    put 0 -> _outputPtr;
+    push _outputPtr;
+    sub Stack::Dup;
+    push _outputMantissa;
+    push _outputExponent;
+    sub Floats::NormalizeAndSet;
+    pull _outputPtr;
+    put _output <- _outputPtr;
+
+
+    push _output;
+    sub Floats::SetSign ~ _outputSign != 0;
+    sub Stack::Swap;
+    return;
+
+"float16 val1
+"float16 val2
+lab Floats::Comp;
+    "get valExponent and valMantissa
+    sub Stack::Swap;
+    sub Stack::Dup;
+    sub Floats::GetMantissa;    
+    sub Floats::GetExponent;
+    pull _val2Exponent;
+    pull _val2Mantissa;
+    
+    sub Stack::Swap;
+    sub Stack::Dup;
+    sub Floats::GetMantissa;    
+    sub Floats::GetExponent;
+    pull _val1Exponent;
+    pull _val1Mantissa;
+
+    jump Floats::Comp::SkipExp ~ _val1Exponent == _val2Exponent;
+        jump Floats::Comp::Ret1 ~ _val1Exponent > _val2Exponent;
+
+    lab Floats::Comp::SkipExp;
+    jump Floats::Comp::SkipMan ~ _val1Exponent != _val2Exponent;
+        jump Floats::Comp::Ret1 ~ _val1Mantissa > _val2Mantissa;
+
+    lab Floats::Comp::SkipMan;
+    
+    push 0;
+    sub Stack::Swap;
+    return;
+
+    lab Floats::Comp::Ret1;
+        push 1;
+        sub Stack::Swap;
+        return;
+
 
 
 "short val1
