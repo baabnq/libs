@@ -117,8 +117,17 @@ lab Floats::ShiftSmall;
     
     sub Floats::GetExponent;
     pull _exponent;
+
+    "switch fpValue with *fpValue, for SetExponent call
+    pull _fpValue;
+    put  _fpValue -> _outputPtr;
+    push _outputPtr;
     push _exponent - _offset;
     sub Floats::SetExponent;
+    
+    put _fpValue <- _outputPtr;
+    push _fpValue;    
+    sub Stack::Swap;
     return;    
 
 "float16 fpValue
@@ -131,8 +140,16 @@ lab Floats::ShiftGreat;
     
     sub Floats::GetExponent;
     pull _exponent;
+
+    pull _fpValue;
+    put  _fpValue -> _outputPtr;
+    push _outputPtr;
     push _exponent + _offset;
     sub Floats::SetExponent;
+
+    put _fpValue <- _outputPtr;
+    push _fpValue;    
+    sub Stack::Swap;
     return;    
 
 "float16* fpPtr
