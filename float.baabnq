@@ -111,6 +111,7 @@ lab Floats::SetSign;
 "short     offset
 lab Floats::ShiftSmall;
     sub Stack::Swap;
+    sub Floats::Fp2Value;
     pull _offset;
     sub Stack::Swap;
     sub Stack::Dup; "keep reference to fpValue for SetExponent call
@@ -134,6 +135,7 @@ lab Floats::ShiftSmall;
 "short   offset
 lab Floats::ShiftGreat;
     sub Stack::Swap;
+    sub Floats::Fp2Value;
     pull _offset;
     sub Stack::Swap;
     sub Stack::Dup; "keep reference to fpValue for SetExponent call
@@ -203,8 +205,26 @@ lab Floats::NormalizeAndSet;
         put _posNaN -> _fpValue;
         return;
 
+
 "short value
-lab Floats::Value2fp;
+lab Floats::TwoC2Fp;
+    sub Stack::Swap;
+    sub Stack::Dup; 
+   
+    pull _value;
+    put _sign = (_value >> 15) & 1;
+    "print _sign;
+
+    sub Floats::Inv16 ~ _sign == 1;
+    sub Floats::Value2Fp;
+
+    pull _output;
+    push _output | (_sign << 15);
+    sub Stack::Swap;
+    return;
+
+"short value
+lab Floats::Value2Fp;
     sub Stack::Swap;
     pull _value;
     put _output = 0;
@@ -234,7 +254,7 @@ lab Floats::Value2fp;
     return;
 
 "float16 fpValue
-lab Floats::Fp2value;
+lab Floats::Fp2Value;
     sub Stack::Swap;
     pull _fpValue;
 
@@ -247,11 +267,13 @@ lab Floats::Fp2value;
     
     jump ExpNeg ~ (_exponent & (1 << 7)) != 0;
         push (_mantissa << _exponent);
+        sub Floats::Inv8 ~ _fpValue & _SIGN_MASK != 0;
         sub Stack::Swap;
         return;
     lab ExpNeg;
         "two'c conversion (255, because 8 bit)
         push (_mantissa >> (((_exponent ^ (0 - 1)) + 1) & 255));
+        sub Floats::Inv8 ~ _fpValue & _SIGN_MASK != 0;
         sub Stack::Swap;
         return;
 
@@ -259,9 +281,9 @@ lab Floats::Fp2value;
 "float16 val2
 lab Floats::Add;
     sub Stack::Swap;
-    pull _val1;
-    sub Stack::Swap;
     pull _val2;
+    sub Stack::Swap;
+    pull _val1;
 
     put _valLow = 0;
     put _valBig = 0;
@@ -312,11 +334,11 @@ lab Floats::Add;
     
     "apply the sign
     push _valLowMantissa;
-    sub Floats::Inv8 ~ (_valLow & _SIGN_MASK) != 0;
+    sub Floats::Inv16 ~ (_valLow & _SIGN_MASK) != 0;
     pull _valLowMantissa;
 
     push _valBigMantissa;
-    sub Floats::Inv8 ~ (_valBig & _SIGN_MASK) != 0;
+    sub Floats::Inv16 ~ (_valBig & _SIGN_MASK) != 0;
     pull _valBigMantissa;
 
     "do the addition
@@ -406,20 +428,36 @@ lab Floats::Comp;
     "get valExponent and valMantissa
     sub Stack::Swap;
     sub Stack::Dup;
+    sub Stack::Dup;
+    pull _val2;
     sub Floats::GetMantissa;    
+    pull _val2Mantissa;
     sub Floats::GetExponent;
     pull _val2Exponent;
-    pull _val2Mantissa;
     
     sub Stack::Swap;
     sub Stack::Dup;
+    sub Stack::Dup;
+    pull _val1;
     sub Floats::GetMantissa;    
+    pull _val1Mantissa;
     sub Floats::GetExponent;
     pull _val1Exponent;
-    pull _val1Mantissa;
 
+    "print _val1Exponent;
+    "print _val2Exponent;
+
+
+    jump Floats::Comp::SkipSign ~ _val1 & _SIGN_MASK == _val2 & _SIGN_MASK;
+        jump Floats::Comp::Ret1 ~ _val1 & _SIGN_MASK < _val2 & _SIGN_MASK;
+
+    lab Floats::Comp::SkipSign;
     jump Floats::Comp::SkipExp ~ _val1Exponent == _val2Exponent;
-        jump Floats::Comp::Ret1 ~ _val1Exponent > _val2Exponent;
+        push _val1Exponent;
+        push _val2Exponent;
+        sub Floats::TwosComp;
+        sub Stack::Swap;
+        return;        
 
     lab Floats::Comp::SkipExp;
     jump Floats::Comp::SkipMan ~ _val1Exponent != _val2Exponent;
@@ -448,8 +486,8 @@ lab Floats::TwosComp;
     sub Stack::Swap;
     pull _Floats::TwosComp::Val1;
 
-    put _Floats::TwosComp::Sign1 = _Floats::TwosComp::Val1 & (1 << 7);
-    put _Floats::TwosComp::Sign2 = _Floats::TwosComp::Val2 & (1 << 7);
+    put _Floats::TwosComp::Sign1 = (_Floats::TwosComp::Val1 & 255) >> 7;
+    put _Floats::TwosComp::Sign2 = (_Floats::TwosComp::Val2 & 255) >> 7;
 
     "if the sign of the inputs are not the same, just compare the two
     jump Floats::TwosComp::QuickSign ~ _Floats::TwosComp::Sign1 != _Floats::TwosComp::Sign2;
@@ -468,11 +506,8 @@ lab Floats::TwosComp;
     return;
 
     lab Floats::TwosComp::Neg;
-        put _Floats::TwosComp::Val1 = (_Floats::TwosComp::Val1 ^ 255) + 1;
-        put _Floats::TwosComp::Val2 = (_Floats::TwosComp::Val2 ^ 255) + 1;
-
         put _Floats::TwosComp::Output = 1;
-        jump Floats::TwosComp::Neg::Exit ~ _Floats::TwosComp::Val1 < _Floats::TwosComp::Val2; 
+        jump Floats::TwosComp::Neg::Exit ~ _Floats::TwosComp::Val1 > _Floats::TwosComp::Val2; 
             put _Floats::TwosComp::Output = 0;
         lab Floats::TwosComp::Neg::Exit;
 
