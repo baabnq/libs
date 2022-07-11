@@ -474,6 +474,24 @@ lab Floats::Comp;
         sub Stack::Swap;
         return;
 
+"fuck u i need div
+"float16 input
+"lab Floats::Sqrt;
+"    "square root approximation using archimedes
+"    sub Stack::Swap;
+"    pull _input;
+"    put _val = 1;
+"    
+"    "10 iterations 
+"    put _index = 0;
+"    lab Floats::Sqrt::Loop;
+"        
+"
+"        put _index = _index + 1;
+"    jump Floats::Sqrt::Loop ~ _index < 10;
+
+        
+
 
 
 "short val1

@@ -1,3 +1,4 @@
+use 'libs/stack.baabnq';
 put _Math::returnAddr = 0;
 
 
@@ -70,7 +71,7 @@ return;
 
 
 
-lab Math::Div;
+"lab Math::Div;
 "i know, this is not a very efficient division alogrithem, but i don't care
 "call this subroutine like this;
 "push dividend
@@ -79,28 +80,54 @@ lab Math::Div;
 "pull output
 "pull remainder
 
-put _Math::divisor = 0;
-put _Math::dividend = 0;
-put _Math::output = 0;
+"put _Math::divisor = 0;
+"put _Math::dividend = 0;
+"put _Math::output = 0;
 
-pull _Math::returnAddr;
-pull _Math::divisor;
-pull _Math::dividend;
+"pull _Math::returnAddr;
+"pull _Math::divisor;
+"pull _Math::dividend;
 
-jump Math::divExit ~ _Math::divisor > _Math::dividend;
-lab Math::divLoop;
+"jump Math::divExit ~ _Math::divisor > _Math::dividend;
+"lab Math::divLoop;
 
-put _Math::output = _Math::output + 1;
-put _Math::dividend = _Math::dividend - _Math::divisor;
+"put _Math::output = _Math::output + 1;
+"put _Math::dividend = _Math::dividend - _Math::divisor;
 
-jump Math::divLoop ~ _Math::dividend > _Math::divisor;
-jump Math::divLoop ~ _Math::dividend == _Math::divisor;
-lab Math::divExit;
+"jump Math::divLoop ~ _Math::dividend > _Math::divisor;
+"jump Math::divLoop ~ _Math::dividend == _Math::divisor;
+"lab Math::divExit;
 
-push _Math::dividend;
-push _Math::output;
-push _Math::returnAddr;
-return;
+"push _Math::dividend;
+"push _Math::output;
+"push _Math::returnAddr;
+"return;
+
+"translated from https://en.wikipedia.org/wiki/Division_algorithm#Long_division
+"dividend
+"divisor
+lab Math::Div; 
+    sub Stack::Swap;
+    pull _d;
+    sub Stack::Swap;    
+    pull _n;
+
+    put _q = 0;
+    put _r = 0;
+    put _i = 15;
+    
+    lab Math::Div::Loop;
+        put _r = (_r << 1) | ((_n >> _i) & 1);
+        jump Math::Div::SkipSub ~ _d > _r;
+            put _r = _r - _d;
+            put _q = _q | (1 << _i);
+        lab Math::Div::SkipSub;
+        put _i = _i - 1;
+    jump Math::Div::Loop ~ _i + 1 > 0;
+
+    push _q;
+    sub Stack::Swap;
+    return;
 
 
 lab Math::Skip;
