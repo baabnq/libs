@@ -477,11 +477,20 @@ lab Floats::Comp;
 "float16 val1
 "float16 val2
 "returns val1/val2
+"not working idk
 lab Floats::Div;
     sub Stack::Swap;
     pull _val2;
     sub Stack::Swap;
     pull _val1;
+
+    push _val1;
+    sub Floats::Fp2Value;
+    pull _temp; print _temp;
+    push _val2;
+    sub Floats::Fp2Value;
+    pull _temp; print _temp;
+
 
     put _outputSign = (_val1 & _SIGN_MASK) ^ (_val2 & _SIGN_MASK);
 
@@ -491,6 +500,8 @@ lab Floats::Div;
     push _val2;
     sub Floats::GetMantissa;
     sub Math::Div;
+    
+
 
     push _val1;
     sub Floats::GetExponent;
@@ -500,6 +511,14 @@ lab Floats::Div;
     sub Math::Sub;
     pull _outputExponent;
     pull _outputMantissa;
+
+
+    lab Floats::Div::Loop;
+        put _outputMantissa = _outputMantissa >> 1;
+        put _outputExponent = _outputExponent  + 1;
+
+    jump Floats::Div::Loop ~ _outputMantissa > (1 << _MANTISSA_SIZE) - 1;
+
 
     put 0 -> _outputPtr;
     push _outputPtr;
@@ -512,27 +531,47 @@ lab Floats::Div;
 
     push _output;
     sub Floats::SetSign ~ _outputSign != 0;
+
+    sub Stack::Dup;
+    sub Floats::Fp2Value;
+    pull _temp; print _temp;
+
+
     sub Stack::Swap;
     return;
     
 
-"fuck u i need div
 "float16 input
-"lab Floats::Sqrt;
-"    "square root approximation using archimedes
-"    sub Stack::Swap;
-"    pull _input;
-"    put _val = 1;
-"    
-"    "10 iterations 
-"    put _index = 0;
-"    lab Floats::Sqrt::Loop;
-"        
-"
-"        put _index = _index + 1;
-"    jump Floats::Sqrt::Loop ~ _index < 10;
-
+lab Floats::Sqrt;
+    "square root approximation using archimedes
+    sub Stack::Swap;
+    pull _input;
+    
+    push 1;
+    sub Floats::Value2Fp;
+    
+    "10 iterations 
+    put _index = 0;
+    lab Floats::Sqrt::Loop;
+        sub Stack::Dup; "make copy of val
+        push _input;
+        sub Stack::Swap;
+        sub Floats::Div;
+        sub Floats::Add; "add result of div with val stored previously
         
+        push 31872; "divide by two (1 = 0f31872)
+        sub Floats::ShiftSmall;        
+
+        "sub Stack::Dup;
+        "sub Floats::Fp2Value;
+        "pull _temp; print _temp;
+
+
+        put _index = _index + 1;
+    jump Floats::Sqrt::Loop ~ _index < 10;
+
+    sub Stack::Swap;
+    return;
 
 
 
@@ -588,14 +627,10 @@ lab Floats::TwosComp;
 	
 lab Floats::Skip; 
 
-push 22;
-sub Floats::Value2Fp;
-push 7;
-sub Floats::Value2Fp;
 
-sub Floats::Div;
-sub Stack::Dup;
-sub Floats::GetMantissa;
-pull _temp; print _temp;
-sub Floats::GetExponent;
+
+push 144;
+sub Floats::Value2Fp;
+sub Floats::Sqrt;
+sub Floats::Fp2Value;
 pull _temp; print _temp;
