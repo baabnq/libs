@@ -474,6 +474,48 @@ lab Floats::Comp;
         sub Stack::Swap;
         return;
 
+"float16 val1
+"float16 val2
+"returns val1/val2
+lab Floats::Div;
+    sub Stack::Swap;
+    pull _val2;
+    sub Stack::Swap;
+    pull _val1;
+
+    put _outputSign = (_val1 & _SIGN_MASK) ^ (_val2 & _SIGN_MASK);
+
+    push _val1;
+    sub Floats::GetMantissa;
+    pull _temp; push _temp << 8;
+    push _val2;
+    sub Floats::GetMantissa;
+    sub Math::Div;
+
+    push _val1;
+    sub Floats::GetExponent;
+    pull _temp; push _temp - 8;
+    push _val2;
+    sub Floats::GetExponent;    
+    sub Math::Sub;
+    pull _outputExponent;
+    pull _outputMantissa;
+
+    put 0 -> _outputPtr;
+    push _outputPtr;
+    sub Stack::Dup;
+    push _outputMantissa;
+    push _outputExponent;
+    sub Floats::NormalizeAndSet;
+    pull _outputPtr;
+    put _output <- _outputPtr;
+
+    push _output;
+    sub Floats::SetSign ~ _outputSign != 0;
+    sub Stack::Swap;
+    return;
+    
+
 "fuck u i need div
 "float16 input
 "lab Floats::Sqrt;
@@ -545,3 +587,15 @@ lab Floats::TwosComp;
 
 	
 lab Floats::Skip; 
+
+push 22;
+sub Floats::Value2Fp;
+push 7;
+sub Floats::Value2Fp;
+
+sub Floats::Div;
+sub Stack::Dup;
+sub Floats::GetMantissa;
+pull _temp; print _temp;
+sub Floats::GetExponent;
+pull _temp; print _temp;
