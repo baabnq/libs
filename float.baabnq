@@ -484,14 +484,6 @@ lab Floats::Div;
     sub Stack::Swap;
     pull _val1;
 
-    push _val1;
-    sub Floats::Fp2Value;
-    pull _temp; print _temp;
-    push _val2;
-    sub Floats::Fp2Value;
-    pull _temp; print _temp;
-
-
     put _outputSign = (_val1 & _SIGN_MASK) ^ (_val2 & _SIGN_MASK);
 
     push _val1;
@@ -500,24 +492,26 @@ lab Floats::Div;
     push _val2;
     sub Floats::GetMantissa;
     sub Math::Div;
+    pull _outputMantissa;
     
 
 
     push _val1;
     sub Floats::GetExponent;
-    pull _temp; push _temp - 8;
+    pull _temp; push (_temp - 8) & 255;
     push _val2;
-    sub Floats::GetExponent;    
+    sub Floats::GetExponent;
+
     sub Math::Sub;
     pull _outputExponent;
-    pull _outputMantissa;
-
-
+    
     lab Floats::Div::Loop;
+        jump Floats::Div::Exit ~ _outputMantissa < (1 << _MANTISSA_SIZE);
         put _outputMantissa = _outputMantissa >> 1;
         put _outputExponent = _outputExponent  + 1;
 
-    jump Floats::Div::Loop ~ _outputMantissa > (1 << _MANTISSA_SIZE) - 1;
+    jump Floats::Div::Loop;
+    lab Floats::Div::Exit;
 
 
     put 0 -> _outputPtr;
@@ -531,11 +525,6 @@ lab Floats::Div;
 
     push _output;
     sub Floats::SetSign ~ _outputSign != 0;
-
-    sub Stack::Dup;
-    sub Floats::Fp2Value;
-    pull _temp; print _temp;
-
 
     sub Stack::Swap;
     return;
@@ -626,11 +615,3 @@ lab Floats::TwosComp;
 
 	
 lab Floats::Skip; 
-
-
-
-push 144;
-sub Floats::Value2Fp;
-sub Floats::Sqrt;
-sub Floats::Fp2Value;
-pull _temp; print _temp;
