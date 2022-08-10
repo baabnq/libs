@@ -1,5 +1,5 @@
 use 'libs/string.baabnq';
-
+use 'libs/stack.baabnq';
 
 put _OpAdd = 43;
 put _OpSub = 45;
@@ -296,5 +296,16 @@ lab Expr::PrintExprTree;
         print _Value;
         return;
 
+
+
+lab Expr::Demo;
+    "21 bruh
+    new '2 + 10 * 2 - 1' _ptr;
+    push _ptr;
+    sub Expr::Parse;
+    sub Expr::Eval;
+
+    sub Stack::Swap;
+    return;
 
 lab Expr::Skip;
