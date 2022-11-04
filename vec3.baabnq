@@ -1,0 +1,28 @@
+use 'libs/stack.baabnq';
+
+jump Vec3::Skip;
+
+lab Vec3::New;
+    new 3 _Vec3::TempPtr;
+    sub Stack::Swap;
+    pull _Temp;
+    put _Temp -> _Vec3::TempPtr + 2;
+    sub Stack::Swap;
+    pull _Temp;
+    put _Temp -> _Vec3::TempPtr + 1;
+    sub Stack::Swap;
+    pull _Temp;
+    put _Temp -> _Vec3::TempPtr + 0;
+
+    push _Vec3::TempPtr;
+    sub Stack::Swap;
+    return;
+
+lab 
+
+
+
+
+
+
+lab Vec3::Skip;

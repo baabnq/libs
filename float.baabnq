@@ -493,7 +493,7 @@ lab Floats::Div;
     sub Floats::GetMantissa;
     sub Math::Div;
     pull _outputMantissa;
-    
+    pull __;
 
 
     push _val1;
