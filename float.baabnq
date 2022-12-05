@@ -479,6 +479,7 @@ lab Floats::Comp;
 "returns val1/val2
 "not working idk
 lab Floats::Div;
+
     sub Stack::Swap;
     pull _val2;
     sub Stack::Swap;
@@ -513,7 +514,6 @@ lab Floats::Div;
     jump Floats::Div::Loop;
     lab Floats::Div::Exit;
 
-
     put 0 -> _outputPtr;
     push _outputPtr;
     sub Stack::Dup;
@@ -522,7 +522,7 @@ lab Floats::Div;
     sub Floats::NormalizeAndSet;
     pull _outputPtr;
     put _output <- _outputPtr;
-
+    
     push _output;
     sub Floats::SetSign ~ _outputSign != 0;
 

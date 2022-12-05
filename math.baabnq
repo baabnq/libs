@@ -1,42 +1,40 @@
 use 'libs/stack.baabnq';
-put _Math::returnAddr = 0;
 
 
 jump Math::Skip;
 
 
 lab Math::Add;
-put _Math::arg1 = 0;
-put _Math::arg2 = 0;
-put _Math::output = 0;
+    asm '
+    jmS Stack::Swap;    
+    pla;
+    sAD -Temp;
+    lDR -Temp;
 
-pull _Math::returnAddr;
-pull _Math::arg2;
-pull _Math::arg1;
-
-put _Math::output = _Math::arg1 + _Math::arg2;
-
-push _Math::output;
-push _Math::returnAddr;
-return;
-
-
-
+    jmS Stack::Swap;    
+    pla;
+    add;
+    pha;
+    
+    jmS Stack::Swap;
+    ';
+    return;
 
 lab Math::Sub;
-put _Math::arg1 = 0;
-put _Math::arg2 = 0;
-put _Math::output = 0;
+    asm '
+    jmS Stack::Swap;    
+    pla;
+    sAD -Temp;
+    lDR -Temp;
 
-pull _Math::returnAddr;
-pull _Math::arg2;
-pull _Math::arg1;
-
-put _Math::output = _Math::arg1 - _Math::arg2;
-
-push _Math::output;
-push _Math::returnAddr;
-return;
+    jmS Stack::Swap;    
+    pla;
+    sub;
+    pha;
+    
+    jmS Stack::Swap;
+    ';
+    return;
 
 
 
