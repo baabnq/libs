@@ -40,31 +40,31 @@ lab Math::Sub;
 
 
 lab Math::Mul;
-put _Math::arg1 = 0;
-put _Math::arg2 = 0;
-put _Math::output = 0;
+put _arg1 = 0;
+put _arg2 = 0;
+put _output = 0;
 
-pull _Math::returnAddr;
-pull _Math::arg1;
-pull _Math::arg2;
+sub Stack::Swap;
+pull _arg1;
+sub Stack::Swap;
+pull _arg2;
 
-jump Math::mulExit ~ _Math::arg1 == 0;
-jump Math::mulExit ~ _Math::arg2 == 0;
+jump Math::mulExit ~ _arg1 == 0;
+jump Math::mulExit ~ _arg2 == 0;
 lab Math::mulLoop;
 
-put _Math::baseBit = _Math::arg1 & 1;
-jump Math::mulSkipAdd ~ _Math::baseBit == 0;
-put _Math::output = _Math::output + _Math::arg2;
+jump Math::mulSkipAdd ~ _arg1 & 1 == 0;
+put _output = _output + _arg2;
 lab Math::mulSkipAdd;
 
-put _Math::arg2 = _Math::arg2 << 1;
-put _Math::arg1 = _Math::arg1 >> 1;
+put _arg2 = _arg2 << 1;
+put _arg1 = _arg1 >> 1;
 
-jump Math::mulLoop ~ _Math::arg1 != 0;
+jump Math::mulLoop ~ _arg1 != 0;
 lab Math::mulExit;
 
-push _Math::output;
-push _Math::returnAddr;
+push _output;
+sub Stack::Swap;
 return;
 
 
