@@ -1,11 +1,12 @@
 use 'libs/math.baabnq';
+use 'libs/stack.baabnq';
 jump String::Skip;
 
 
 lab String::PrintString;
-    pull _ReturnAddr;
+    sub Stack::Swap;
     pull _StringPtr;
-    push _ReturnAddr;
+
 
     lab String::PrintString::PrintLoop;
     put _Data <- _StringPtr;
@@ -22,7 +23,7 @@ lab String::PrintString;
 "takes a list of char from the stack and converts it into an int
 "order of char can be changed be setting config to a 1
 lab String::StackChar2Int;
-    pull _ReturnAddr;
+    sub Stack::Swap;
     pull _Config;
     put _Buffer = 0;
     put _IndexInit = 0;
@@ -33,6 +34,7 @@ lab String::StackChar2Int;
     put _Index = _IndexInit;
 
     lab String::StackChar2Int::AccLoop;
+    sub Stack::Swap;
     pull _Data; 
     "check for terminator
     jump String::StackChar2Int::Exit ~ _Data == 0;
@@ -53,7 +55,7 @@ lab String::StackChar2Int;
     lab String::StackChar2Int::Exit;
 
     push _Buffer;
-    push _ReturnAddr;
+    sub Stack::Swap;
     return;
 
 

@@ -9,9 +9,8 @@ jump Expr::Skip;
 
 lab Expr::Parse;
 
-    pull _ReturnAddr;
+    sub Stack::Swap;
     pull _InputStr;
-    push _ReturnAddr;
 
     "push _InputStr;    
     "putstr 32;
@@ -28,9 +27,8 @@ lab Expr::Parse;
     new 4 _ThisNodePtr;
 
     "place the ptr to node on the stack as a return value
-    pull _ReturnAddr;
     push _ThisNodePtr;
-    push _ReturnAddr;
+    sub Stack::Swap;
 
 
     "scaning does not call anything so we don't need that namespacing thing
@@ -63,7 +61,6 @@ lab Expr::Parse;
     put 1 -> _ThisNodePtr + 0;
 
 
-
     "push data to stack for parsing to int
     push 0; "terminator
 
@@ -77,6 +74,7 @@ lab Expr::Parse;
     push _Data;
     jump Expr::PushLoop;
     lab Expr::PushExit;
+
 
 
     push 0; "config
@@ -170,18 +168,16 @@ lab Expr::Parse;
 
 
 lab Expr::Eval;
-    pull _ReturnAddr;
+    sub Stack::Swap;
     pull _Ptr;
-    push _ReturnAddr;
 
     put _Type  <- _Ptr + 0;
     put _Value <- _Ptr + 1;
 
     jump Expr::Eval::FoundOp ~ _Type == 0;
     "delete returnAddr, place Value and rewrite returnAddr
-    pull __;
     push _Value;
-    push _ReturnAddr;
+    sub Stack::Swap;
     return;
 
 
@@ -215,6 +211,8 @@ lab Expr::Eval;
         push _ReturnValue1;
         push _ReturnValue2;
 
+        "
+
         "call helper routine for math lib
         sub Math::Add ~ _Value == _OpAdd;
         sub Math::Sub ~ _Value == _OpSub;
@@ -222,18 +220,13 @@ lab Expr::Eval;
 
 
         "flip with return value
-        pull _FinalValue;
-        pull _ReturnAddr;
-        push _FinalValue;
-        push _ReturnAddr;
-
+        sub Stack::Swap;
 
         return;
 
 lab Expr::FreeExprTree;
-    pull _ReturnAddr;
+    sub Stack::Swap;
     pull _Ptr;
-    push _ReturnAddr;
 
     put _Type  <- _Ptr + 0;
     put _Value <- _Ptr + 1;
@@ -258,9 +251,9 @@ lab Expr::FreeExprTree;
 
 
 lab Expr::PrintExprTree;
-    pull _ReturnAddr;
+    sub Stack::Swap;
     pull _Ptr;
-    push _ReturnAddr;
+
 
 
     put _Type  <- _Ptr + 0;
