@@ -20,6 +20,8 @@ lab String::PrintString;
     return;
 
 
+"string rendering and parsing ------------
+
 "takes a list of char from the stack and converts it into an int
 "order of char can be changed be setting config to a 1
 lab String::StackChar2Int;
@@ -58,8 +60,6 @@ lab String::StackChar2Int;
     sub Stack::Swap;
     return;
 
-
-
     lab String::StackChar2Int::SetIndexInit1;
         put _IndexInit = 1;
         return;
@@ -67,6 +67,69 @@ lab String::StackChar2Int;
         put _IndexInit = 10000;
         return;
 
+
+"takes number, converts it to string
+"config similar to String::StackChar2Int
+"THIS WILL ALLOCATE MEMORY
+lab String::Int2Str;
+    sub Stack::Swap;
+    pull _Config;
+    put _Buffer = 0;
+    put _IndexInit = 0;
+
+    sub Stack::Swap;
+    pull _Num;
+
+    "16-bit int limit is 65535, so 5 digits plus terminator
+    new 6 _pStr;
+    put 0 -> _pStr + 5;
+
+    "start and end
+    push _pStr;
+    push _pStr + 4;
+
+    "swap if the config says to
+    sub Stack::Swap ~ _Config != 0;
+
+    pull _End;
+    pull _Start;
+
+    "count direction
+    put _Delta = 1;
+    jump String::Int2Str::SkipDec ~ _End > _Start;
+        put _Delta = 0 - 1;
+    lab String::Int2Str::SkipDec;
+    
+
+    "populate string from start to end
+    put _PlaceVal = 10000;
+    lab String::Int2Str::Loop;
+        put _Count = 0;
+        lab String::Int2Str::DivLoop;
+            jump String::Int2Str::DivDone ~ _Num < _PlaceVal;
+            put _Count = _Count + 1;
+            put _Num = _Num - _PlaceVal;
+        jump String::Int2Str::DivLoop;
+        lab String::Int2Str::DivDone;
+
+        put _Count + 48 -> _Start;
+        put _Start = _Start + _Delta;
+
+        push _PlaceVal;
+        push 10;
+        sub Math::Div;
+        pull _PlaceVal;
+    jump String::Int2Str::Loop ~ _Num != 0;
+
+    push _pStr;
+    sub Stack::Swap;
+    return;
+
+    
+
+
+
+"general string manipulation ---------
 
 "takes a string pointer from the stack and returns it's length ('' -> 0, 'a' -> 1)
 lab String::GetSize;
