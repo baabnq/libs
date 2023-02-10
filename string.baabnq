@@ -114,7 +114,6 @@ lab String::Int2Str;
         lab String::Int2Str::SkipWrite;
 
         put _Index = _Index + 1;
-        print _Index;
     jump String::Int2Str::Loop ~ _Index < 5;
 
     "special case
