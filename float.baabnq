@@ -6,7 +6,7 @@
 use 'libs/math.baabnq';
 use 'libs/stack.baabnq';
 
-put _upper15 = 65024;
+put _upper16 = 65280;
 put _posNaN  = 16256;
 
 put _MANTISSA_SIZE = 8;
@@ -200,8 +200,8 @@ lab Floats::NormalizeAndSet;
         return;
 
     lab Floats::NormalizeAndSet::CheckPosNaN;
-        jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _upper15 == 0;
-        jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _upper15 == _upper15;
+        jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _upper16 == 0;
+        jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _upper16 == _upper16;
         put _posNaN -> _fpValue;
         return;
 
@@ -407,12 +407,11 @@ lab Floats::Mul;
 
     jump Floats::Mul::Loop ~ _outputMantissa > (1 << _MANTISSA_SIZE) - 1;
 
-
     put 0 -> _outputPtr;
     push _outputPtr;
     sub Stack::Dup;
     push _outputMantissa;
-    push _outputExponent;
+    push _outputExponent & 255;
     sub Floats::NormalizeAndSet;
     pull _outputPtr;
     put _output <- _outputPtr;
