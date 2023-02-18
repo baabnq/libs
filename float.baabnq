@@ -8,6 +8,7 @@ use 'libs/stack.baabnq';
 
 put _upper16 = 65280;
 put _posNaN  = 16256;
+put _FpZero  = 16384;
 
 put _MANTISSA_SIZE = 8;
 put _EXPONENT_SIZE = 8;
@@ -384,6 +385,10 @@ lab Floats::Mul;
     sub Stack::Swap;
     pull _val1;
 
+    "check for zero
+    jump Floats::Mul::Zero ~ _val1 == _FpZero;
+    jump Floats::Mul::Zero ~ _val2 == _FpZero;
+
     push _val1;
     sub Floats::GetMantissa;
     push _val2;
@@ -407,6 +412,10 @@ lab Floats::Mul;
 
     jump Floats::Mul::Loop ~ _outputMantissa > (1 << _MANTISSA_SIZE) - 1;
 
+
+    print _outputExponent & 255;
+    print _outputMantissa;
+
     put 0 -> _outputPtr;
     push _outputPtr;
     sub Stack::Dup;
@@ -422,6 +431,11 @@ lab Floats::Mul;
     sub Stack::Swap;
     return;
 
+    lab Floats::Mul::Zero;
+    push _FpZero;
+    sub Stack::Swap;
+    return;
+    
 "float16 val1
 "float16 val2
 lab Floats::Comp;
