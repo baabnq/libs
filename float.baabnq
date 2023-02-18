@@ -6,7 +6,7 @@
 use 'libs/math.baabnq';
 use 'libs/stack.baabnq';
 
-put _upper16 = 65280;
+put _upper15 = 65024;
 put _posNaN  = 16256;
 
 put _MANTISSA_SIZE = 8;
@@ -200,8 +200,8 @@ lab Floats::NormalizeAndSet;
         return;
 
     lab Floats::NormalizeAndSet::CheckPosNaN;
-        jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _upper16 == 0;
-        jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _upper16 == _upper16;
+        jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _upper15 == 0;
+        jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _upper15 == _upper15;
         put _posNaN -> _fpValue;
         return;
 
@@ -407,6 +407,7 @@ lab Floats::Mul;
 
     jump Floats::Mul::Loop ~ _outputMantissa > (1 << _MANTISSA_SIZE) - 1;
 
+
     put 0 -> _outputPtr;
     push _outputPtr;
     sub Stack::Dup;
@@ -477,7 +478,6 @@ lab Floats::Comp;
 "float16 val1
 "float16 val2
 "returns val1/val2
-"not working idk
 lab Floats::Div;
 
     sub Stack::Swap;
@@ -494,9 +494,7 @@ lab Floats::Div;
     sub Floats::GetMantissa;
     sub Math::Div;
     pull _outputMantissa;
-    pull __;
-
-
+    
     push _val1;
     sub Floats::GetExponent;
     pull _temp; push (_temp - 8) & 255;
