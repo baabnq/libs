@@ -413,9 +413,6 @@ lab Floats::Mul;
     jump Floats::Mul::Loop ~ _outputMantissa > (1 << _MANTISSA_SIZE) - 1;
 
 
-    print _outputExponent & 255;
-    print _outputMantissa;
-
     put 0 -> _outputPtr;
     push _outputPtr;
     sub Stack::Dup;
