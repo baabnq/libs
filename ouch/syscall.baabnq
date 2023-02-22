@@ -1,5 +1,3 @@
-use 'libs/stack.baabnq';
-
 jump Ouch::Syscall::Skip;
 
 "--- noop ---
