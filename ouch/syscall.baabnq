@@ -1,0 +1,52 @@
+use 'libs/stack.baabnq';
+
+jump Ouch::Syscall::Skip;
+
+"--- noop ---
+
+lab Ouch::Syscall::Noop;
+    asm 'syscall 0;';
+    return;
+
+"--- stream ---
+
+lab Ouch::Sycall::CloseStream;
+    asm 'pla; syscall 1; pha;';
+    return;
+
+lab Ouch::Sycall::ReadStream;
+    asm 'pla; syscall 2; pha;';
+    return;
+
+lab Ouch::Sycall::WriteStream;
+    asm 'pla; syscall 3; pha;';
+    return;
+
+lab Ouch::Sycall::StreamInfo;
+    asm 'pla; syscall 4; pha;';
+    return;
+
+"--- files ---
+lab Ouch::Sycall::OpenFileObj;
+    asm 'pla; syscall 16; pha;';
+    return;
+
+lab Ouch::Sycall::CreateFileObj;
+    asm 'pla; syscall 17; pha;';
+    return;
+
+lab Ouch::Sycall::DeleteFileObj;
+    asm 'pla; syscall 18; pha;';
+    return;
+
+"--- time ---
+"--- network ---
+lab Ouch::Syscall::BindSock;
+    asm 'pla; syscall 48; pha;';
+    return;
+    
+lab Ouch::Syscall::AcceptSock;
+    asm 'pla; syscall 49; pha;';
+    return;
+
+lab Ouch::Syscall::Skip;
