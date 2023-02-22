@@ -8,32 +8,32 @@ lab Ouch::Syscall::Noop;
 
 "--- stream ---
 
-lab Ouch::Sycall::CloseStream;
+lab Ouch::Syscall::CloseStream;
     asm 'pla; syscall 1; pha;';
     return;
 
-lab Ouch::Sycall::ReadStream;
+lab Ouch::Syscall::ReadStream;
     asm 'pla; syscall 2; pha;';
     return;
 
-lab Ouch::Sycall::WriteStream;
+lab Ouch::Syscall::WriteStream;
     asm 'pla; syscall 3; pha;';
     return;
 
-lab Ouch::Sycall::StreamInfo;
+lab Ouch::Syscall::StreamInfo;
     asm 'pla; syscall 4; pha;';
     return;
 
 "--- files ---
-lab Ouch::Sycall::OpenFileObj;
+lab Ouch::Syscall::OpenFileObj;
     asm 'pla; syscall 16; pha;';
     return;
 
-lab Ouch::Sycall::CreateFileObj;
+lab Ouch::Syscall::CreateFileObj;
     asm 'pla; syscall 17; pha;';
     return;
 
-lab Ouch::Sycall::DeleteFileObj;
+lab Ouch::Syscall::DeleteFileObj;
     asm 'pla; syscall 18; pha;';
     return;
 
