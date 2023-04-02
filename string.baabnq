@@ -139,14 +139,14 @@ lab String::StrLen;
 
 
     put _SizeBuffer = 0;
-    lab String::GetSize::CountLoop;
+    lab String::StrLen::CountLoop;
     put _Data <- _SizeBuffer + _StringPtr;
 
-    jump String::GetSize::Exit ~ _Data == 0;
+    jump String::StrLen::Exit ~ _Data == 0;
 
     put _SizeBuffer = _SizeBuffer + 1;
-    jump String::GetSize::CountLoop;
-    lab String::GetSize::Exit;
+    jump String::StrLen::CountLoop;
+    lab String::StrLen::Exit;
 
 
     push _SizeBuffer;
@@ -212,10 +212,10 @@ lab String::Concat;
     push _ReturnAddr;    
 
     push _StrPtr1;
-    sub String::GetSize;
+    sub String::StrLen;
     pull _StrLen1;
     push _StrPtr2;
-    sub String::GetSize;
+    sub String::StrLen;
     pull _StrLen2;
 
     "restore retrun address
