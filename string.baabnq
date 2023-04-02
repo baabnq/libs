@@ -133,7 +133,7 @@ lab String::Int2Str;
 "general string manipulation ---------
 
 "takes a string pointer from the stack and returns it's length ('' -> 0, 'a' -> 1)
-lab String::GetSize;
+lab String::StrLen;
     pull _ReturnAddr;
     pull _StringPtr;
 
@@ -264,7 +264,9 @@ lab String::Join;
     lab String::Join::Count;
         put _pSub <- _pStrs + _Index;
         jump String::Join::CountDone ~ _pSub == 0;
-        put _Size <- _pSub - 1;
+        push _pSub; 
+        sub String::StrLen; 
+        pull _Size;
         put _Count = _Count + _Size;
         put _Index = _Index + 1;
     jump String::Join::Count;
@@ -281,7 +283,10 @@ lab String::Join;
         put _pSub <- _pStrs + _iStrs;
         put _iStrs = _iStrs + 1;
         jump String::Join::CopyDone ~ _pSub == 0;
-        put _Size <- _pSub - 1;
+
+        push _pSub; 
+        sub String::StrLen; 
+        pull _Size;
 
         push _pSub;
         push _pOut + _iOut;
