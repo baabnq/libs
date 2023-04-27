@@ -232,11 +232,11 @@ lab Floats::Value2Fp;
     put _exponent = 0;
     
     lab Floats::Value2fp::Loop;
-        jump Float::Value2fp::Exit ~ (_value >> _MANTISSA_SIZE) == 0;
+        jump Floats::Value2fp::Exit ~ (_value >> _MANTISSA_SIZE) == 0;
         put _value    = _value >> 1;
         put _exponent = _exponent + 1;
     jump Floats::Value2fp::Loop;
-    lab Float::Value2fp::Exit;
+    lab Floats::Value2fp::Exit;
 
 
     static 1 _fpPtr;
