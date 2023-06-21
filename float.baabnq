@@ -232,11 +232,11 @@ lab Floats::Value2Fp;
     put _exponent = 0;
     
     lab Floats::Value2fp::Loop;
-        jump Floats::Value2fp::Exit ~ (_value >> _MANTISSA_SIZE) == 0;
+        jump Float::Value2fp::Exit ~ (_value >> _MANTISSA_SIZE) == 0;
         put _value    = _value >> 1;
         put _exponent = _exponent + 1;
     jump Floats::Value2fp::Loop;
-    lab Floats::Value2fp::Exit;
+    lab Float::Value2fp::Exit;
 
 
     static 1 _fpPtr;
@@ -386,8 +386,8 @@ lab Floats::Mul;
     pull _val1;
 
     "check for zero
-    jump Floats::Mul::Zero ~ _val1 == _FpZero;
-    jump Floats::Mul::Zero ~ _val2 == _FpZero;
+    "jump Floats::Mul::Zero ~ _val1 == _FpZero;
+    "jump Floats::Mul::Zero ~ _val2 == _FpZero;
 
     push _val1;
     sub Floats::GetMantissa;
