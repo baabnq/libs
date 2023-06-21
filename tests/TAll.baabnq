@@ -1,1 +1,3 @@
+use 'libs/tests/common.baabnq';
 use 'libs/tests/TMath.baabnq';
+jump fail;
