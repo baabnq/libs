@@ -64,4 +64,16 @@ lab Ouch::Syscall::ForkProcess;
     asm 'pla; syscall 68; pha;';
     return;    
 
+
+"--- threads ---
+lab Ouch::Syscall::MMap;
+    asm 'pla; syscall 80; pha;';
+    return;
+
+lab Ouch::Syscall::TSL;
+    asm 'pla; syscall 81; pha;';
+    return;
+
+
+
 lab Ouch::Syscall::Skip;
