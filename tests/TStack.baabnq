@@ -1,8 +1,6 @@
 use 'libs/tests/common.baabnq';
 use 'libs/stack.baabnq';
 
-    push 3;
-
 
 lab TestStack::Swap;
     push 5;
