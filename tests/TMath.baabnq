@@ -1,7 +1,7 @@
 use 'libs/tests/common.baabnq';
 use 'libs/math.baabnq';
 
-lab Test::Add;
+lab TestMath::Add;
     push 4;
     push 3;
     sub Math::Add;
@@ -22,7 +22,7 @@ lab Test::Add;
 
     jump succ;
 
-lab Test::Sub;
+lab TestMath::Sub;
     push 4;
     push 3;
     sub Math::Sub;
@@ -44,7 +44,7 @@ lab Test::Sub;
     jump succ;
 
 
-lab Test::Mul;
+lab TestMath::Mul;
     push 4;
     push 3;
     sub Math::Mul;
@@ -71,7 +71,7 @@ lab Test::Mul;
     
     jump succ;
 
-lab Test::Div;
+lab TestMath::Div;
     push 12;
     push 3;
     sub Math::Div;
@@ -100,7 +100,7 @@ lab Test::Div;
 
     jump succ;
 
-lab Test::Mod;
+lab TestMath::Mod;
     "largest primes less than 1 << 16 - 1
     push 65521;
     push 65407;

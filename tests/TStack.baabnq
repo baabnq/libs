@@ -4,7 +4,7 @@ use 'libs/stack.baabnq';
     push 3;
 
 
-lab Test::Swap;
+lab TestStack::Swap;
     push 5;
     push 9;
     sub Stack::Swap;
@@ -30,7 +30,7 @@ lab Test::Swap;
     jump succ;
 
 
-lab Test::Dup;    
+lab TestStack::Dup;    
     "0b1010101010101010
     push 43690;
     sub Stack::Dup;
@@ -59,7 +59,7 @@ lab Test::Dup;
     jump succ;
 
 
-lab Test::DupSafe;    
+lab TestStack::DupSafe;    
     "0b1010101010101010
     push 43690;
     sub Stack::DupSafe;
