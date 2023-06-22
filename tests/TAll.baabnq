@@ -1,3 +1,6 @@
 use 'libs/tests/common.baabnq';
+
 use 'libs/tests/TMath.baabnq';
+use 'libs/tests/TStack.baabnq';
+
 jump fail;
