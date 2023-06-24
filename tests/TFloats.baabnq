@@ -28,3 +28,41 @@ lab TestFloats::Const;
     jump fail ~ _MIN_SIGNED_CHAR != 128;
 
     jump succ;
+
+lab TestFloats::GetMantissa;
+    sub fInit;
+    
+    "msb is implied to save space    
+    push 0;
+    sub Floats::GetMantissa;
+    pull _v;
+    jump fail ~ _v != 128;
+
+    push 127;
+    sub Floats::GetMantissa;
+    pull _v;
+    jump fail ~ _v != 128 | 127;
+    
+    jump succ;
+
+
+lab TestFloats::GetExponent;
+    sub fInit;
+    
+    "zero should be zero
+    push 0 << 7; "<< 7 for symmetry
+    sub Floats::GetExponent;
+    pull _v;
+    jump fail ~ _v != 0;
+
+    "!zero should be !zero (>> 7)
+    push 255 << 7;
+    sub Floats::GetExponent;
+    pull _v;
+    jump fail ~ _v != 255;
+    
+    jump succ;
+
+
+
+    

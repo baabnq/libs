@@ -18,5 +18,4 @@ lab succ;
     push 0 - 1;
     sub swap;
     return;    
-    
-            
+                
