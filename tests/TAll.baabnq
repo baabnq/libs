@@ -2,5 +2,6 @@ use 'libs/tests/common.baabnq';
 
 use 'libs/tests/TMath.baabnq';
 use 'libs/tests/TStack.baabnq';
+use 'libs/tests/TFloats.baabnq';
 
 jump fail;

@@ -266,12 +266,13 @@ lab Floats::Fp2Value;
     sub Floats::GetExponent;
     pull _exponent;
     
-    jump ExpNeg ~ (_exponent & (1 << 7)) != 0;
+    jump Floats::Fp2Value::ExpNeg ~ (_exponent & (1 << 7)) != 0;
         push (_mantissa << _exponent);
         sub Floats::Inv8 ~ _fpValue & _SIGN_MASK != 0;
         sub Stack::Swap;
         return;
-    lab ExpNeg;
+
+    lab Floats::Fp2Value::ExpNeg;
         "two'c conversion (255, because 8 bit)
         push (_mantissa >> (((_exponent ^ (0 - 1)) + 1) & 255));
         sub Floats::Inv8 ~ _fpValue & _SIGN_MASK != 0;
