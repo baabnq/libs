@@ -3,6 +3,7 @@ use 'libs/tests/common.baabnq';
 
 "library has to run, to define consts
 lab fInit;
+static 1 _pTst; "test ptr
 use 'libs/float.baabnq';
 return;
 
@@ -63,6 +64,49 @@ lab TestFloats::GetExponent;
     
     jump succ;
 
+lab TestFloats::SetMantissa;
+    sub fInit;
 
+    "!zero against zero
+    put (0 - 1) -> _pTst;
+    push _pTst;
+    push 0;
+    sub Floats::SetMantissa;
+    put _v <- _pTst;
+    jump fail ~ _v != ((1 << 15) | (255 << 7));
+
+    "other way round
+    put 0 -> _pTst;
+    push _pTst;
+    push (0 - 1); "maxint will be capped by _MANTISSA_MASK
+    sub Floats::SetMantissa;
+    put _v <- _pTst;
+    jump fail ~ _v != 0 | (127 << 0);
+    
+
+    jump succ;
+
+
+lab TestFloats::SetExponent;
+    sub fInit;
+
+    "!zero against zero
+    put (0 - 1) -> _pTst;
+    push _pTst;
+    push 0;
+    sub Floats::SetExponent;
+    put _v <- _pTst;
+    jump fail ~ _v != ((1 << 15) | (127 << 0));
+
+    "other way round
+    put 0 -> _pTst;
+    push _pTst;
+    push (0 - 1); "maxint will be capped by _EXPONENT_MASK
+    sub Floats::SetExponent;
+    put _v <- _pTst;
+    jump fail ~ _v != 0 | (255 << 7);
+    
+
+    jump succ;
 
     
