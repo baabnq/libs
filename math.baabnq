@@ -31,26 +31,28 @@ lab Math::Min;
     pull _ReturnAddr; "nasty, but best solution in this case
     pull _1;
     pull _2;
+    push _ReturnAddr; "save
     push _2;
     push _1;
     
     sub Stack::Swap ~ _1 < _2;
-       
+      
     pull __; "pull smaller value
-    push _ReturnAddr;
+    sub Stack::Swap;
     return;
 
 lab Math::Max;
     pull _ReturnAddr; "nasty, but best solution in this case
     pull _1;
     pull _2;
+    push _ReturnAddr; "save
     push _2;
     push _1;
-    
+
     sub Stack::Swap ~ _1 > _2;
        
     pull __; "pull smaller value
-    push _ReturnAddr;
+    sub Stack::Swap;
     return;
 
 

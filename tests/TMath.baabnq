@@ -1,6 +1,103 @@
 use 'libs/tests/common.baabnq';
 use 'libs/math.baabnq';
 
+lab TestMath::Inc;
+    push 10; "normal
+    sub Math::Inc;
+    pull _v;
+    jump fail ~ _v != 11;
+
+    push 0 - 1; "overflow
+    sub Math::Inc;
+    pull _v;
+    jump fail ~ _v != 0;
+    
+    push 0 - 1; "stack fuckery
+    push 0;
+    sub Math::Inc;
+    pull _v;
+    pull _o;    
+
+    jump fail ~ _v != 1;
+    jump fail ~ _o != 0 - 1;
+
+    jump succ;
+
+
+lab TestMath::Dec;
+    push 10; "normal
+    sub Math::Dec;
+    pull _v;
+    jump fail ~ _v != 9;
+
+    push 0; "underflow
+    sub Math::Dec;
+    pull _v;
+    jump fail ~ _v != 0 - 1;
+    
+    push 0 - 1; "stack fuckery
+    push 1;
+    sub Math::Dec;
+    pull _v;
+    pull _o;    
+
+    jump fail ~ _v != 0;
+    jump fail ~ _o != 0 - 1;
+
+    jump succ;
+
+lab TestMath::Min;
+    push 3; "way 1
+    push 5;
+    sub Math::Min;
+    pull _v;
+    jump fail ~ _v != 3;
+
+    push 5; "way 2
+    push 3;
+    sub Math::Min;
+    pull _v;
+    jump fail ~ _v != 3;
+
+
+    push 0 - 1; "stack fuckery
+    push 0;
+    push 0 - 1;
+    sub Math::Min;
+    pull _v;
+    pull _o;
+    jump fail ~ _v != 0;
+    jump fail ~ _o != 0 - 1;
+
+    jump succ;
+
+lab TestMath::Max;
+    push 3; "way 1
+    push 5;
+    sub Math::Max;
+    pull _v;
+    jump fail ~ _v != 5;
+
+    push 5; "way 2
+    push 3;
+    sub Math::Max;
+    pull _v;
+    jump fail ~ _v != 5;
+
+
+    push 0 - 1; "stack fuckery
+    push 0;
+    push 0 - 1;
+    sub Math::Max;
+    pull _v;
+    pull _o;
+    jump fail ~ _v != 0 - 1;
+    jump fail ~ _o != 0 - 1;
+
+    jump succ;
+
+
+
 lab TestMath::Add;
     push 4;
     push 3;
