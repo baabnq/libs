@@ -158,7 +158,7 @@ lab TestFloats::SetSign;
 
 
 lab TestFloats::ShiftSmall;
-    "sub fInit;
+    sub fInit;
 
     "test zero-shift
     push 378;  "some random value, in this case (float16)1000
@@ -171,34 +171,33 @@ lab TestFloats::ShiftSmall;
     push 16384;
     push 32288; "(float16)10
     sub Floats::ShiftSmall;
+    sub Floats::Fp2Value;
     pull _v;
-    jump fail ~ _v != 16384;
+    jump fail ~ _v != 0; "isomorphic
 
     jump succ;
 
-"float16   fpValue
-"short     offset
-lab Floats::ShiftSmall;
-    sub Stack::Swap;
-    sub Floats::Fp2Value;
-    pull _offset;
-    sub Stack::Swap;
-    sub Stack::Dup; "keep reference to fpValue for SetExponent call
-    
-    sub Floats::GetExponent;
-    pull _exponent;
+lab TestFloats::ShiftGreat;
+    sub fInit;
 
-    "switch fpValue with *fpValue, for SetExponent call
-    pull _fpValue;
-    put  _fpValue -> _outputPtr;
-    push _outputPtr;
-    push _exponent - _offset;
-    sub Floats::SetExponent;
-    
-    put _fpValue <- _outputPtr;
-    push _fpValue;    
-    sub Stack::Swap;
-    return;    
+    "test zero-shift
+    push 378;  "some random value, in this case (float16)1000
+    push 16384;
+    sub Floats::ShiftGreat;
+    pull _v;
+    jump fail ~ _v != 378;
+
+    "test n-shift for zero
+    push 16384;
+    push 32288; "(float16)10
+    sub Floats::ShiftGreat;
+    sub Floats::Fp2Value;
+    pull _v;
+    jump fail ~ _v != 0; "isomorphic
+
+    jump succ;
+
+
 
 "float16 fpValue
 "short   offset

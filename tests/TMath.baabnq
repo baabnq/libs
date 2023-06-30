@@ -46,6 +46,7 @@ lab TestMath::Dec;
 
     jump succ;
 
+
 lab TestMath::Min;
     push 3; "way 1
     push 5;
