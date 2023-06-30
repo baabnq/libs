@@ -175,6 +175,16 @@ lab TestFloats::ShiftSmall;
     pull _v;
     jump fail ~ _v != 0; "isomorphic
 
+    "64 >> 2 = 16
+    push 64;
+    sub Floats::Value2Fp;
+    push 2;
+    sub Floats::Value2Fp;
+    sub Floats::ShiftSmall;
+    sub Floats::Fp2Value;
+    pull _v;
+    jump fail ~ _v != 16;
+
     jump succ;
 
 lab TestFloats::ShiftGreat;
@@ -195,83 +205,64 @@ lab TestFloats::ShiftGreat;
     pull _v;
     jump fail ~ _v != 0; "isomorphic
 
+    "64 << 2 = 256
+    push 64;
+    sub Floats::Value2Fp;
+    push 2;
+    sub Floats::Value2Fp;
+    sub Floats::ShiftGreat;
+    sub Floats::Fp2Value;
+    pull _v;
+    jump fail ~ _v != 256;
+
     jump succ;
 
 
+lab ATestFloats::NormalizeAndSet;
+    sub fInit;
 
-"float16 fpValue
-"short   offset
-lab Floats::ShiftGreat;
-    sub Stack::Swap;
-    sub Floats::Fp2Value;
-    pull _offset;
-    sub Stack::Swap;
-    sub Stack::Dup; "keep reference to fpValue for SetExponent call
+    "normal (ize, hahahah)
+    push _pTst;
+    "1 << 0 = 1 (prolly)
+    push 1; 
+    push 0;
+    sub Floats::NormalizeAndSet;
+    put _v <- _pTst;
+    jump fail ~ _v != 31872;
+
+    "unchangable
+    push _pTst;
+    "255 << 1 = 510 (prolly)
+    push 255; 
+    push 1;
+    sub Floats::NormalizeAndSet;
+    put _v <- _pTst;
+    jump fail ~ _v != 255;
+
+    "man0
+    push _pTst;
+    "0 << 0 = 0 (prolly)
+    push 0;
+    push 0;
+    sub Floats::NormalizeAndSet;
+    put _v <- _pTst;
+    jump fail ~ _v != 16384;
+
+    "nan/inf
+    push _pTst;
+    "sil << sil =~ infinity (prolly)
+    "signed int limit (sil)
+    push (1 << 15) - 1;
+    push (1 << 15) - 1;
+    sub Floats::NormalizeAndSet;
+    put _v <- _pTst;
+    jump fail ~ _v != 16256;
+
+
+    jump succ;
     
-    sub Floats::GetExponent;
-    pull _exponent;
-
-    pull _fpValue;
-    put  _fpValue -> _outputPtr;
-    push _outputPtr;
-    push _exponent + _offset;
-    sub Floats::SetExponent;
-
-    put _fpValue <- _outputPtr;
-    push _fpValue;    
-    sub Stack::Swap;
-    return;    
-
-"float16* fpPtr
-"unsigned char mantissa
-"short exponent
-
-lab Floats::NormalizeAndSet;
-    sub Stack::Swap;         
-    pull _exponent;
-    sub Stack::Swap;
-    pull _mantissa;
-    sub Stack::Swap;
-    pull _fpPtr;
-   
-    jump Floats::NormalizeAndSet::CheckPosNaN;
-    lab Floats::NormalizeAndSet::CheckFallBack;
-    jump Floats::NormalizeAndSet::Man0 ~ _mantissa == 0;
     
-    lab Floats::NormalizeAndSet::NormLoop;
-        jump Floats::NormalizeAndSet::NormExit ~ (_mantissa >> (_MANTISSA_SIZE - 1)) != 0;
-        put _mantissa = _mantissa << 1;
-        put _exponent = (_exponent - 1) & 255;
-    jump Floats::NormalizeAndSet::NormLoop;
-    lab Floats::NormalizeAndSet::NormExit;
 
-    push _fpPtr;
-    sub Stack::Dup;
-
-    push _mantissa;
-    sub Floats::SetMantissa;
-    push _exponent;
-    sub Floats::SetExponent;
-    
-    return;
-
-    lab Floats::NormalizeAndSet::Man0;
-        push _fpPtr;
-        sub Stack::Dup;
-
-        push 0;
-        sub Floats::SetMantissa;
-        push _MIN_SIGNED_CHAR;
-        sub Floats::SetExponent;
-        
-
-        return;
-
-    lab Floats::NormalizeAndSet::CheckPosNaN;
-        jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _upper16 == 0;
-        jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _upper16 == _upper16;
-        put _posNaN -> _fpValue;
-        return;
 
 
 "short value

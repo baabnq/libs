@@ -203,7 +203,7 @@ lab Floats::NormalizeAndSet;
     lab Floats::NormalizeAndSet::CheckPosNaN;
         jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _upper16 == 0;
         jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _upper16 == _upper16;
-        put _posNaN -> _fpValue;
+        put _posNaN -> _fpPtr;
         return;
 
 
