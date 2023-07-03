@@ -2,6 +2,10 @@
 "using the bfloat16 format https://en.wikipedia.org/wiki/Bfloat16_floating-point_format
 "a float is represented by a sigle 16-bit number
 
+" format:
+"     msb [(1 bit sign) (8 bit exponent) (7 bit mantissa)] lsb
+" 8th bit of mantissa is virtual, because of norm
+
 
 use 'libs/math.baabnq';
 use 'libs/stack.baabnq';

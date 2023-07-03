@@ -372,10 +372,10 @@ lab TestFloats::Add;
     push 380;   "1010 (man: 252, exp: 2)
     sub Floats::Add;
     pull _v;
-    jump fail ~ _v != 507; "1096
+    jump fail ~ _v != 507;
 
     "sign stuff
-    push 31872;              "1
+    push 31872;              " 1
     push 31872 | _SIGN_MASK; "-1
     sub Floats::Add;
     pull _v;
@@ -384,6 +384,7 @@ lab TestFloats::Add;
     "double sign
     push 31872 | _SIGN_MASK; "-1
     push 31872 | _SIGN_MASK; "-1
+    sub Floats::Add;
     pull _v;
     jump fail ~ _v != 32000 | _SIGN_MASK; "-1-1 = -2 
     
@@ -391,12 +392,33 @@ lab TestFloats::Add;
 
 
 
+lab TestFloats::Mul;
+    sub fInit;
+
+    "(1000 * 100 = 100 000 ~> 99840)
+    push 378;   "1000
+    push 32712; "100
+    sub Floats::Mul;
+    pull _v;
+    jump fail ~ _v != 1219; "99840
 
 
 
+    "sign stuff
+    push 31872;              " 1
+    push 31872 | _SIGN_MASK; "-1
+    sub Floats::Mul;
+    pull _v;
+    jump fail ~ _v != 31872 | _SIGN_MASK; "1 * -1 = -1
 
-
-
+    "double sign
+    push 31872 | _SIGN_MASK; "-1
+    push 31872 | _SIGN_MASK; "-1
+    sub Floats::Mul;
+    pull _v;
+    jump fail ~ _v != 31872; "-1 * -1 = 1
+    
+    jump succ;
 
 
 
