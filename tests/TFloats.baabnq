@@ -344,6 +344,59 @@ lab TestFloats::Fp2Value;
     pull _v;
     jump fail ~ _v != 1;
 
-
     jump succ;
+
+
+
+lab TestFloats::Add;
+    sub fInit;
+
+    "A (1000 + 100 = 1100 ~> 1096)
+    push 378;   "1000
+    push 32712; "100
+    sub Floats::Add;
+    pull _v;
+    jump fail ~ _v != 393; "1096
+
+    "B (100 + 1000 = 1100 ~> 1096)
+    push 32712; "100
+    push 378;   "1000
+    sub Floats::Add;
+    pull _v;
+    jump fail ~ _v != 393; "1096
+
+    "trust me, there's a difference
+
+    "same exponent (1000 + 1010 = 2010 ~> 2008)
+    push 378;   "1000 (man: 250, exp: 2)
+    push 380;   "1010 (man: 252, exp: 2)
+    sub Floats::Add;
+    pull _v;
+    jump fail ~ _v != 507; "1096
+
+    "sign stuff
+    push 31872;              "1
+    push 31872 | _SIGN_MASK; "-1
+    sub Floats::Add;
+    pull _v;
+    jump fail ~ _v != 16384; "1-1 = 0 
+
+    "double sign
+    push 31872 | _SIGN_MASK; "-1
+    push 31872 | _SIGN_MASK; "-1
+    pull _v;
+    jump fail ~ _v != 32000 | _SIGN_MASK; "-1-1 = -2 
+    
+    jump succ;
+
+
+
+
+
+
+
+
+
+
+
 
