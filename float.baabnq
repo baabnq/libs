@@ -158,7 +158,6 @@ lab Floats::ShiftGreat;
 "float16* fpPtr
 "unsigned char mantissa
 "short exponent
-
 lab Floats::NormalizeAndSet;
     sub Stack::Swap;         
     pull _exponent;
@@ -214,9 +213,10 @@ lab Floats::TwoC2Fp;
    
     pull _value;
     put _sign = (_value >> 15) & 1;
-    "print _sign;
 
-    sub Floats::Inv16 ~ _sign == 1;
+    "sub Floats::Inv16 ~ _sign == 1;
+    pull _output;
+    push (_output ^ (0 - _sign)) + _sign;  
     sub Floats::Value2Fp;
 
     pull _output;
