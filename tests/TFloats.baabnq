@@ -294,9 +294,56 @@ lab TestFloats::TwoC2Fp;
     jump fail ~ _v != 1023 | (1 << 15);
 
     jump succ;
+
+
+
+lab TestFloats::Value2Fp;
+    sub fInit;
+
+    "zero for sanity
+    push 0;
+    sub Floats::Value2Fp;
+    pull _v;
+    jump fail ~ _v != 16384;
+
+    "max int for rounding (65535 ~> 65280, deltaR = 255, bad ik)
+    push 0 - 1;
+    sub Floats::Value2Fp;
+    pull _v;
+    jump fail ~ _v != 1151;
+
+    "shift limit (notice how 1 turns into 31872, BIG normalize)
+    push 1;
+    sub Floats::Value2Fp;
+    pull _v;
+    jump fail ~ _v != 31872;
     
 
 
-
-
+    jump succ;
     
+
+lab TestFloats::Fp2Value;
+    sub fInit;
+
+    "zero
+    push 16384;
+    sub Floats::Fp2Value;
+    pull _v;
+    jump fail ~ _v != 0;
+
+    "pos exponent (65535 rounded => exp = 8)
+    push 1151;
+    sub Floats::Fp2Value;
+    pull _v;
+    jump fail ~ _v != 65280;
+
+    "neg exponent (1 => exp = -7)
+    push 31872;
+    sub Floats::Fp2Value;
+    pull _v;
+    jump fail ~ _v != 1;
+
+
+    jump succ;
+
