@@ -419,6 +419,20 @@ lab TestFloats::Mul;
     pull _v;
     jump fail ~ _v != 31872; "-1 * -1 = 1
     
+    "zero
+    push 16384;
+    push 378;
+    sub Floats::Mul;
+    pull _v;
+    jump fail ~ _v != 16384;
+
+    "double zero
+    push 16384;
+    push 16384;
+    sub Floats::Mul;
+    pull _v;
+    jump fail ~ _v != 16384;
+
     jump succ;
 
 
