@@ -112,6 +112,32 @@ lab Floats::SetSign;
     push _temp;
     return;
 
+
+"m*2^e -> m*10^e
+"float16 fpValue
+use 'libs/string.baabnq'; "!!!TEMP!!!
+lab Floats::ToDec;
+    sub Stack::Swap;
+    sub Stack::Dup;
+    
+    sub Floats::GetMantissa;
+    pull _manBin;
+    sub Floats::GetExponent;
+    pull _expBin;
+
+    "expDec = int(expBin * log10(2))
+    push 31642; " = 0.300781 ~ log10(2)
+    push _expBin;
+    sub Floats::Value2Fp;
+    sub Floats::Mul;
+    sub Floats::Fp2Value;
+    pull _expDec;
+
+    print _expDec;
+
+    return;
+
+
 "float16   fpValue
 "short     offset
 lab Floats::ShiftSmall;
@@ -392,8 +418,9 @@ lab Floats::Mul;
     pull _val1;
 
     "check for zero
-    "jump Floats::Mul::Zero ~ _val1 == _FpZero;
-    "jump Floats::Mul::Zero ~ _val2 == _FpZero;
+    jump Floats::Mul::Zero ~ _val1 == _FpZero;
+    jump Floats::Mul::Zero ~ _val2 == _FpZero;
+
 
     push _val1;
     sub Floats::GetMantissa;
