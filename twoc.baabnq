@@ -152,6 +152,20 @@ lab Twoc::Shift;
     sub Stack::Swap;
     return;
 
+"(Value::Comp) => IO
+lab Twoc::Print;
+    sub Stack::Swap;
+    sub Twoc::Get;
+    pull _Twoc::Temp;
+    pull _Twoc::Sign;
+    
+    "sign
+    jump Twoc::Print::Skip ~ _Twoc::Sign == 0;
+        putchr 45;
+    lab Twoc::Print::Skip;
+
+    print _Twoc::Temp;
+    return;
 
 lab Twoc::Skip;
 
