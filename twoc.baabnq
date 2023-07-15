@@ -20,19 +20,11 @@ lab Twoc::GetSign;
     sub Stack::Swap;
     return;
 
-"(Value::Comp, Sign::Bool) => (Value::Comp)
-lab Twoc::SetSign;
-    sub Stack::Swap;
-    pull _Twoc::Sign;
+"(Value::Comp) => (Value::Comp)
+lab Twoc::Neg;
     sub Stack::Swap;
     pull _Twoc::Temp;
-
-    "clear bit
-    put _Twoc::Temp = _Twoc::Temp & ((0 - 1) >> 1);
-
-    "new sign
-    push _Twoc::Temp | (_Twoc::Sign << 15);
-
+    push (_Twoc::Temp ^ (0 - 1)) + 1;
     sub Stack::Swap;
     return;
 
@@ -41,10 +33,11 @@ lab Twoc::Get;
     sub Stack::Swap;
     pull _Twoc::Temp;
     "sign    
-    push (_Twoc::Temp >> 15) & 1;
+    put _Twoc::Sign = (_Twoc::Temp >> 15) & 1;
+    push _Twoc::Sign;
     sub Stack::Swap;
     "value
-    push _Twoc::Temp & ((0 - 1) >> 1);
+    push (_Twoc::Temp ^ (0 - _Twoc::Sign)) + _Twoc::Sign;
     sub Stack::Swap;
     return;
 
@@ -55,7 +48,7 @@ lab Twoc::Set;
     sub Stack::Swap;
     pull _Twoc::Temp;
 
-    push _Twoc::Temp | (_Twoc::Sign << 15);
+    push (_Twoc::Temp ^ (0 - _Twoc::Sign)) + _Twoc::Sign;
     sub Stack::Swap;
     return;
     
@@ -107,6 +100,35 @@ lab Twoc::Div;
     sub Stack::Swap;
     return;
 
+"(Big::Comp, Small::Comp) => (True::Bool)
+"True::Bool is true if Big::Comp > Small::Comp
+lab Twoc::Cmp;
+    sub Stack::Swap;
+    sub Twoc::Get;
+    pull _Twoc::Val2; "small
+    pull _Twoc::Sgn2;
+    sub Stack::Swap;
+    sub Twoc::Get;
+    pull _Twoc::Val1; "big
+    pull _Twoc::Sgn1;
+
+    "check sign
+    jump Twoc::Cmp::True ~ _Twoc::Sgn1 < _Twoc::Sgn2;
+    jump Twoc::Cmp::False ~ _Twoc::Sgn1 > _Twoc::Sgn2;
+    "check value
+    jump Twoc::Cmp::True ~ _Twoc::Val1 > _Twoc::Val2;
+    jump Twoc::Cmp::False ~ _Twoc::Val1 < _Twoc::Val2;
+    
+    "Big::Comp == Small::Comp, i luv label mechanisms
+    lab Twoc::Cmp::False;
+        push 0;
+        sub Stack::Swap;
+        return;
+
+    lab Twoc::Cmp::True;
+        push 1;
+        sub Stack::Swap;
+        return;
 
 
 
