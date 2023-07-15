@@ -437,3 +437,10 @@ lab TestFloats::Mul;
 
 
 
+
+lab TestFloats::Comp;
+
+
+
+
+

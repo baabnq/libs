@@ -1,0 +1,114 @@
+"2's compliment lib
+
+use 'libs/stack.baabnq';
+use 'libs/math.baabnq';
+
+put _Twoc::Val1 = 0;
+put _Twoc::Val2 = 0;
+put _Twoc::Sgn1 = 0;
+put _Twoc::Sgn2 = 0;
+
+
+jump Twoc::Skip;
+
+
+"(Value) => (Sign)
+lab Twoc::GetSign;
+    sub Stack::Swap;
+    pull _Twoc::Temp;
+    push (_Twoc::Temp >> 15) & 1;
+    sub Stack::Swap;
+    return;
+
+"(Value, Sign) => (NewValue)
+lab Twoc::SetSign;
+    sub Stack::Swap;
+    pull _Twoc::Sign;
+    sub Stack::Swap;
+    pull _Twoc::Temp;
+
+    "clear bit
+    put _Twoc::Temp = _Twoc::Temp & ((0 - 1) >> 1);
+
+    "new sign
+    push _Twoc::Temp | (_Twoc::Sign << 15);
+
+    sub Stack::Swap;
+    return;
+
+"(ValueComp) => (Value, Sign)
+lab Twoc::Get;
+    sub Stack::Swap;
+    pull _Twoc::Temp;
+    "sign    
+    push (_Twoc::Temp >> 15) & 1;
+    sub Stack::Swap;
+    "value
+    push _Twoc::Temp & ((0 - 1) >> 1);
+    sub Stack::Swap;
+    return;
+
+"(Value, Sign) => (ValueComp)
+lab Twoc::Set;
+    sub Stack::Swap;
+    pull _Twoc::Sign;    
+    sub Stack::Swap;
+    pull _Twoc::Temp;
+
+    push _Twoc::Temp | (_Twoc::Sign << 15);
+    sub Stack::Swap;
+    return;
+    
+
+
+"(Value1, Value2) => (Product)
+lab Twoc::Mul;
+    sub Stack::Swap;
+    sub Twoc::Get;
+    pull _Twoc::Val1;
+    pull _Twoc::Sgn1;
+    sub Stack::Swap;
+    sub Twoc::Get;
+    pull _Twoc::Val2;
+    pull _Twoc::Sgn2;
+
+    "value
+    push _Twoc::Val1;
+    push _Twoc::Val2;
+    sub Math::Mul;
+
+    "sign
+    push _Twoc::Sgn1 ^ _Twoc::Sgn2;
+
+    sub Twoc::Set;
+    sub Stack::Swap;
+    return;
+
+"(Num, Den) => (Frac)
+lab Twoc::Div;
+    sub Stack::Swap;
+    sub Twoc::Get;
+    pull _Twoc::Val2;
+    pull _Twoc::Sgn2;
+    sub Stack::Swap;
+    sub Twoc::Get;
+    pull _Twoc::Val1;
+    pull _Twoc::Sgn1;
+
+    "value
+    push _Twoc::Val1;
+    push _Twoc::Val2;
+    sub Math::Div;
+
+    "sign
+    push _Twoc::Sgn1 ^ _Twoc::Sgn2;
+
+    sub Twoc::Set;
+    sub Stack::Swap;
+    return;
+
+
+
+
+lab Twoc::Skip;
+
