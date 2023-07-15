@@ -130,6 +130,20 @@ lab Twoc::Cmp;
         sub Stack::Swap;
         return;
 
+"(Value::Comp, Offset::Comp) => (Value::Comp)
+"Value::Comp *= (2 ** Offset::Comp)
+lab Twoc::Shift;
+    sub Stack::Swap;
+    sub Twoc::Get;
+    pull _Twoc::Val2; "offset
+    pull _Twoc::Sgn2;
+    sub Stack::Swap;
+    sub Twoc::Get;
+    pull _Twoc::Val1; "value
+    pull _Twoc::Sgn1;
+    
+    
+
 
 
 lab Twoc::Skip;

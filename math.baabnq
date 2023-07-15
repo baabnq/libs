@@ -55,6 +55,31 @@ lab Math::Max;
     sub Stack::Swap;
     return;
 
+"(Value::Int, Offset::Int) => (Value::Int)
+"Value::Int =<< Offset::Int
+lab Math::Shg;
+    sub Stack::Swap;
+    pull _2;
+    sub Stack::Swap;
+    pull _1;
+
+    push _1 << _2;
+    sub Stack::Swap;
+    return;    
+
+"(Value::Int, Offset::Int) => (Value::Int)
+"Value::Int =>> Offset::Int
+lab Math::Shs;
+    sub Stack::Swap;
+    pull _2;
+    sub Stack::Swap;
+    pull _1;
+
+    push _1 >> _2;
+    sub Stack::Swap;
+    return;    
+    
+
 
 lab Math::Add;
     asm '
