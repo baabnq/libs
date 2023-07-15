@@ -12,7 +12,7 @@ put _Twoc::Sgn2 = 0;
 jump Twoc::Skip;
 
 
-"(Value) => (Sign)
+"(Value::Comp) => (Sign::Bool)
 lab Twoc::GetSign;
     sub Stack::Swap;
     pull _Twoc::Temp;
@@ -20,7 +20,7 @@ lab Twoc::GetSign;
     sub Stack::Swap;
     return;
 
-"(Value, Sign) => (NewValue)
+"(Value::Comp, Sign::Bool) => (Value::Comp)
 lab Twoc::SetSign;
     sub Stack::Swap;
     pull _Twoc::Sign;
@@ -36,7 +36,7 @@ lab Twoc::SetSign;
     sub Stack::Swap;
     return;
 
-"(ValueComp) => (Value, Sign)
+"(Value::Comp) => (Value::Int, Sign::Bool)
 lab Twoc::Get;
     sub Stack::Swap;
     pull _Twoc::Temp;
@@ -48,7 +48,7 @@ lab Twoc::Get;
     sub Stack::Swap;
     return;
 
-"(Value, Sign) => (ValueComp)
+"(Value::Int, Sign::Bool) => (Value::Comp)
 lab Twoc::Set;
     sub Stack::Swap;
     pull _Twoc::Sign;    
@@ -61,7 +61,7 @@ lab Twoc::Set;
     
 
 
-"(Value1, Value2) => (Product)
+"(Value1::Comp, Value2::Comp) => (Product::Comp)
 lab Twoc::Mul;
     sub Stack::Swap;
     sub Twoc::Get;
@@ -84,7 +84,7 @@ lab Twoc::Mul;
     sub Stack::Swap;
     return;
 
-"(Num, Den) => (Frac)
+"(Num::Comp, Den::Comp) => (Frac::Comp)
 lab Twoc::Div;
     sub Stack::Swap;
     sub Twoc::Get;
