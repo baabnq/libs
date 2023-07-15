@@ -142,8 +142,15 @@ lab Twoc::Shift;
     pull _Twoc::Val1; "value
     pull _Twoc::Sgn1;
     
+    push _Twoc::Val1;
+    push _Twoc::Val2;
+    sub Math::Shg ~ _Twoc::Sgn2 == 0;
+    sub Math::Shs ~ _Twoc::Sgn2 == 1;
     
-
+    push _Twoc::Sgn1;
+    sub Twoc::Set;
+    sub Stack::Swap;
+    return;
 
 
 lab Twoc::Skip;
