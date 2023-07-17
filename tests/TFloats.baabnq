@@ -437,8 +437,53 @@ lab TestFloats::Mul;
 
 
 
-
 lab TestFloats::Comp;
+    sub fInit;
+
+    "sign
+    "(100 > -100 => True)
+    push 32712;
+    push 32712 | _SIGN_MASK;
+    sub Floats::Comp;
+    pull _v;
+    jump fail ~ _v == 0;
+    "(-100 > 100 => False)
+    push 32712 | _SIGN_MASK;
+    push 32712;
+    sub Floats::Comp;
+    pull _v;
+    jump fail ~ _v != 0;
+
+    "exponent
+    "(1000 > 100 => True)
+    push 378;
+    push 32712;
+    sub Floats::Comp;
+    pull _v;
+    jump fail ~ _v == 0;
+    "(100 > 1000 => False)
+    push 32712;
+    push 378;
+    sub Floats::Comp;
+    pull _v;
+    jump fail ~ _v != 0;
+    
+    "mantissa
+    "(101 > 100 => True)
+    push 32714;
+    push 32712;
+    sub Floats::Comp;
+    pull _v;
+    jump fail ~ _v == 0;
+    "(100 > 101 => False)
+    push 32712;
+    push 32714;
+    sub Floats::Comp;
+    pull _v;
+    jump fail ~ _v != 0;
+
+
+    jump succ;
 
 
 
