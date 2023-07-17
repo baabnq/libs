@@ -482,6 +482,13 @@ lab TestFloats::Comp;
     pull _v;
     jump fail ~ _v != 0;
 
+    "same
+    "(100 > 100 => False)
+    push 32712;
+    push 32712;
+    sub Floats::Comp;
+    pull _v;
+    jump fail ~ _v != 0;
 
     jump succ;
 

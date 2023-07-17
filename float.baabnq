@@ -492,28 +492,24 @@ lab Floats::Comp;
     "print _val2Exponent;
 
 
-    jump Floats::Comp::SkipSign ~ _val1 & _SIGN_MASK == _val2 & _SIGN_MASK;
-        jump Floats::Comp::Ret1 ~ _val1 & _SIGN_MASK < _val2 & _SIGN_MASK;
+    jump Floats::Comp::True ~ _val1 & _SIGN_MASK < _val2 & _SIGN_MASK;
 
-    lab Floats::Comp::SkipSign;
     jump Floats::Comp::SkipExp ~ _val1Exponent == _val2Exponent;
         push _val1Exponent;
         push _val2Exponent;
         sub Floats::TwosComp;
         sub Stack::Swap;
         return;        
-
     lab Floats::Comp::SkipExp;
-    jump Floats::Comp::SkipMan ~ _val1Exponent != _val2Exponent;
-        jump Floats::Comp::Ret1 ~ _val1Mantissa > _val2Mantissa;
+    
+    jump Floats::Comp::True ~ _val1Mantissa > _val2Mantissa;
 
-    lab Floats::Comp::SkipMan;
     
     push 0;
     sub Stack::Swap;
     return;
 
-    lab Floats::Comp::Ret1;
+    lab Floats::Comp::True;
         push 1;
         sub Stack::Swap;
         return;
