@@ -262,12 +262,12 @@ lab Floats::Value2Fp;
     put _output = 0;
     put _exponent = 0;
     
-    lab Floats::Value2fp::Loop;
-        jump Float::Value2fp::Exit ~ (_value >> _MANTISSA_SIZE) == 0;
+    lab Floats::Value2Fp::Loop;
+        jump Floats::Value2Fp::Exit ~ (_value >> _MANTISSA_SIZE) == 0;
         put _value    = _value >> 1;
         put _exponent = _exponent + 1;
-    jump Floats::Value2fp::Loop;
-    lab Float::Value2fp::Exit;
+    jump Floats::Value2Fp::Loop;
+    lab Floats::Value2Fp::Exit;
 
 
     static 1 _fpPtr;
@@ -331,7 +331,7 @@ lab Floats::Add;
 
     push _val2Exp;
     push _val1Exp;
-    sub Floats::TwosComp;
+    sub Floats::LocalTCC8;
     pull _Temp;
 
     jump Floats::Add::SkipValComp1 ~ _Temp == 0;
@@ -497,7 +497,7 @@ lab Floats::Comp;
     jump Floats::Comp::SkipExp ~ _val1Exponent == _val2Exponent;
         push _val1Exponent;
         push _val2Exponent;
-        sub Floats::TwosComp;
+        sub Floats::LocalTCC8;
         sub Stack::Swap;
         return;        
     lab Floats::Comp::SkipExp;
@@ -605,48 +605,48 @@ lab Floats::Sqrt;
 "short val2
 "returns 1 if val1 > val2
 "8 BIT ONLY !!!!!!!!
-lab Floats::TwosComp;
+lab Floats::LocalTCC8;
     sub Stack::Swap;
-    pull _Floats::TwosComp::Val2;
+    pull _Floats::LocalTCC8::Val2;
     sub Stack::Swap;
-    pull _Floats::TwosComp::Val1;
+    pull _Floats::LocalTCC8::Val1;
 
-    put _Floats::TwosComp::Sign1 = (_Floats::TwosComp::Val1 & 255) >> 7;
-    put _Floats::TwosComp::Sign2 = (_Floats::TwosComp::Val2 & 255) >> 7;
+    put _Floats::LocalTCC8::Sign1 = (_Floats::LocalTCC8::Val1 & 255) >> 7;
+    put _Floats::LocalTCC8::Sign2 = (_Floats::LocalTCC8::Val2 & 255) >> 7;
 
     "if the sign of the inputs are not the same, just compare the two
-    jump Floats::TwosComp::QuickSign ~ _Floats::TwosComp::Sign1 != _Floats::TwosComp::Sign2;
+    jump Floats::LocalTCC8::QuickSign ~ _Floats::LocalTCC8::Sign1 != _Floats::LocalTCC8::Sign2;
 
     "handle negativ
-    jump Floats::TwosComp::Neg ~ _Floats::TwosComp::Sign1 == 1;
+    jump Floats::LocalTCC8::Neg ~ _Floats::LocalTCC8::Sign1 == 1;
 
     "normal check
-    put _Floats::TwosComp::Output = 1;
-    jump Floats::TwosComp::Exit ~ _Floats::TwosComp::Val1 > _Floats::TwosComp::Val2; 
-        put _Floats::TwosComp::Output = 0;
-    lab Floats::TwosComp::Exit;
+    put _Floats::LocalTCC8::Output = 1;
+    jump Floats::LocalTCC8::Exit ~ _Floats::LocalTCC8::Val1 > _Floats::LocalTCC8::Val2; 
+        put _Floats::LocalTCC8::Output = 0;
+    lab Floats::LocalTCC8::Exit;
 
-    push _Floats::TwosComp::Output;
+    push _Floats::LocalTCC8::Output;
     sub Stack::Swap;
     return;
 
-    lab Floats::TwosComp::Neg;
-        put _Floats::TwosComp::Output = 1;
-        jump Floats::TwosComp::Neg::Exit ~ _Floats::TwosComp::Val1 > _Floats::TwosComp::Val2; 
-            put _Floats::TwosComp::Output = 0;
-        lab Floats::TwosComp::Neg::Exit;
+    lab Floats::LocalTCC8::Neg;
+        put _Floats::LocalTCC8::Output = 1;
+        jump Floats::LocalTCC8::Neg::Exit ~ _Floats::LocalTCC8::Val1 > _Floats::LocalTCC8::Val2; 
+            put _Floats::LocalTCC8::Output = 0;
+        lab Floats::LocalTCC8::Neg::Exit;
 
-        push _Floats::TwosComp::Output;
+        push _Floats::LocalTCC8::Output;
         sub Stack::Swap;
         return;
 
 
-    lab Floats::TwosComp::QuickSign;
-        put _Floats::TwosComp::Output = 1;
-        jump Floats::TwosComp::QuickSign::Exit ~ _Floats::TwosComp::Sign1 < _Floats::TwosComp::Sign2; 
-            put _Floats::TwosComp::Output = 0;
-        lab Floats::TwosComp::QuickSign::Exit;
-        push _Floats::TwosComp::Output;
+    lab Floats::LocalTCC8::QuickSign;
+        put _Floats::LocalTCC8::Output = 1;
+        jump Floats::LocalTCC8::QuickSign::Exit ~ _Floats::LocalTCC8::Sign1 < _Floats::LocalTCC8::Sign2; 
+            put _Floats::LocalTCC8::Output = 0;
+        lab Floats::LocalTCC8::QuickSign::Exit;
+        push _Floats::LocalTCC8::Output;
         sub Stack::Swap;
         return;
 

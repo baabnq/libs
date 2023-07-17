@@ -496,3 +496,44 @@ lab TestFloats::Comp;
 
 
 
+lab TestFloats::Div;
+    sub fInit;
+
+    "(1000 * 100 = 10)
+    push 378;   "1000
+    push 32712; "100
+    sub Floats::Div;
+    pull _v;
+    jump fail ~ _v != 32288;
+
+
+
+    "sign stuff
+    push 31872;              " 1
+    push 31872 | _SIGN_MASK; "-1
+    sub Floats::Div;
+    pull _v;
+    jump fail ~ _v != 31872 | _SIGN_MASK; "1 / -1 = -1
+
+    "double sign
+    push 31872 | _SIGN_MASK; "-1
+    push 31872 | _SIGN_MASK; "-1
+    sub Floats::Div;
+    pull _v;
+    jump fail ~ _v != 31872; "-1 / -1 = 1
+    
+    "div by zero
+    push 378;
+    push 16384;
+    sub Floats::Div;
+    sub Floats::GetExponent;
+    pull _v;
+    jump fail ~ _v > 240; "exponent should be damn big, cuz infinity and shit
+
+
+    jump succ;
+
+
+
+
+
