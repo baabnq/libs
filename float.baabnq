@@ -27,7 +27,7 @@ put 0 -> _outputPtr;
 
 jump Floats::Skip;
 
-"float16 fpValue
+"(Value::Float16) => (Man::Byte)
 lab Floats::GetMantissa;
     sub Stack::Swap;
     pull _fpValue; 
@@ -35,7 +35,7 @@ lab Floats::GetMantissa;
     sub Stack::Swap;
     return;
 
-"float16 fpValue
+"(Value::Float16) => (Exp::Byte)
 lab Floats::GetExponent;
     sub Stack::Swap;
     pull _fpValue; 
@@ -46,8 +46,7 @@ lab Floats::GetExponent;
 "the MANTISSA_SIZE is the virtual size of the mantissa
 "MANTISSA_SIZE - 1 bits are actually being stored
 
-"float16* fpPtr
-"char     newValue
+"(Ptr::Float16*, NewMan::Byte)
 lab Floats::SetMantissa;
     sub Stack::Swap;
     pull _newValue;
@@ -67,8 +66,7 @@ lab Floats::SetMantissa;
     put _fpValue -> _fpPtr;    
     return;
 
-"float16* fpPtr
-"char     newValue
+"(Ptr::Float16*, NewExp::Byte)
 lab Floats::SetExponent;
     sub Stack::Swap;
     pull _newValue;
@@ -88,7 +86,7 @@ lab Floats::SetExponent;
     put _fpValue -> _fpPtr;
     return;
 
-"short    value
+"(Value::Int) => (Inv::Int)
 lab Floats::Inv16;
     sub Stack::Swap;
     pull _value;
@@ -96,7 +94,7 @@ lab Floats::Inv16;
     sub Stack::Swap;
     return;
 
-"short    value
+"(Value::Byte) => (Inv::Byte)
 lab Floats::Inv8;
     sub Stack::Swap;
     pull _value;
@@ -104,7 +102,8 @@ lab Floats::Inv8;
     sub Stack::Swap;
     return;
 
-"short    value
+"(Value::Float16) => (Neg::Float16)
+"Neg::Float16 = -abs(Value::Float16)
 lab Floats::SetSign;
     pull _temp;
     pull _value;
@@ -113,33 +112,9 @@ lab Floats::SetSign;
     return;
 
 
-"m*2^e -> m*10^e
-"float16 fpValue
-use 'libs/string.baabnq'; "!!!TEMP!!!
-lab Floats::ToDec;
-    sub Stack::Swap;
-    sub Stack::Dup;
-    
-    sub Floats::GetMantissa;
-    pull _manBin;
-    sub Floats::GetExponent;
-    pull _expBin;
-
-    "expDec = int(expBin * log10(2))
-    push 31642; " = 0.300781 ~ log10(2)
-    push _expBin;
-    sub Floats::Value2Fp;
-    sub Floats::Mul;
-    sub Floats::Fp2Value;
-    pull _expDec;
-
-    print _expDec;
-
-    return;
-
-
-"float16   fpValue
-"short     offset
+"there's no point in offset being a float, FIX IT !!!
+"(Value::Float16, Offset::Float16) => (Shift::Float16)
+"Shift::Float16 = Value::Float16 >> Offset::Float16
 lab Floats::ShiftSmall;
     sub Stack::Swap;
     sub Floats::Fp2Value;
@@ -162,8 +137,8 @@ lab Floats::ShiftSmall;
     sub Stack::Swap;
     return;    
 
-"float16 fpValue
-"short   offset
+"(Value::Float16, Offset::Float16) => (Shift::Float16)
+"Shift::Float16 = Value::Float16 << Offset::Float16
 lab Floats::ShiftGreat;
     sub Stack::Swap;
     sub Floats::Fp2Value;
@@ -185,9 +160,7 @@ lab Floats::ShiftGreat;
     sub Stack::Swap;
     return;    
 
-"float16* fpPtr
-"unsigned char mantissa
-"short exponent
+"(Ptr::Float16*, Man::Byte, Exp::Byte)
 lab Floats::NormalizeAndSet;
     sub Stack::Swap;         
     pull _exponent;
@@ -236,7 +209,7 @@ lab Floats::NormalizeAndSet;
         return;
 
 
-"short value
+"(Value::Int) => (Value::Float16)
 lab Floats::TwoC2Fp;
     sub Stack::Swap;
     sub Stack::Dup; 
@@ -254,7 +227,7 @@ lab Floats::TwoC2Fp;
     sub Stack::Swap;
     return;
 
-"short value
+"(Value::Int) => (Value::Float16)
 lab Floats::Value2Fp;
     sub Stack::Swap;
     pull _value;
@@ -285,7 +258,7 @@ lab Floats::Value2Fp;
     sub Stack::Swap;
     return;
 
-"float16 fpValue
+"(Value::Float16) => (Value::Int)
 lab Floats::Fp2Value;
     sub Stack::Swap;
     pull _fpValue;
@@ -310,8 +283,7 @@ lab Floats::Fp2Value;
         sub Stack::Swap;
         return;
 
-"float16 val1
-"float16 val2
+"(Val1::Float16, Val2::Float16) => (Val::Float16)
 lab Floats::Add;
     sub Stack::Swap;
     pull _val2;
@@ -409,8 +381,7 @@ lab Floats::Add;
     return;
 
 
-"float16 val1
-"float16 val2
+"(Val1::Float16, Val2::Float16) => (Val::Float16)
 lab Floats::Mul;
     sub Stack::Swap;
     pull _val2;
@@ -466,8 +437,9 @@ lab Floats::Mul;
     sub Stack::Swap;
     return;
     
-"float16 val1
-"float16 val2
+
+"(Val1::Float16, Val2::Float16) => (Val::Bool)
+"Val::Bool = Val1::Float16 > Val2::Float16
 lab Floats::Comp;
     "get valExponent and valMantissa
     sub Stack::Swap;
@@ -514,9 +486,9 @@ lab Floats::Comp;
         sub Stack::Swap;
         return;
 
-"float16 val1
-"float16 val2
-"returns val1/val2
+
+"(Val1::Float16, Val2::Float16) => (Val::Float16)
+"Val::Float16 = Val1::Float16 / Val2::Float16
 lab Floats::Div;
 
     sub Stack::Swap;
@@ -567,7 +539,7 @@ lab Floats::Div;
     return;
     
 
-"float16 input
+"(Val::Float16) => (Val::Float16)
 lab Floats::Sqrt;
     "square root approximation using archimedes
     sub Stack::Swap;
@@ -601,10 +573,8 @@ lab Floats::Sqrt;
 
 
 
-"short val1
-"short val2
-"returns 1 if val1 > val2
-"8 BIT ONLY !!!!!!!!
+"(Val1::Byte, Val2::Byte) => (Val::Bool)
+"Val::Bool = Val1::Byte > Val2::Byte
 lab Floats::LocalTCC8;
     sub Stack::Swap;
     pull _Floats::LocalTCC8::Val2;
