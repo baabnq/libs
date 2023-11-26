@@ -1,0 +1,21 @@
+"panic / stacktrace lib
+
+use 'libs/string.baabnq';
+static 'PANIC\n' _No::pPanic;
+
+jump No::Skip;
+
+"dump the stack and then crash
+lab No::Panic;
+    pull __;
+    print __;
+    jump No::Panic ~ __ != 0;
+
+    push _No::pPanic;
+    sub String::Print;
+
+    asm 'brk;';
+
+
+
+lab No::Skip;

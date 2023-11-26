@@ -440,6 +440,7 @@ lab Floats::Mul;
 
 "(Val1::Float16, Val2::Float16) => (Val::Bool)
 "Val::Bool = Val1::Float16 > Val2::Float16
+lab Floats::Cmp;
 lab Floats::Comp;
     "get valExponent and valMantissa
     sub Stack::Swap;
