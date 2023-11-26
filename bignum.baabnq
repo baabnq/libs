@@ -25,7 +25,7 @@ lab Bignum::New;
 
     "alloc new Bignum
     new _size + 2 _ptr;
-    put _ptr <- _size; "size
+    put _size -> _ptr; "size
     
     push _ptr;
     sub Stack::Swap;
@@ -51,6 +51,10 @@ lab Bignum::AddSmall;
         
         "carry check
         jump Bignum::AddSmall::Done ~ _new > _old;
+
+        "DEBUG
+        put __ <- _ptr + 3;
+        print __;
 
         "carry to next bit
         put _num = 1;
@@ -84,8 +88,11 @@ lab Bignum::Cmp;
 
         jump Bignum::Cmp::False ~ _val1 != _val2;
 
+        print _val1;
+        print _val2;
+
         put _i = _i - 1;
-    jump Bignum::Cmp::Loop ~ _i + 1 != 0;
+    jump Bignum::Cmp::Loop ~ _i != 0;
 
         push 1;
         sub Stack::Swap;
@@ -99,29 +106,5 @@ lab Bignum::Cmp;
 
 
 lab Bignum::Skip;
-
-
-
-push 2;
-sub Bignum::New;
-sub Stack::Dup;
-push 50000;
-sub Bignum::AddSmall;
-sub Stack::Dup;
-push 50000;
-sub Bignum::AddSmall;
-
-push 2;
-sub Bignum::New;
-pull _tmp;
-put 34464 -> _tmp + 2;
-put 1     -> _tmp + 3;
-push _tmp;
-
-sub Bignum::Cmp;
-pull __;
-print __;
-
-
 
 
