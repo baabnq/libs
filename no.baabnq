@@ -17,5 +17,4 @@ lab No::Panic;
     asm 'brk;';
 
 
-
 lab No::Skip;

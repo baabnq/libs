@@ -59,6 +59,10 @@ lab Ouch::Syscall::AcceptSock;
     asm 'pla; syscall 49; pha;';
     return;
 
+lab Ouch::Syscall::Connect;
+    asm 'pla; syscall 50; pha;';
+    return;
+
 "--- process ---
 lab Ouch::Syscall::GetPid;
     asm 'pla; syscall 64; pha;';
