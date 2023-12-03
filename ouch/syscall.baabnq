@@ -24,6 +24,10 @@ lab Ouch::Syscall::StreamInfo;
     asm 'pla; syscall 4; pha;';
     return;
 
+lab Ouch::Syscall::SendStream;
+    asm 'pla; syscall 5; pha;';
+    return;
+
 "--- files ---
 lab Ouch::Syscall::OpenFileObj;
     asm 'pla; syscall 16; pha;';
