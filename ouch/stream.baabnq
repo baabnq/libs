@@ -2,40 +2,5 @@ use 'libs/stack.baabnq';
 
 jump Ouch::Stream::Skip;
 
-"writes null terminated stream to given stream fd
-"params:
-"id (socket fd)
-"ptr (string)
-"derams:
-"suc (0 -> error, 1 -> success)
-lab Ouch::Stream::Write;
-    sub Stack::Swap;
-    pull _pStr;
-    sub Stack::Swap;
-    pull _id;
-
-    lab Ouch::Stream::Write::Loop;
-        put _data <- _pStr;
-        put _pStr = _pStr + 1;
-        jump Ouch::Stream::Write::Done ~ _data == 0;
-        push _id;
-        push _data;
-        sub Ouch::Syscall::WriteStream;
-        pull _suc;
-        jump Ouch::Stream::Write::Done ~ _suc == 0;
-    jump Ouch::Stream::Write::Loop;
-    lab Ouch::Stream::Write::Done;
-    
-    push _suc;
-    sub Stack::Swap;
-    return;
-
-    
-    
-    
-
-
-
-
 
 lab Ouch::Stream::Skip;
