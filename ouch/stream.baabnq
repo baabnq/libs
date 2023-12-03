@@ -1,6 +1,27 @@
 use 'libs/stack.baabnq';
+use 'libs/ouch/syscall.baabnq';
+use 'libs/string.baabnq';
 
 jump Ouch::Stream::Skip;
+
+lab Ouch::Stream::Write;
+    sub Stack::Swap;
+    pull _pStr;
+    sub Stack::Swap;
+    pull _id;
+
+    push _id;
+    push _pStr;
+
+    push _pStr;
+    sub String::StrLen;
+    
+    sub Ouch::Syscall::SendStream;
+
+    sub Stack::Swap;
+    return;
+
+
 
 
 lab Ouch::Stream::Skip;

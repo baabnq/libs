@@ -1,0 +1,66 @@
+use 'libs/stack.baabnq';
+use 'libs/ouch/syscall.baabnq';
+use 'libs/no.baabnq';
+
+"base screen port
+put _XBASEPORT = 6000;
+
+"interface
+put _XLib::HostLow  = 0;
+put _XLib::HostHigh = 0;
+put _XLib::ScreenNum = 0;
+
+
+static 4 _XResourceAcc;
+static 4 _XWindowID;
+static 4 _XRootWinID;
+
+jump XLib::Skip;
+
+"this only works, because we assume that the lower few bytes are empty
+"this is however ususally the case, because of resource_mask looking something like 0x1ffff
+lab XLib::XAllocID;
+    put _Temp     <- _XResourceAcc;
+    put _Temp + 1 -> _XResourceAcc;
+    return;
+
+"opens window, based on globals
+lab XLib::XOpenDisplay;
+        
+
+
+
+
+
+lab XLib::Skip;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
