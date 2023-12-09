@@ -16,5 +16,14 @@ lab No::Panic;
 
     asm 'brk;';
 
+"return guard, if called by function, functions returns
+lab No::Return;
+    "pull sub addr
+    pull __;
+
+    "jump back to originl retaddr
+    return;
+
+
 
 lab No::Skip;

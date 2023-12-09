@@ -5,15 +5,28 @@ use 'libs/no.baabnq';
 "base screen port
 put _XBASEPORT = 6000;
 
-"interface
-put _XLib::HostLow  = 0;
-put _XLib::HostHigh = 0;
+"interface, default ip -> localhost
+put _XLib::HostLow  = (0 << 8)   + 1; "???.???.000.001
+put _XLib::HostHigh = (127 << 8) + 0; "127.000.???.???
 put _XLib::ScreenNum = 0;
 
+
+"privates (prefix with "X")
+put _XWidth  = 0;
+put _XHeight = 0;
+
+static 4 _XWhitePixel;
+static 4 _XBlackPixel;
 
 static 4 _XResourceAcc;
 static 4 _XWindowID;
 static 4 _XRootWinID;
+
+put _XpSock = 0;
+
+
+
+"!!!! NON OF THESE TAKE ARGS !!!!
 
 jump XLib::Skip;
 
@@ -24,9 +37,132 @@ lab XLib::XAllocID;
     put _Temp + 1 -> _XResourceAcc;
     return;
 
+"recv cons parser util
+lab XLib::XCons;
+    "check recv, loop if data not yet available
+    push _XpSock;
+    sub Ouch::Syscall::ReadStream;
+    pull _suc;
+    pull _data;
+    jump XLib::XCons ~ _suc == 2;
+    sub  No::Panic   ~ _suc == 0;
+    
+    push _data;
+    sub Stack::Swap;
+    return;
+
+"recv cons parser util
+lab XLib::XConsShort;
+    sub XLib::XCons;
+    pull _low;
+    sub XLib::XCons;
+    pull _high;
+
+    push (_high << 8) + _low;
+    sub Stack::Swap;
+    return;    
+
+
 "opens window, based on globals
 lab XLib::XOpenDisplay;
-        
+    
+    push _XBASEPORT + _XLib::ScreenNum;
+    push _XLib::HostLow;
+    push _XLib::HostHigh;
+    sub Ouch::Syscall::Connect;
+    pull _XpSock;
+    sub No::Return ~ _XpSock == 0;
+    
+
+    "client prefix string
+    "new 'B\x0b\x00\x00\x00' _pStr;
+    new 'l\x0b\x00\x00\x00' _pStr;
+    put _len <- _pStr - 1;
+    put _len = _len - 1;
+
+    push _XpSock;
+    push _pStr;
+    push _len;
+    sub Ouch::Syscall::SendStream;
+    pull _suc;
+    sub No::Return ~ _suc == 0;
+
+    free _pStr;
+
+
+
+
+    "read response
+    sub XLib::XCons; pull _suc;
+    sub XLib::XCons; pull __;
+
+    sub No::Panic ~ _suc != 1;
+
+    "version numbers
+    sub XLib::XConsShort; pull __; sub No::Return ~ __ != 11; "major = 11
+    sub XLib::XConsShort; pull __; sub No::Return ~ __ != 0;  "minor = 0
+    
+    sub XLib::XConsShort; pull _len;
+    put _len = _len << 2;
+    print _len;
+    
+    "setup
+    new _len _pBuf;
+    put _p = _pBuf;
+    
+    put _i = 0;
+    lab XLib::XOpenDisplay::SetupLoop;
+        sub XLib::XCons;
+        pull _data;
+        put _data -> _pBuf + _i;
+        put _i = _i + 1;
+    jump XLib::XOpenDisplay::SetupLoop ~ _i < _len;
+
+    "parse (hell)
+    put _p = _p + 4; "skip release number
+
+    "resource base id    
+    push _p;
+    push _XResourceAcc;
+    push 4;
+    sub String::MemCpy;
+
+    put _p = _p + 4 + 4 + 4; "resource base id + mask id + motion size buffer
+    put _venlen <- _p;
+    put _p = _p + 2 + 2; "vendor len + max req len
+    
+    put __ <- _p;
+    sub No::Panic ~ __ != 1; "only one screen supported
+    put _p = _p 
++ 1 "number screem
++ 1 "number format
++ 1 "image byte order
++ 1 "bitmap byte order
++ 1 "bitmap scanline unit
++ 1 "bitmap scanline pad
++ 1 "min keycode
++ 1 "max keycode
++ 4; "unused
+
+    put _i = 0;
+    lab XLib::XOpenDisplay::VenLoop;
+        put _data <- _p + _i;
+        putchr _data;
+        put _i = _i + 1;
+    jump XLib::XOpenDisplay::VenLoop ~ _i < _venlen;
+    putchr 10;
+    put _p = _p + _venlen;
+    
+
+
+
+    
+    asm 'brk';
+
+
+
+
+
 
 
 
@@ -36,23 +172,8 @@ lab XLib::Skip;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+sub XLib::XOpenDisplay;
+asm 'brk';
 
 
 
