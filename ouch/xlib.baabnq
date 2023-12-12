@@ -10,17 +10,20 @@ put _XLib::HostLow  = (0 << 8)   + 1; "???.???.000.001
 put _XLib::HostHigh = (127 << 8) + 0; "127.000.???.???
 put _XLib::ScreenNum = 0;
 
+put _XLib::DisplayWidth = 100;
+put _XLib::DisplayHeight = 100;
+
 
 "privates (prefix with "X")
 put _XWidth  = 0;
 put _XHeight = 0;
 
-static 4 _XWhitePixel;
-static 4 _XBlackPixel;
+"long (32) = 2 word (16) = 2 shorts (16)
+static 2 _XResourceAcc;
+static 2 _XWindowID;
+static 2 _XContentID;
 
-static 4 _XResourceAcc;
-static 4 _XWindowID;
-static 4 _XRootWinID;
+static 2 _XRootWinID;
 
 put _XpSock = 0;
 
@@ -33,8 +36,17 @@ jump XLib::Skip;
 "this only works, because we assume that the lower few bytes are empty
 "this is however ususally the case, because of resource_mask looking something like 0x1ffff
 lab XLib::XAllocID;
-    put _Temp     <- _XResourceAcc;
-    put _Temp + 1 -> _XResourceAcc;
+    "put __     <- _XResourceAcc;
+    "put __ + 1 -> _XResourceAcc;
+    
+    asm '
+    lPA (_XResourceAcc);
+    set 1;
+    add;
+    sAP (_XResourceAcc);
+    ';
+
+
     return;
 
 "recv cons parser util
@@ -76,9 +88,9 @@ lab XLib::XOpenDisplay;
 
     "client prefix string
     "new 'B\x0b\x00\x00\x00' _pStr;
-    new 'l\x0b\x00\x00\x00' _pStr;
+    new 'l\x0b\x00\x00\x00\x00' _pStr;
     put _len <- _pStr - 1;
-    put _len = _len - 1;
+    put _len = _len - 2;
 
     push _XpSock;
     push _pStr;
@@ -122,16 +134,20 @@ lab XLib::XOpenDisplay;
     put _p = _p + 4; "skip release number
 
     "resource base id    
-    push _p;
-    push _XResourceAcc;
-    push 4;
-    sub String::MemCpy;
+    put _low  <- _p + 0;
+    put _high <- _p + 1;
+    put _low | (_high << 8) -> _XResourceAcc + 0;    
+    put _low  <- _p + 2;
+    put _high <- _p + 3;
+    put _low | (_high << 8) -> _XResourceAcc + 1;
+
 
     put _p = _p + 4 + 4 + 4; "resource base id + mask id + motion size buffer
     put _venlen <- _p;
     put _p = _p + 2 + 2; "vendor len + max req len
     
     put __ <- _p;
+    put _numFormat <- _p + 1;
     sub No::Panic ~ __ != 1; "only one screen supported
     put _p = _p 
 + 1 "number screem
@@ -151,13 +167,57 @@ lab XLib::XOpenDisplay;
         put _i = _i + 1;
     jump XLib::XOpenDisplay::VenLoop ~ _i < _venlen;
     putchr 10;
-    put _p = _p + _venlen;
+    put _p = _p + _venlen + 1;
     
 
+    "skip format, sizeof(format) = 8 bytes
+    put _p = _p + (_numFormat << 3) - 1;
+
+    "root window id
+    put _low  <- _p + 0; print _low;
+    put _high <- _p + 1; print _high;
+    put _low | (_high << 8) -> _XRootWinID + 0;    
+    put _low  <- _p + 2; print _low;
+    put _high <- _p + 3; print _high;
+    put _low | (_high << 8) -> _XRootWinID + 1;
 
 
-    
-    asm 'brk';
+    "done parsing connection startup
+    free _pBuf;
+
+    "graphics context
+    sub XLib::XAllocID;
+    push _XResourceAcc;
+    push _XContentID;
+    push 2;
+    sub String::MemCpy;
+
+    new '\x37\x04\x00\x00\x00\x00\x00\x00' _pStr;
+    put _len <- _pStr - 1;
+    put _len = _len - 2;    
+
+    push _XContentID;
+    push _pStr + 2;
+    push 2;
+    sub String::MemCpy;
+
+    push _XRootWinID;
+    push _pStr + 4;
+    push 2;
+    sub String::MemCpy;
+
+    push _XpSock;
+    push _pStr;
+    push _len;
+    sub Ouch::Syscall::SendStream;
+    pull _suc;
+    sub No::Return ~ _suc == 0;
+
+
+
+
+
+    return;
 
 
 
