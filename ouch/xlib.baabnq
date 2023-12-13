@@ -13,14 +13,8 @@ put _XLib::ScreenNum = 0;
 put _XLib::DisplayWidth = 100;
 put _XLib::DisplayHeight = 100;
 
-
-"privates (prefix with "X")
-put _XWidth  = 0;
-put _XHeight = 0;
-
 "long (32) = 2 word (16) = 2 shorts (16)
 static 2 _XResourceAcc;
-static 2 _XWindowID;
 static 2 _XContentID;
 
 static 2 _XRootWinID;
@@ -174,11 +168,11 @@ lab XLib::XOpenDisplay;
     put _p = _p + (_numFormat << 3) - 1;
 
     "root window id
-    put _low  <- _p + 0; print _low;
-    put _high <- _p + 1; print _high;
+    put _low  <- _p + 0;
+    put _high <- _p + 1;
     put _low | (_high << 8) -> _XRootWinID + 0;    
-    put _low  <- _p + 2; print _low;
-    put _high <- _p + 3; print _high;
+    put _low  <- _p + 2;
+    put _high <- _p + 3;
     put _low | (_high << 8) -> _XRootWinID + 1;
 
 
@@ -213,17 +207,90 @@ lab XLib::XOpenDisplay;
     pull _suc;
     sub No::Return ~ _suc == 0;
 
-
-
-
+    free _pStr;
 
     return;
 
 
+"(X::Int, Y::Int, Width::Int, Height::Int) => (WinID::Long)
+lab XLib::XCreateWindow;
+    sub Stack::Swap;
+    pull _Height;
+    sub Stack::Swap;
+    pull _Width;
+    sub Stack::Swap;
+    pull _Y;
+    sub Stack::Swap;
+    pull _X;
+    
+    "new window id
+    new 2 _pWin;
+    sub XLib::XAllocID;
+    push _XResourceAcc;
+    push _pWin;
+    push 2;
+    sub String::MemCpy;
+
+    
+    "request
+    new '\x01\x08\xff\xff\xff\xff\xff\xff\xff\xff\x01\x00\x00\x00\x00\x00' _pStr;
+    put _len <- _pStr - 1;
+    put _len = _len - 2;
+    
+    push _pWin;
+    push _pStr + 2;
+    push 2;
+    sub String::MemCpy;
+    push _XRootWinID;
+    push _pStr + 4;
+    push 2;
+    sub String::MemCpy;
+
+    put _X -> _pStr + 6;
+    put _Y -> _pStr + 7;
+    put _Width -> _pStr + 8;
+    put _Height -> _pStr + 9;
+    
+
+    push _XpSock;
+    push _pStr;
+    push _len;
+    sub Ouch::Syscall::SendStream;
+    pull _suc;
+    sub No::Return ~ _suc == 0;
+
+
+    free _pStr;
+
+    push _pWin;
+    sub Stack::Swap;
+    return;
 
 
 
+"(WinID::Long)
+lab XLib::XMapWindow;
+    sub Stack::Swap;
+    pull _pWin;
+    
+    new '\x08\x02\x00\x00' _pStr;
+    put _len <- _pStr;
+    put _len = _len - 2;
 
+    push _pWin;
+    push _pStr + 2;
+    push 2;
+    sub String::MemCpy;
+
+    push _XpSock;
+    push _pStr;
+    push _len;
+    sub Ouch::Syscall::SendStream;
+    pull _suc;
+    sub No::Return ~ _suc == 0;
+
+    free _pStr;
+    return;    
 
 
 
@@ -233,6 +300,26 @@ lab XLib::Skip;
 
 
 sub XLib::XOpenDisplay;
+
+push 10;
+push 10;
+push 1000;
+push 500;
+sub XLib::XCreateWindow;
+pull _pWin;
+
+print _pWin;
+
+push _pWin;
+sub XLib::XMapWindow;
+
+
+push 10000;
+sub Ouch::Syscall::NapMs;
+
+
+
+
 asm 'brk';
 
 
