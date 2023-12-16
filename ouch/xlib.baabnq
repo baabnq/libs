@@ -14,7 +14,7 @@ put _XLib::ScreenNum = 0;
 
 "long (32) = 2 word (16) = 2 shorts (16)
 static 2 _XResourceAcc;
-static 2 _XContentID;
+static 2 _XContextID;
 
 static 2 _XRootWinID;
 
@@ -188,7 +188,7 @@ lab XLib::XOpenDisplay;
     "graphics context
     sub XLib::XAllocID;
     push _XResourceAcc;
-    push _XContentID;
+    push _XContextID;
     push 2;
     sub String::MemCpy;
 
@@ -196,7 +196,7 @@ lab XLib::XOpenDisplay;
     put _len <- _pStr - 1;
     put _len = _len - 2;    
 
-    push _XContentID;
+    push _XContextID;
     push _pStr + 2;
     push 2;
     sub String::MemCpy;
@@ -219,13 +219,13 @@ lab XLib::XOpenDisplay;
 "(X::Int, Y::Int, Width::Int, Height::Int) => (WinID::Long*)
 lab XLib::XCreateWindow;
     sub Stack::Swap;
-    pull _Height;
+    pull _height;
     sub Stack::Swap;
-    pull _Width;
+    pull _width;
     sub Stack::Swap;
-    pull _Y;
+    pull _y;
     sub Stack::Swap;
-    pull _X;
+    pull _x;
     
     "new window id
     new 2 _pWin;
@@ -237,7 +237,7 @@ lab XLib::XCreateWindow;
 
     
     "request
-    new '\x01\x08\xff\xff\xff\xff\xff\xff\xff\xff\x01\x00\x00\x00\x00\x00' _pStr;
+    new '\x01\x09\xff\xff\xff\xff\xff\xff\xff\xff\x01\x00\x00\x00\x02\x00\x00\x00' _pStr;
     put _len <- _pStr - 1;
     put _len = _len - 2;
     
@@ -250,10 +250,10 @@ lab XLib::XCreateWindow;
     push 2;
     sub String::MemCpy;
 
-    put _X -> _pStr + 6;
-    put _Y -> _pStr + 7;
-    put _Width -> _pStr + 8;
-    put _Height -> _pStr + 9;
+    put _x -> _pStr + 6;
+    put _y -> _pStr + 7;
+    put _width -> _pStr + 8;
+    put _height -> _pStr + 9;
     
 
     push _XpSock;
@@ -344,43 +344,73 @@ lab XLib::XNextEvent;
     return;
 
 
+"(e::Event*) => (Width::Int)
+lab XLib::ExposeWidth;
+    sub Stack::Swap;
+    pull _pEvent;
+
+    put _low  <- _pEvent + 8;
+    put _high <- _pEvent + 9;
+    
+    push _low + (_high << 8);
+    sub Stack::Swap;
+    return;
+
+"(e::Event*) => (Height::Int)
+lab XLib::ExposeHeight;
+    sub Stack::Swap;
+    pull _pEvent;
+
+    put _low  <- _pEvent + 10;
+    put _high <- _pEvent + 11;
+    
+    push _low + (_high << 8);
+    sub Stack::Swap;
+    return;
+
+
+"(WinID::Long*, X::Int, Y::Int, Width::Int, Height::Int)
+lab XLib::XPolyRect;
+    sub Stack::Swap;
+    pull _height;
+    sub Stack::Swap;
+    pull _width;
+    sub Stack::Swap;
+    pull _y;
+    sub Stack::Swap;
+    pull _x;
+    sub Stack::Swap;
+    pull _pWin;
+
+    new '\x43\x05\xff\xff\xff\xff\xff\xff\xff\xff' _pStr;
+
+    push _pWin;
+    push _pStr + 2;
+    push 2;
+    sub String::MemCpy;
+
+    push _XContextID;
+    push _pStr + 4;
+    push 2;
+    sub String::MemCpy;
+
+    put _x      -> _pStr + 6;
+    put _y      -> _pStr + 7;
+    put _width  -> _pStr + 8;
+    put _height -> _pStr + 9;
+    
+    push _XpSock;
+    push _pStr;
+    push _len;
+    sub Ouch::Syscall::SendStream;
+    pull _suc;
+
+    free _pStr;
+    return;
+
 
 lab XLib::Skip;
 
-
-
-sub XLib::XOpenDisplay;
-
-push 10;
-push 10;
-push 1000;
-push 500;
-sub XLib::XCreateWindow;
-pull _pWin;
-
-new 2 _mask;
-put _XLib::DefaultMask -> _mask;
-push _pWin;
-push _mask;
-sub XLib::XSelectInput;
-
-push _pWin;
-sub XLib::XMapWindow;
-
-
-
-sub XLib::XNextEvent;
-pull _event;
-put _type <- _event;
-print _type;
-
-push 100;
-sub Ouch::Syscall::NapMs;
-
-
-
-
-asm 'brk';
 
 
 
