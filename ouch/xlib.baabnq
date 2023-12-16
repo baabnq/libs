@@ -1,6 +1,8 @@
 use 'libs/stack.baabnq';
-use 'libs/ouch/syscall.baabnq';
 use 'libs/no.baabnq';
+use 'libs/ouch/syscall.baabnq';
+use 'libs/ouch/stream.baabnq';
+
 
 "base screen port
 put _XBASEPORT = 6000;
@@ -18,11 +20,13 @@ static 2 _XRootWinID;
 
 put _XpSock = 0;
 
-
+"public consts
 put _XLib::ExposureMask = 1;
 put _XLib::KeyPressMask = 1 << 15;
 put _XLib::DefaultMask = _XLib::ExposureMask | _XLib::KeyPressMask;
 
+put _XLib::EventKeyPress = 2;
+put _XLib::EventExpose   = 12;
 
 
 "!!!! NON OF THESE TAKE ARGS !!!!
@@ -207,14 +211,12 @@ lab XLib::XOpenDisplay;
     push _len;
     sub Ouch::Syscall::SendStream;
     pull _suc;
-    sub No::Return ~ _suc == 0;
 
     free _pStr;
-
     return;
 
 
-"(X::Int, Y::Int, Width::Int, Height::Int) => (WinID::Long)
+"(X::Int, Y::Int, Width::Int, Height::Int) => (WinID::Long*)
 lab XLib::XCreateWindow;
     sub Stack::Swap;
     pull _Height;
@@ -259,7 +261,6 @@ lab XLib::XCreateWindow;
     push _len;
     sub Ouch::Syscall::SendStream;
     pull _suc;
-    sub No::Return ~ _suc == 0;
 
 
     free _pStr;
@@ -269,7 +270,7 @@ lab XLib::XCreateWindow;
     return;
 
 
-"(WinID::Long, Mask::Long)
+"(WinID::Long*, Mask::Long*)
 lab XLib::XSelectInput;
     sub Stack::Swap;
     pull _mask;
@@ -294,14 +295,13 @@ lab XLib::XSelectInput;
     push _len;
     sub Ouch::Syscall::SendStream;
     pull _suc;
-    sub No::Return ~ _suc == 0;
 
     free _pStr;
     return;
 
 
 
-"(WinID::Long)
+"(WinID::Long*)
 lab XLib::XMapWindow;
     sub Stack::Swap;
     pull _pWin;
@@ -320,11 +320,28 @@ lab XLib::XMapWindow;
     push _len;
     sub Ouch::Syscall::SendStream;
     pull _suc;
-    sub No::Return ~ _suc == 0;
 
     free _pStr;
     return;    
 
+
+"=> (e::XEvent*)
+lab XLib::XNextEvent;
+    push _XpSock;
+    push 32;  "read 32 bytes
+    push 100; "poll nap interval 100 Msecs
+    sub Ouch::Stream::Read;
+    pull _pStr;
+
+    put _type <- _pStr;
+    jump XLib::XNextEvent::Success ~ _type != 0;
+        free _pStr;
+        jump XLib::XNextEvent;
+    lab XLib::XNextEvent::Success;
+
+    push _pStr;
+    sub Stack::Swap;
+    return;
 
 
 
@@ -341,8 +358,6 @@ push 500;
 sub XLib::XCreateWindow;
 pull _pWin;
 
-print _pWin;
-
 new 2 _mask;
 put _XLib::DefaultMask -> _mask;
 push _pWin;
@@ -353,7 +368,13 @@ push _pWin;
 sub XLib::XMapWindow;
 
 
-push 10000;
+
+sub XLib::XNextEvent;
+pull _event;
+put _type <- _event;
+print _type;
+
+push 100;
 sub Ouch::Syscall::NapMs;
 
 
