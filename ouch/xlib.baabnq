@@ -278,6 +278,9 @@ lab XLib::XSelectInput;
     pull _pWin;
     
     new '\x02\x04\xff\xff\x00\x00\xff\xff' _pStr;
+    put _len <- _pStr - 1;
+    put _len = _len - 2;
+
     put 1 << 11 -> _pStr + 4; "highbyte of CWEventMask
 
     push _pWin;
@@ -307,7 +310,7 @@ lab XLib::XMapWindow;
     pull _pWin;
     
     new '\x08\x02\xff\xff' _pStr;
-    put _len <- _pStr;
+    put _len <- _pStr - 1;
     put _len = _len - 2;
 
     push _pWin;
@@ -383,6 +386,8 @@ lab XLib::XPolyRect;
     pull _pWin;
 
     new '\x43\x05\xff\xff\xff\xff\xff\xff\xff\xff' _pStr;
+    put _len <- _pStr - 1;
+    put _len = _len - 2;
 
     push _pWin;
     push _pStr + 2;
@@ -409,14 +414,39 @@ lab XLib::XPolyRect;
     return;
 
 
+"(R::Int, G::Int, B::Int)
+lab XLib::XSetFore;
+    sub Stack::Swap;
+    pull _b;
+    sub Stack::Swap;
+    pull _g;
+    sub Stack::Swap;
+    pull _b;
+
+    new '\x38\x04\xff\xff\x04\x00\xff\xff' _pStr;
+    put _len <- _pStr - 1;
+    put _len = _len - 2;
+    
+    push _XContextID;
+    push _pStr + 2;
+    push 2;
+    sub String::MemCpy;
+
+    put _b + (_g << 8) -> _pStr + 7;
+    put _r             -> _pStr + 8;
+
+    push _XpSock;
+    push _pStr;
+    push _len;
+    sub Ouch::Syscall::SendStream;
+    pull _suc;
+
+    free _pStr;
+    return;
+
+
+
 lab XLib::Skip;
-
-
-
-
-
-
-
 
 
 
