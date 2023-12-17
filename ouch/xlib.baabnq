@@ -352,8 +352,8 @@ lab XLib::ExposeWidth;
     sub Stack::Swap;
     pull _pEvent;
 
-    put _low  <- _pEvent + 8;
-    put _high <- _pEvent + 9;
+    put _low  <- _pEvent + 12;
+    put _high <- _pEvent + 13;
     
     push _low + (_high << 8);
     sub Stack::Swap;
@@ -364,8 +364,8 @@ lab XLib::ExposeHeight;
     sub Stack::Swap;
     pull _pEvent;
 
-    put _low  <- _pEvent + 10;
-    put _high <- _pEvent + 11;
+    put _low  <- _pEvent + 14;
+    put _high <- _pEvent + 15;
     
     push _low + (_high << 8);
     sub Stack::Swap;
@@ -421,7 +421,7 @@ lab XLib::XSetFore;
     sub Stack::Swap;
     pull _g;
     sub Stack::Swap;
-    pull _b;
+    pull _r;
 
     new '\x38\x04\xff\xff\x04\x00\xff\xff' _pStr;
     put _len <- _pStr - 1;
@@ -432,8 +432,8 @@ lab XLib::XSetFore;
     push 2;
     sub String::MemCpy;
 
-    put _b + (_g << 8) -> _pStr + 7;
-    put _r             -> _pStr + 8;
+    put _b + (_g << 8) -> _pStr + 6;
+    put _r             -> _pStr + 7;
 
     push _XpSock;
     push _pStr;
