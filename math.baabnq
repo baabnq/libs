@@ -4,6 +4,7 @@ use 'libs/stack.baabnq';
 jump Math::Skip;
 
 
+"(Value::Int) => (Value::Int + 1)
 lab Math::Inc;
     asm '
     jmS Stack::Swap;    
@@ -15,6 +16,7 @@ lab Math::Inc;
     ';
     return;
 
+"(Value::Int) => (Value::Int - 1)
 lab Math::Dec;
     asm '
     jmS Stack::Swap;    
@@ -27,6 +29,8 @@ lab Math::Dec;
     return;
 
 
+"(A::Int, B::Int) => (Min::Int)
+"Min::Int = A::Int < B::Int ? A::Int : B::Int
 lab Math::Min;
     pull _ReturnAddr; "nasty, but best solution in this case
     pull _1;
@@ -41,17 +45,19 @@ lab Math::Min;
     sub Stack::Swap;
     return;
 
+"(A::Int, B::Int) => (Max::Int)
+"Max::Int = A::Int > B::Int ? A::Int : B::Int
 lab Math::Max;
-    pull _ReturnAddr; "nasty, but best solution in this case
+    pull _ReturnAddr;
     pull _1;
     pull _2;
-    push _ReturnAddr; "save
+    push _ReturnAddr;
     push _2;
     push _1;
 
     sub Stack::Swap ~ _1 > _2;
        
-    pull __; "pull smaller value
+    pull __;
     sub Stack::Swap;
     return;
 
@@ -80,7 +86,8 @@ lab Math::Shs;
     return;    
     
 
-
+"(A::Int, B::Int) => (Sum::Int)
+"Sum::Int = A::Int + B::Int
 lab Math::Add;
     asm '
     jmS Stack::Swap;    
@@ -97,6 +104,8 @@ lab Math::Add;
     ';
     return;
 
+"(A::Int, B::Int) => (Diff::Int)
+"Diff::Int = A::Int - B::Int
 lab Math::Sub;
     asm '
     jmS Stack::Swap;    
@@ -115,7 +124,8 @@ lab Math::Sub;
 
 
 
-
+"(A::Int, B::Int) => (Prod::Int)
+"Prod::Int = A::Int * B::Int
 lab Math::MulSafe;
     put _arg1 = 0;
     put _arg2 = 0;
@@ -146,7 +156,8 @@ lab Math::MulSafe;
 return;
 
 
-
+"(A::Int, B::Int) => (Prod::Int)
+"Prod::Int = A::Int * B::Int
 lab Math::Mul;
     asm '
     clr;
@@ -194,41 +205,9 @@ lab Math::Mul;
     return;
 
 
-"lab Math::Div;
-"i know, this is not a very efficient division alogrithem, but i don't care
-"call this subroutine like this;
-"push dividend
-"push divisor
-"sub Math:div
-"pull output
-"pull remainder
-
-"put _Math::divisor = 0;
-"put _Math::dividend = 0;
-"put _Math::output = 0;
-
-"pull _Math::returnAddr;
-"pull _Math::divisor;
-"pull _Math::dividend;
-
-"jump Math::divExit ~ _Math::divisor > _Math::dividend;
-"lab Math::divLoop;
-
-"put _Math::output = _Math::output + 1;
-"put _Math::dividend = _Math::dividend - _Math::divisor;
-
-"jump Math::divLoop ~ _Math::dividend > _Math::divisor;
-"jump Math::divLoop ~ _Math::dividend == _Math::divisor;
-"lab Math::divExit;
-
-"push _Math::dividend;
-"push _Math::output;
-"push _Math::returnAddr;
-"return;
-
+"(A::Int, B::Int) => (Quo::Int)
+"Quo::Int = A::Int / B::Int
 "translated from https://en.wikipedia.org/wiki/Division_algorithm#Long_division
-"dividend
-"divisor
 lab Math::Div; 
     sub Stack::Swap;
     pull _d;
@@ -253,7 +232,9 @@ lab Math::Div;
     sub Stack::Swap;
     return;
 
-lab Math::Mod; 
+"(A::Int, B::Int) => (Rem::Int)
+"Rem::Int = A::Int % B::Int
+lab Math::Mod;
     sub Stack::Swap;    
     pull _d;
     sub Stack::Swap;    
