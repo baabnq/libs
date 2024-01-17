@@ -7,12 +7,13 @@ jump No::Skip;
 
 "dump the stack and then crash
 lab No::Panic;
-    pull __;
-    print __;
-    jump No::Panic ~ __ != 0;
-
     push _No::pPanic;
     sub String::Print;
+
+    lab No::Panic::Loop;
+        pull __;
+        print __;
+    jump No::Panic::Loop ~ __ != 0;
 
     asm 'brk;';
 

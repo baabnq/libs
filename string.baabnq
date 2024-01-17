@@ -209,50 +209,81 @@ lab String::ScanChar;
         return;
 
 "takes 2 string pointer and concatenates them
-lab String::Concat;
-    pull _ReturnAddr;
-    pull _StrPtr2;
-    pull _StrPtr1;
-    push _ReturnAddr;    
-
-    push _StrPtr1;
-    sub String::StrLen;
-    pull _StrLen1;
-    push _StrPtr2;
-    sub String::StrLen;
-    pull _StrLen2;
+"lab String::Concat;
+"    pull _ReturnAddr;
+"    pull _StrPtr2;
+"    pull _StrPtr1;
+"    push _ReturnAddr;    "
+"
+"    push _StrPtr1;
+"    sub String::StrLen;
+"    pull _StrLen1;
+"    push _StrPtr2;
+"    sub String::StrLen;
+"    pull _StrLen2;
 
     "restore retrun address
-    pull _ReturnAddr;
+"    pull _ReturnAddr;
     
     "+ 1 for terminator
-    new _StrLen1 + _StrLen2 + 1 _StrPtrFinal;
+"    new _StrLen1 + _StrLen2 + 1 _StrPtrFinal;
 
-    put _Index = 0;
-    lab String::Concat::StrCopyLoop1;
-        put _Data <- _StrPtr1 + _Index;
-        jump String::Concat::StrCopyExit1 ~ _Data == 0;
+"    put _Index = 0;
+"    lab String::Concat::StrCopyLoop1;
+"        put _Data <- _StrPtr1 + _Index;
+"        jump String::Concat::StrCopyExit1 ~ _Data == 0;
 
-        put _Data -> _StrPtrFinal + _Index;
-        put _Index = _Index + 1;
-        jump String::Concat::StrCopyLoop1;
-    lab String::Concat::StrCopyExit1;
+"        put _Data -> _StrPtrFinal + _Index;
+"        put _Index = _Index + 1;
+"        jump String::Concat::StrCopyLoop1;
+"    lab String::Concat::StrCopyExit1;
 
-    put _Index = 0;
+"    put _Index = 0;
 
     "start to write the 2nd string after the first for obvious reasons
-    put _StrPtrFinalShifted = _StrPtrFinal + _StrLen1;
-    lab String::Concat::StrCopyLoop2;
-        put _Data <- _StrPtr2 + _Index;
-        jump String::Concat::StrCopyExit2 ~ _Data == 0;
+"    put _StrPtrFinalShifted = _StrPtrFinal + _StrLen1;
+"    lab String::Concat::StrCopyLoop2;
+"        put _Data <- _StrPtr2 + _Index;
+"        jump String::Concat::StrCopyExit2 ~ _Data == 0;
 
-        put _Data -> _StrPtrFinalShifted + _Index;
-        put _Index = _Index + 1;
-        jump String::Concat::StrCopyLoop2;        
-    lab String::Concat::StrCopyExit2;
+"        put _Data -> _StrPtrFinalShifted + _Index;
+"        put _Index = _Index + 1;
+"        jump String::Concat::StrCopyLoop2;        
+"    lab String::Concat::StrCopyExit2;
 
-    push _StrPtrFinal;
-    push _ReturnAddr;
+"    push _StrPtrFinal;
+"    push _ReturnAddr;
+"    return;
+
+
+"(Str1::String*, Str2::String*) => (Res::String*)
+lab String::Concat;
+    sub Stack::Swap;
+    pull _pStr2;
+    sub Stack::Swap;
+    pull _pStr1;
+
+    push _pStr1;
+    sub String::StrLen;
+    pull _len1;
+
+    push _pStr2;
+    sub String::StrLen;
+    pull _len2;
+
+    new _len1 + _len2 _pStr;
+
+    push _pStr1;
+    push _pStr;
+    push _len1;
+    sub String::MemCpy;
+    push _pStr2;
+    push _pStr + _len1;
+    push _len2;
+    sub String::MemCpy;
+
+    push _pStr;
+    sub Stack::Swap;
     return;
 
 

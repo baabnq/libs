@@ -116,34 +116,82 @@ lab Math::Sub;
 
 
 
-lab Math::Mul;
-put _arg1 = 0;
-put _arg2 = 0;
-put _output = 0;
+lab Math::MulSafe;
+    put _arg1 = 0;
+    put _arg2 = 0;
+    put _output = 0;
 
-sub Stack::Swap;
-pull _arg1;
-sub Stack::Swap;
-pull _arg2;
+    sub Stack::Swap;
+    pull _arg1;
+    sub Stack::Swap;
+    pull _arg2;
 
-jump Math::mulExit ~ _arg1 == 0;
-jump Math::mulExit ~ _arg2 == 0;
-lab Math::mulLoop;
+    jump Math::MulSafe::Exit ~ _arg1 == 0;
+    jump Math::MulSafe::Exit ~ _arg2 == 0;
+    
+    lab Math::MulSafe::Loop; 
+       
+        jump Math::MulSafe::SkipAdd ~ _arg1 & 1 == 0;
+            put _output = _output + _arg2;
+        lab Math::MulSafe::SkipAdd;
 
-jump Math::mulSkipAdd ~ _arg1 & 1 == 0;
-put _output = _output + _arg2;
-lab Math::mulSkipAdd;
+        put _arg2 = _arg2 << 1;
+        put _arg1 = _arg1 >> 1;
 
-put _arg2 = _arg2 << 1;
-put _arg1 = _arg1 >> 1;
+        jump Math::MulSafe::Loop ~ _arg1 != 0;
+    lab Math::MulSafe::Exit;
 
-jump Math::mulLoop ~ _arg1 != 0;
-lab Math::mulExit;
-
-push _output;
-sub Stack::Swap;
+    push _output;
+    sub Stack::Swap;
 return;
 
+
+
+lab Math::Mul;
+    asm '
+    clr;
+    sAD -output;
+
+    jmS Stack::Swap;
+    pla;
+    sAD -arg1;
+    jmS Stack::Swap;    
+    pla;
+    sAD -arg2;
+    
+    jm0 Math::Mul::Done;
+    lDA -arg1;
+    jm0 Math::Mul::Done;
+                
+    lab Math::Mul::Loop;
+
+    lDA -arg1;
+    set 1;
+    and;
+
+    jm0 Math::Mul::Skip;
+    lDA -output;
+    lDR -arg2;
+    add;
+    sAD -output;
+    lab Math::Mul::Skip;
+    
+    lDA -arg2;
+    shg;
+    sAD -arg2;
+    lDA -arg1;
+    shs;
+    sAD -arg1;
+    
+    jm0 Math::Mul::Done;
+    got Math::Mul::Loop;
+    lab Math::Mul::Done;
+             
+    lDA -output;    
+    pha;
+    jmS Stack::Swap;    
+    ';
+    return;
 
 
 "lab Math::Div;

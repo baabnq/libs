@@ -68,6 +68,10 @@ lab Ouch::Syscall::GetPid;
     asm 'pla; syscall 64; pha;';
     return;
 
+lab Ouch::Syscall::LaunchProcess;
+    asm 'pla; syscall 65; pha;';
+    return;
+
 lab Ouch::Syscall::ForkProcess;
     asm 'pla; syscall 68; pha;';
     return;    
