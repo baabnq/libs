@@ -3,52 +3,46 @@
 use 'libs/stack.baabnq';
 use 'libs/math.baabnq';
 
-put _Twoc::Val1 = 0;
-put _Twoc::Val2 = 0;
-put _Twoc::Sgn1 = 0;
-put _Twoc::Sgn2 = 0;
-
-
 jump Twoc::Skip;
 
 
 "(Value::Comp) => (Sign::Bool)
 lab Twoc::GetSign;
     sub Stack::Swap;
-    pull _Twoc::Temp;
-    push (_Twoc::Temp >> 15) & 1;
+    pull _Temp;
+    push (_Temp >> 15) & 1;
     sub Stack::Swap;
     return;
 
 "(Value::Comp) => (Value::Comp)
 lab Twoc::Neg;
     sub Stack::Swap;
-    pull _Twoc::Temp;
-    push (_Twoc::Temp ^ (0 - 1)) + 1;
+    pull _Temp;
+    push (_Temp ^ (0 - 1)) + 1;
     sub Stack::Swap;
     return;
 
 "(Value::Comp) => (Value::Int, Sign::Bool)
 lab Twoc::Get;
     sub Stack::Swap;
-    pull _Twoc::Temp;
+    pull _Temp;
     "sign    
-    put _Twoc::Sign = (_Twoc::Temp >> 15) & 1;
-    push _Twoc::Sign;
+    put _Sign = (_Temp >> 15) & 1;
+    push _Sign;
     sub Stack::Swap;
     "value
-    push (_Twoc::Temp ^ (0 - _Twoc::Sign)) + _Twoc::Sign;
+    push (_Temp ^ (0 - _Sign)) + _Sign;
     sub Stack::Swap;
     return;
 
 "(Value::Int, Sign::Bool) => (Value::Comp)
 lab Twoc::Set;
     sub Stack::Swap;
-    pull _Twoc::Sign;    
+    pull _Sign;
     sub Stack::Swap;
-    pull _Twoc::Temp;
+    pull _Temp;
 
-    push (_Twoc::Temp ^ (0 - _Twoc::Sign)) + _Twoc::Sign;
+    push (_Temp ^ (0 - _Sign)) + _Sign;
     sub Stack::Swap;
     return;
     
@@ -58,20 +52,20 @@ lab Twoc::Set;
 lab Twoc::Mul;
     sub Stack::Swap;
     sub Twoc::Get;
-    pull _Twoc::Val1;
-    pull _Twoc::Sgn1;
+    pull _Val1;
+    pull _Sgn1;
     sub Stack::Swap;
     sub Twoc::Get;
-    pull _Twoc::Val2;
-    pull _Twoc::Sgn2;
+    pull _Val2;
+    pull _Sgn2;
 
     "value
-    push _Twoc::Val1;
-    push _Twoc::Val2;
+    push _Val1;
+    push _Val2;
     sub Math::Mul;
 
     "sign
-    push _Twoc::Sgn1 ^ _Twoc::Sgn2;
+    push _Sgn1 ^ _Sgn2;
 
     sub Twoc::Set;
     sub Stack::Swap;
@@ -81,20 +75,20 @@ lab Twoc::Mul;
 lab Twoc::Div;
     sub Stack::Swap;
     sub Twoc::Get;
-    pull _Twoc::Val2;
-    pull _Twoc::Sgn2;
+    pull _Val2;
+    pull _Sgn2;
     sub Stack::Swap;
     sub Twoc::Get;
-    pull _Twoc::Val1;
-    pull _Twoc::Sgn1;
+    pull _Val1;
+    pull _Sgn1;
 
     "value
-    push _Twoc::Val1;
-    push _Twoc::Val2;
+    push _Val1;
+    push _Val2;
     sub Math::Div;
 
     "sign
-    push _Twoc::Sgn1 ^ _Twoc::Sgn2;
+    push _Sgn1 ^ _Sgn2;
 
     sub Twoc::Set;
     sub Stack::Swap;
@@ -105,19 +99,19 @@ lab Twoc::Div;
 lab Twoc::Cmp;
     sub Stack::Swap;
     sub Twoc::Get;
-    pull _Twoc::Val2; "small
-    pull _Twoc::Sgn2;
+    pull _Val2; "small
+    pull _Sgn2;
     sub Stack::Swap;
     sub Twoc::Get;
-    pull _Twoc::Val1; "big
-    pull _Twoc::Sgn1;
+    pull _Val1; "big
+    pull _Sgn1;
 
     "check sign
-    jump Twoc::Cmp::True ~ _Twoc::Sgn1 < _Twoc::Sgn2;
-    jump Twoc::Cmp::False ~ _Twoc::Sgn1 > _Twoc::Sgn2;
+    jump Twoc::Cmp::True ~  _Sgn1 < _Sgn2;
+    jump Twoc::Cmp::False ~ _Sgn1 > _Sgn2;
     "check value
-    jump Twoc::Cmp::True ~ _Twoc::Val1 > _Twoc::Val2;
-    jump Twoc::Cmp::False ~ _Twoc::Val1 < _Twoc::Val2;
+    jump Twoc::Cmp::True ~  _Val1 > _Val2;
+    jump Twoc::Cmp::False ~ _Val1 < _Val2;
     
     "Big::Comp == Small::Comp, i luv label mechanisms
     lab Twoc::Cmp::False;
@@ -135,19 +129,19 @@ lab Twoc::Cmp;
 lab Twoc::Shift;
     sub Stack::Swap;
     sub Twoc::Get;
-    pull _Twoc::Val2; "offset
-    pull _Twoc::Sgn2;
+    pull _Val2; "offset
+    pull _Sgn2;
     sub Stack::Swap;
     sub Twoc::Get;
-    pull _Twoc::Val1; "value
-    pull _Twoc::Sgn1;
+    pull _Val1; "value
+    pull _Sgn1;
     
-    push _Twoc::Val1;
-    push _Twoc::Val2;
-    sub Math::Shg ~ _Twoc::Sgn2 == 0;
-    sub Math::Shs ~ _Twoc::Sgn2 == 1;
+    push _Val1;
+    push _Val2;
+    sub Math::Shg ~ _Sgn2 == 0;
+    sub Math::Shs ~ _Sgn2 == 1;
     
-    push _Twoc::Sgn1;
+    push _Sgn1;
     sub Twoc::Set;
     sub Stack::Swap;
     return;
@@ -156,15 +150,15 @@ lab Twoc::Shift;
 lab Twoc::Print;
     sub Stack::Swap;
     sub Twoc::Get;
-    pull _Twoc::Temp;
-    pull _Twoc::Sign;
+    pull _Temp;
+    pull _Sign;
     
     "sign
-    jump Twoc::Print::Skip ~ _Twoc::Sign == 0;
+    jump Twoc::Print::Skip ~ _Sign == 0;
         putchr 45;
     lab Twoc::Print::Skip;
 
-    print _Twoc::Temp;
+    print _Temp;
     return;
 
 lab Twoc::Skip;
