@@ -16,7 +16,7 @@ put _FpZero  = 16384;
 
 put _MANTISSA_SIZE = 8;
 put _EXPONENT_SIZE = 8;
-put _SIGN_SIZE     = 15;
+put _SIGN_OFFSET   = 15;
 put _MANTISSA_MASK = 127;
 put _EXPONENT_MASK = 255;
 put _SIGN_MASK     = 32768;

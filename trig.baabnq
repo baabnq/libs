@@ -1,0 +1,111 @@
+use 'libs/stack.baabnq';
+use 'libs/float.baabnq';
+
+jump Trig::Skip;
+
+
+"(A::Fixed, B::Fixed) => (Prod::Fixed)
+lab Trig::LocalF2Mul;
+    sub Stack::Swap;
+    pull _b;
+    sub Stack::Swap;
+    pull _a;
+    
+    put _prod = 0;
+    put _i = 0;
+    lab Trig::LocalF2Mul::Loop;
+        jump Trig::LocalF2Mul::Skip ~ _a & (1 << 15) == 0;
+        asm '
+            lDA (_b);
+            shg;
+            shg;
+            lDR (_prod);
+            add;
+            sAD (_prod);';
+        lab Trig::LocalF2Mul::Skip;
+    
+        asm '
+            lDA (_b); shs; sAD (_b);
+            lDA (_a); shg; sAD (_a);';
+    
+        put _i = _i + 1;
+    jump Trig::LocalF2Mul::Loop ~ _i < 15;
+
+    push _prod;
+    sub Stack::Swap;
+    return;
+
+"(X::Fixed) => (X::Fixed)
+"twos comp negation
+lab Trig::LocalFNeg;
+    sub Stack::Swap;
+    asm '
+        pla;
+        not;
+        set 1;
+        add;
+        pha;
+    ';
+    sub Stack::Swap;
+    return;
+
+
+"(X::Fixed) => (Sin::Fixed)
+lab Trig::FSin;
+    sub Stack::Swap;
+
+    sub Stack::Dup;
+    pull __;
+    sub Trig::LocalFNeg ~ __ & (1 << 15) != 0;
+    pull _a;
+
+    push _a;
+    sub Trig::LocalFNeg;
+    pull _b;
+    
+    push _b & ((0 - 1) >> 1);
+    push _a;
+    
+    sub Trig::LocalF2Mul;
+
+    sub Stack::Swap;
+    return;
+    
+"(X::Float16) => (Sin::Float16)
+lab Trig::Sin;
+    sub Stack::Swap;
+    pull _x;
+
+    "sanity
+    push _FpZero;
+    jump Trig::Sin::Null ~ ((_x >> 7) & 255) > 128;
+    pull __;
+
+    "save sign
+    push _x & _SIGN_MASK;    
+                                                                                                               
+    "add 7 to exp (mant offset is 7 too)
+    push _x + (7 << 7);
+
+    sub Floats::Fp2Value;
+    sub Trig::FSin;
+    sub Floats::Value2Fp;
+
+    pull _x;
+    put _x = _x - (7 << 7);
+
+    "fix sign
+    pull _sign;
+    put _x = _x & (_sign << _SIGN_OFFSET);
+    
+    push _x;
+        lab Trig::Sin::Null;
+    sub Stack::Swap;
+    return;
+
+
+
+
+
+
+lab Trig::Skip;
