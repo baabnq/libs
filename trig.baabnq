@@ -90,14 +90,23 @@ lab Trig::LocalAddExpo;
     sub Stack::Swap;
     return;
 
+lab Trig::Zero;
+    push _FpZero;
+    sub Stack::Swap;
+    return;
     
     
 "(X::Float16) => (Sin::Float16)
 lab Trig::Sin;
     sub Stack::Swap;
 
-     "save for sign extraction
-     sub Stack::Dup;
+    "check null
+    pull _x;
+    jump Trig::Zero ~ _x == _FpZero;
+    push _x;
+
+    "save for sign extraction
+    sub Stack::Dup;
     
     "add 15 to exp for fixed-point digit extraction
     push 15;
@@ -106,6 +115,12 @@ lab Trig::Sin;
     sub Floats::Fp2Value;
     sub Trig::FSin;
     sub Floats::Value2Fp;
+
+    pull _x;
+    pull __;
+    jump Trig::Zero ~ _x == _FpZero;
+    push __;
+    push _x;
 
     "sub 15 from exp for fixed-point digit integration
     push 0 - 15;
