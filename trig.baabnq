@@ -71,35 +71,65 @@ lab Trig::FSin;
     sub Stack::Swap;
     return;
     
-"(X::Float16) => (Sin::Float16)
-lab Trig::Sin;
+    
+lab Trig::LocalAddExpo;
+    sub Stack::Swap;
+    pull _d;
     sub Stack::Swap;
     pull _x;
 
-    "sanity
-    push _FpZero;
-    jump Trig::Sin::Null ~ ((_x >> 7) & 255) > 128;
-    pull __;
+    push _tempPtr;
+    push _x;
+    sub Floats::GetExponent;
+    pull __; push __ + _d;
+    put _x -> _tempPtr;
+    sub Floats::SetExponent;
+    put _x <- _tempPtr;
+    push _x;
+    
+    sub Stack::Swap;
+    return;
 
-    "save sign
-    push _x & _SIGN_MASK;    
-                                                                                                               
-    "add 7 to exp (mant offset is 7 too)
-    push _x + (7 << 7);
+    
+    
+"(X::Float16) => (Sin::Float16)
+lab Trig::Sin;
+    sub Stack::Swap;
 
+     "save for sign extraction
+     sub Stack::Dup;
+    
+    "add 15 to exp for fixed-point digit extraction
+    push 15;
+    sub Trig::LocalAddExpo;
+    
     sub Floats::Fp2Value;
     sub Trig::FSin;
     sub Floats::Value2Fp;
 
-    pull _x;
-    put _x = _x - (7 << 7);
-
-    "fix sign
-    pull _sign;
-    put _x = _x & (_sign << _SIGN_OFFSET);
+    "sub 15 from exp for fixed-point digit integration
+    push 0 - 15;
+    sub Trig::LocalAddExpo;
     
-    push _x;
-        lab Trig::Sin::Null;
+    "swap restore sign and res
+    sub Stack::Swap;
+
+    "calculate sign and set
+    push 64640; "(=^ (float16)-1)
+    sub Floats::Add;
+    pull __;
+    
+    "when x-1<0 then sign is not present in res,
+    "therefore x-1 needs to be inverted
+    asm '
+        lDA (__);
+        not;
+        sAD (__);
+    ';
+
+    pull _x;
+    push _x | (_SIGN_MASK & __);
+
     sub Stack::Swap;
     return;
 
@@ -109,3 +139,4 @@ lab Trig::Sin;
 
 
 lab Trig::Skip;
+

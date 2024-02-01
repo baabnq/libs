@@ -22,8 +22,8 @@ put _EXPONENT_MASK = 255;
 put _SIGN_MASK     = 32768;
 put _MIN_SIGNED_CHAR = 128;
 
-static 1 _outputPtr;
-put 0 -> _outputPtr;
+static 1 _tempPtr;
+put 0 -> _tempPtr;
 
 jump Floats::Skip;
 
@@ -127,12 +127,12 @@ lab Floats::ShiftSmall;
 
     "switch fpValue with *fpValue, for SetExponent call
     pull _fpValue;
-    put  _fpValue -> _outputPtr;
-    push _outputPtr;
+    put  _fpValue -> _tempPtr;
+    push _tempPtr;
     push _exponent - _offset;
     sub Floats::SetExponent;
     
-    put _fpValue <- _outputPtr;
+    put _fpValue <- _tempPtr;
     push _fpValue;    
     sub Stack::Swap;
     return;    
@@ -150,12 +150,12 @@ lab Floats::ShiftGreat;
     pull _exponent;
 
     pull _fpValue;
-    put  _fpValue -> _outputPtr;
-    push _outputPtr;
+    put  _fpValue -> _tempPtr;
+    push _tempPtr;
     push _exponent + _offset;
     sub Floats::SetExponent;
 
-    put _fpValue <- _outputPtr;
+    put _fpValue <- _tempPtr;
     push _fpValue;    
     sub Stack::Swap;
     return;    
@@ -365,14 +365,14 @@ lab Floats::Add;
     lab Floats::Add::SkipCarryCorr;
 
 
-    put 0 -> _outputPtr;
-    push _outputPtr;
+    put 0 -> _tempPtr;
+    push _tempPtr;
     sub Stack::Dup; "keep reference
     push _outputMantissa;
     push _outputExponent;
     sub Floats::NormalizeAndSet;
-    pull _outputPtr;
-    put _output <- _outputPtr;
+    pull _tempPtr;
+    put _output <- _tempPtr;
 
 
     push _output;
@@ -417,14 +417,14 @@ lab Floats::Mul;
     jump Floats::Mul::Loop ~ _outputMantissa > (1 << _MANTISSA_SIZE) - 1;
 
 
-    put 0 -> _outputPtr;
-    push _outputPtr;
+    put 0 -> _tempPtr;
+    push _tempPtr;
     sub Stack::Dup;
     push _outputMantissa;
     push _outputExponent & 255;
     sub Floats::NormalizeAndSet;
-    pull _outputPtr;
-    put _output <- _outputPtr;
+    pull _tempPtr;
+    put _output <- _tempPtr;
 
 
     push _output;
@@ -524,14 +524,14 @@ lab Floats::Div;
     jump Floats::Div::Loop;
     lab Floats::Div::Exit;
 
-    put 0 -> _outputPtr;
-    push _outputPtr;
+    put 0 -> _tempPtr;
+    push _tempPtr;
     sub Stack::Dup;
     push _outputMantissa;
     push _outputExponent;
     sub Floats::NormalizeAndSet;
-    pull _outputPtr;
-    put _output <- _outputPtr;
+    pull _tempPtr;
+    put _output <- _tempPtr;
     
     push _output;
     sub Floats::SetSign ~ _outputSign != 0;
