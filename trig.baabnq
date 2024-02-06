@@ -104,15 +104,16 @@ lab Trig::Sin;
     pull _x;
     jump Trig::Zero ~ _x == _FpZero;
     push _x;
-
-    "save for sign extraction
-    sub Stack::Dup;
     
     "add 15 to exp for fixed-point digit extraction
     push 15;
     sub Trig::LocalAddExpo;
     
     sub Floats::Fp2Value;
+    
+    "save for sign extraction
+    sub Stack::Dup;
+    
     sub Trig::FSin;
     sub Floats::Value2Fp;
 
@@ -127,20 +128,11 @@ lab Trig::Sin;
     sub Trig::LocalAddExpo;
     
     "swap restore sign and res
+    "__ contains fixed-point number, where msb has place value 1
+    "output sign needs to be set if input msb is set
     sub Stack::Swap;
-
-    "calculate sign and set
-    push 64640; "(=^ (float16)-1)
-    sub Floats::Add;
     pull __;
-    
-    "when x-1<0 then sign is not present in res,
-    "therefore x-1 needs to be inverted
-    asm '
-        lDA (__);
-        not;
-        sAD (__);
-    ';
+
 
     pull _x;
     push _x | (_SIGN_MASK & __);
