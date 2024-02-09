@@ -180,12 +180,37 @@ lab String::MemCpy;
 
     push _ReturnAddr;
     return;
+    
+    
+"(Str1::String*, Str2::String*) => (Match::Bool)
+lab String::MemCmp;
+    sub Stack::Swap;
+    pull _pStr2;
+    sub Stack::Swap;
+    pull _pStr1;
+    
+    lab String::MemCmp::Loop;
+        put _val1 <- _pStr1;
+        put _val2 <- _pStr2;
+        
+        jump String::MemCmp::Done ~ _val1 == 0;
+        jump String::MemCmp::Done ~ _val1 != _val2;
+        
+        put _pStr1 = _pStr1 + 1;
+        put _pStr2 = _pStr2 + 1;
+    jump String::MemCmp::Loop;
+    lab String::MemCmp::Done;
+    
+    push _val1 - _val2;
+    sub Stack::Swap;
+    return;       
 
 
 "scan string for character
 "StrPtr
 "Char
 lab String::ScanChar;
+lab String::MemChr;
     pull _ReturnAddr;
     pull _Char;
     pull _StrPtr;
@@ -208,53 +233,6 @@ lab String::ScanChar;
         push _ReturnAddr;
         return;
 
-"takes 2 string pointer and concatenates them
-"lab String::Concat;
-"    pull _ReturnAddr;
-"    pull _StrPtr2;
-"    pull _StrPtr1;
-"    push _ReturnAddr;    "
-"
-"    push _StrPtr1;
-"    sub String::StrLen;
-"    pull _StrLen1;
-"    push _StrPtr2;
-"    sub String::StrLen;
-"    pull _StrLen2;
-
-    "restore retrun address
-"    pull _ReturnAddr;
-    
-    "+ 1 for terminator
-"    new _StrLen1 + _StrLen2 + 1 _StrPtrFinal;
-
-"    put _Index = 0;
-"    lab String::Concat::StrCopyLoop1;
-"        put _Data <- _StrPtr1 + _Index;
-"        jump String::Concat::StrCopyExit1 ~ _Data == 0;
-
-"        put _Data -> _StrPtrFinal + _Index;
-"        put _Index = _Index + 1;
-"        jump String::Concat::StrCopyLoop1;
-"    lab String::Concat::StrCopyExit1;
-
-"    put _Index = 0;
-
-    "start to write the 2nd string after the first for obvious reasons
-"    put _StrPtrFinalShifted = _StrPtrFinal + _StrLen1;
-"    lab String::Concat::StrCopyLoop2;
-"        put _Data <- _StrPtr2 + _Index;
-"        jump String::Concat::StrCopyExit2 ~ _Data == 0;
-
-"        put _Data -> _StrPtrFinalShifted + _Index;
-"        put _Index = _Index + 1;
-"        jump String::Concat::StrCopyLoop2;        
-"    lab String::Concat::StrCopyExit2;
-
-"    push _StrPtrFinal;
-"    push _ReturnAddr;
-"    return;
-
 
 "(Str1::String*, Str2::String*) => (Res::String*)
 lab String::Concat;
@@ -271,7 +249,9 @@ lab String::Concat;
     sub String::StrLen;
     pull _len2;
 
-    new _len1 + _len2 _pStr;
+    put _len = _len1 + _len2;
+    new _len + 1 _pStr;
+    put 0 -> _pStr + _len + 1;
 
     push _pStr1;
     push _pStr;

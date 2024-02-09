@@ -4,14 +4,14 @@ use 'libs/string.baabnq';
 
 jump Ouch::Stream::Skip;
 
-"(Socket::FD, Str::Byte*) => (Success::Int)
+"(Stream::FD, Str::String*) => (Success::Int)
 lab Ouch::Stream::Write;
     sub Stack::Swap;
     pull _pStr;
     sub Stack::Swap;
-    pull _pSock;
+    pull _pStream;
 
-    push _pSock;
+    push _pStream;
     push _pStr;
 
     push _pStr;
@@ -21,12 +21,49 @@ lab Ouch::Stream::Write;
 
     sub Stack::Swap;
     return;
+    
+    
+"(Stream::FD) => (Out::Byte*, Len::Int)
+"read all data from stream
+lab Ouch::Stream::ReadAll;
+    sub Stack::Swap;
+    pull _pStream;
+    
+    push _pStream;
+    sub Ouch::Syscall::StreamInfo;
+    pull __;
+    pull _len;
+    
+    new _len _out;
+    put _i = 0;
+        
+    lab Ouch::Stream::ReadStr;
+        push _pStream;
+        sub Ouch::Syscall::ReadStream;
+        pull _suc;
+        pull _c;
+        
+        jump Ouch::Stream::Done ~ _suc == 0;
+        jump Ouch::Stream::Done ~ _suc == 2;
+
+        put _c -> _out + _i;
+        put _i = _i + 1;
+    jump Ouch::Stream::ReadStr ~ _i != _len;
+    lab Ouch::Stream::Done;
+    
+    push _i;
+    sub Stack::Swap;
+    push _out;
+    sub Stack::Swap;
+    return;
+    
+    
 
 
 "(Socket::FD, Size::Int, PollIntervalMS::Int) => (Str::Byte*)
 "(nullptr on socket disconnect)
 "PollIntervalMS is the time (in Msecs) the routine waits between polls, if the socket is empty
-lab Ouch::Stream::Read;
+lab Ouch::Stream::SocketRead;
     sub Stack::Swap;
     pull _time;
     sub Stack::Swap;
