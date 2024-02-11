@@ -12,14 +12,14 @@ lab Ouch::IO::Poll;
     sub Ouch::Syscall::GetPid;
     sub Ouch::Syscall::GetProcStdio;
     pull __;
-    pull _id;
+    pull _temp;
     jump Ouch::IO::Poll::Exit ~ __ == 0;    
-    
+
     lab Ouch::IO::Poll::Loop;
         push 100;
         sub Ouch::Syscall::NapMs;
         
-        push _id;
+        push _temp;
         sub Ouch::Syscall::StreamInfo;
         pull __;
         pull _len;
