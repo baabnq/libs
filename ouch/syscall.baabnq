@@ -40,6 +40,10 @@ lab Ouch::Syscall::GetWork;
     asm 'pla; syscall 8; pha;';
     return;    
 
+lab Ouch::Syscall::PeekStream;
+    asm 'pla; syscall 9; pha;';
+    return;    
+
 "--- files ---
 lab Ouch::Syscall::OpenFileObj;
     asm 'pla; syscall 16; pha;';
