@@ -27,12 +27,12 @@ lab TestFloats::Const;
     "shared consts
     jump fail ~ _upper16 != 65280;
     jump fail ~ _posNaN != 16256;
-    jump fail ~ _FpZero != 16384;    
+    jump fail ~ _FpZero != 16384;
 
     "system consts
     jump fail ~ _MANTISSA_SIZE != 8;
     jump fail ~ _EXPONENT_SIZE != 8;
-    jump fail ~ _SIGN_SIZE     != 15;
+    jump fail ~ _SIGN_OFFSET   != 15;
 
     jump fail ~ _MANTISSA_MASK != 127;
     jump fail ~ _EXPONENT_MASK != 255;

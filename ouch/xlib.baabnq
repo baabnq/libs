@@ -333,7 +333,7 @@ lab XLib::XNextEvent;
     push _XpSock;
     push 32;  "read 32 bytes
     push 100; "poll nap interval 100 Msecs
-    sub Ouch::Stream::Read;
+    sub Ouch::Stream::SocketRead;
     pull _pStr;
 
     put _type <- _pStr;
