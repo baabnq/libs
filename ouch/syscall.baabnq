@@ -103,5 +103,11 @@ lab Ouch::Syscall::TSL;
     return;
 
 
+"--- meta ---
+lab Ouch::Syscall::SOS;
+    asm 'syscall 65535';
+    return;
+
+
 
 lab Ouch::Syscall::Skip;

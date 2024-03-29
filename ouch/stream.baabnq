@@ -50,7 +50,7 @@ lab Ouch::Stream::ReadAll;
         put _i = _i + 1;
     jump Ouch::Stream::ReadStr ~ _i != _len;
     lab Ouch::Stream::Done;
-    
+        
     push _i;
     sub Stack::Swap;
     push _out;
