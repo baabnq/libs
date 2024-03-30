@@ -34,15 +34,17 @@ lab Ouch::Stream::ReadAll;
     pull __;
     pull _len;
     
-    new _len _out;
+    "+1 for null termi
+    new (_len + 1) _out;
+    put 0 -> _out + _len;
+
     put _i = 0;
-        
     lab Ouch::Stream::ReadStr;
         push _pStream;
         sub Ouch::Syscall::ReadStream;
         pull _suc;
         pull _c;
-        
+                        
         jump Ouch::Stream::Done ~ _suc == 0;
         jump Ouch::Stream::Done ~ _suc == 2;
 
@@ -50,7 +52,7 @@ lab Ouch::Stream::ReadAll;
         put _i = _i + 1;
     jump Ouch::Stream::ReadStr ~ _i != _len;
     lab Ouch::Stream::Done;
-        
+
     push _i;
     sub Stack::Swap;
     push _out;
