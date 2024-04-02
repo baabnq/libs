@@ -13,19 +13,19 @@ lab Ouch::IO::Poll;
     sub Ouch::Syscall::GetProcStdio;
     pull __;
     pull _temp;
-    jump Ouch::IO::Poll::Exit ~ __ == 0;    
+    jump Ouch::IO::Poll::Exit ~ __ == 0;
 
     lab Ouch::IO::Poll::Loop;
         push 100;
-        sub Ouch::Syscall::NapMs;
-        
+        sub Ouch::Syscall::NapMs;            
+
         push _temp;
         sub Ouch::Syscall::StreamInfo;
         pull __;
-        pull _len;
-    jump Ouch::IO::Poll::Loop ~ _len != 0;
-
+        pull _len;        
+    jump Ouch::IO::Poll::Loop ~ _len > 0;    	
     lab Ouch::IO::Poll::Exit;
+        
     return;
 
 
