@@ -110,31 +110,32 @@ lab String::StrLen;
     
 "(Src::Int*, Dst::Int*, Size::Int)
 lab String::MemCpy;
-    pull _ReturnAddr;
-    pull _Size;
-    pull _DestPtr;
-    pull _SrcPtr;
+    sub Stack::Swap;
+    pull _size;
+    sub Stack::Swap;
+    pull _pDest;
+    sub Stack::Swap;
+    pull _pSrc;
 
-    put _Index = 0;
+    put _index = 0;
 
     lab String::MemCpy::Loop;
-    jump String::MemCpy::Exit ~ _Index == _Size;
+    jump String::MemCpy::Exit ~ _index == _size;
 
-    put _Data <- _SrcPtr  + _Index;
-    put _Data -> _DestPtr + _Index;
+    put _data <- _pSrc  + _index;
+    put _data -> _pDest + _index;
 
-    put _Index = _Index + 1;
+    put _index = _index + 1;
     jump String::MemCpy::Loop;
     lab String::MemCpy::Exit;
     
-
-    push _ReturnAddr;
     return;
     
     
 "(Str1::String*, Str2::String*) => (Match::Bool)
 "Match::Bool = Str1::String* == Str2::String*
 lab String::MemCmp;
+lab String::StrCmp;
     sub Stack::Swap;
     pull _pStr2;
     sub Stack::Swap;
@@ -162,8 +163,9 @@ lab String::MemCmp;
 lab String::ScanChar;
 lab String::MemChr;
 lab String::StrChr;
-    pull _ReturnAddr;
+    sub Stack::Swap;
     pull _Char;
+    sub Stack::Swap;
     pull _StrPtr;
 
     lab String::ScanChar::IterLoop;
@@ -174,12 +176,12 @@ lab String::StrChr;
         jump String::ScanChar::IterLoop ~ _Data != 0;
         
         push 0;
-        push _ReturnAddr;
+        sub Stack::Swap;
         return;
 
     lab String::ScanChar::Found;
         push 1;
-        push _ReturnAddr;
+        sub Stack::Swap;
         return;
 
 
