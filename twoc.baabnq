@@ -49,29 +49,31 @@ lab Twoc::Set;
 
 
 "(Value1::Comp, Value2::Comp) => (Product::Comp)
+"Product::Comp = Value1::Comp * Value2::Comp
 lab Twoc::Mul;
     sub Stack::Swap;
     sub Twoc::Get;
-    pull _Val1;
-    pull _Sgn1;
+    pull _val1;
+    pull _sgn1;
     sub Stack::Swap;
     sub Twoc::Get;
-    pull _Val2;
-    pull _Sgn2;
+    pull _val2;
+    pull _sgn2;
 
     "value
-    push _Val1;
-    push _Val2;
+    push _val1;
+    push _val2;
     sub Math::Mul;
 
     "sign
-    push _Sgn1 ^ _Sgn2;
+    push _sgn1 ^ _sgn2;
 
     sub Twoc::Set;
     sub Stack::Swap;
     return;
 
 "(Num::Comp, Den::Comp) => (Frac::Comp)
+"Frac::Comp = Num::Comp / Den::Comp
 lab Twoc::Div;
     sub Stack::Swap;
     sub Twoc::Get;
@@ -95,7 +97,7 @@ lab Twoc::Div;
     return;
 
 "(Big::Comp, Small::Comp) => (True::Bool)
-"True::Bool is true if Big::Comp > Small::Comp
+"True::Bool = Big::Comp > Small::Comp
 lab Twoc::Cmp;
     sub Stack::Swap;
     sub Twoc::Get;
