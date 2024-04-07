@@ -7,8 +7,8 @@ put _OpMul = 42;
 
 jump Expr::Skip;
 
+"(Raw::String*) => (Tree::Expr*)
 lab Expr::Parse;
-
     sub Stack::Swap;
     pull _InputStr;
 
@@ -34,7 +34,7 @@ lab Expr::Parse;
     "scaning does not call anything so we don't need that namespacing thing
 
     push _InputStr;
-    sub String::GetSize;
+    sub String::StrLen;
     pull _InputSize;
 
 
@@ -95,7 +95,7 @@ lab Expr::Parse;
 
         "find size of substrings
         push _InputStr;
-        sub String::GetSize;
+        sub String::StrLen;
         pull _MainSize;
         put _SubSize1 = _ScanPtr - _InputStr;
         put _SubSize2 = ((_MainSize + _InputStr) - _ScanPtr) - 1;
@@ -107,12 +107,12 @@ lab Expr::Parse;
         push _InputStr;
         push _SubStrPtr1;
         push _SubSize1;
-        sub String::CopyN;
+        sub String::MemCpy;
 
         push _ScanPtr + 1;
         push _SubStrPtr2;
         push _SubSize2;
-        sub String::CopyN;
+        sub String::MemCpy;
 
         "save the ThisNodePtr
         push _ThisNodePtr;
@@ -166,7 +166,7 @@ lab Expr::Parse;
 
 
 
-
+"(Tree::Expr*) => (Res::Int)
 lab Expr::Eval;
     sub Stack::Swap;
     pull _Ptr;
@@ -179,9 +179,6 @@ lab Expr::Eval;
     push _Value;
     sub Stack::Swap;
     return;
-
-
-
 
     lab Expr::Eval::FoundOp;
         "save Value for later operation eval
@@ -224,6 +221,8 @@ lab Expr::Eval;
 
         return;
 
+
+"(Tree::Expr*)
 lab Expr::FreeExprTree;
     sub Stack::Swap;
     pull _Ptr;
@@ -249,12 +248,10 @@ lab Expr::FreeExprTree;
         return;
 
 
-
+"(Tree::Expr*) => IO
 lab Expr::PrintExprTree;
     sub Stack::Swap;
     pull _Ptr;
-
-
 
     put _Type  <- _Ptr + 0;
     put _Value <- _Ptr + 1;
@@ -281,24 +278,11 @@ lab Expr::PrintExprTree;
         
         putchr 41;
         
-        
-        
         return;
 
     lab Expr::PrintExprTree::FoundValue;
         print _Value;
         return;
 
-
-
-lab Expr::Demo;
-    "21 bruh
-    new '2 + 10 * 2 - 1' _ptr;
-    push _ptr;
-    sub Expr::Parse;
-    sub Expr::Eval;
-
-    sub Stack::Swap;
-    return;
 
 lab Expr::Skip;
