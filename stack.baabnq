@@ -2,6 +2,7 @@
 jump Stack::Skip;
 
 "swap first two values on stack
+"(B::Int, A::Int) => (A::Int, B::Int)
 lab Stack::Swap;
     pull _ReturnAddr;
     pull _ValueA;
@@ -12,6 +13,7 @@ lab Stack::Swap;
     return;
 
 "duplicate value on the stack
+"(A::Int) => (A::Int, A::Int)
 lab Stack::DupSafe;
     pull _ReturnAddr;
     pull _Value;
@@ -20,16 +22,17 @@ lab Stack::DupSafe;
     push _ReturnAddr;
     return;
 
+"(A::Int) => (A::Int, A::Int)
 lab Stack::Dup;
     asm '
-pla;
-sAD -temp;
-pla;
-pha;
-pha;
-lDA -temp;
-pha;
-ret;
-';
+    pla;
+    sAD -temp;
+    pla;
+    pha;
+    pha;
+    lDA -temp;
+    pha;
+    ret;
+    ';
 
 lab Stack::Skip;
