@@ -133,15 +133,35 @@ lab String::MemCpy;
 "(Src::String*, Dst::String*)    
 lab String::StrCpy;
     sub Stack::Swap;
-    pull _pDest;
+    pull _pDst;
     sub Stack::Swap;
     pull _pSrc;
     
     lab String::StrCpy::Loop;
-        put _data <- _pSrc ; put _pSrc  = _pSrc  + 1;
-        put _data -> _pDest; put _pDest = _pDest + 1;
+        put _data <- _pSrc; put _pSrc = _pSrc + 1;
+        put _data -> _pDst; put _pDst = _pDst + 1;
         
     jump String::StrCpy::Loop ~ _data != 0;
+    
+    return;
+    
+"(Ptr::String*, Val::Int, Size::Int)
+lab String::MemSet;
+    sub Stack::Swap;
+    pull _size;
+    sub Stack::Swap;
+    pull _val;
+    sub Stack::Swap;
+    pull _ptr;
+    
+    lab String::MemSet::Loop;
+        jump String::MemSet::Exit ~ _size == 0;
+        put _size = _size - 1;
+        
+        put _val -> _ptr;
+        put _ptr =  _ptr + 1;
+    jump String::MemSet::Loop;
+    lab String::MemSet::Exit;
     
     return;
     
