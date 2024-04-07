@@ -107,7 +107,7 @@ lab String::StrLen;
     push _ReturnAddr;
     return;
     
-    
+
 "(Src::Int*, Dst::Int*, Size::Int)
 lab String::MemCpy;
     sub Stack::Swap;
@@ -121,15 +121,30 @@ lab String::MemCpy;
 
     lab String::MemCpy::Loop;
     jump String::MemCpy::Exit ~ _index == _size;
+        put _data <- _pSrc  + _index;
+        put _data -> _pDest + _index;
 
-    put _data <- _pSrc  + _index;
-    put _data -> _pDest + _index;
-
-    put _index = _index + 1;
+        put _index = _index + 1;
     jump String::MemCpy::Loop;
     lab String::MemCpy::Exit;
     
     return;
+
+"(Src::String*, Dst::String*)    
+lab String::StrCpy;
+    sub Stack::Swap;
+    pull _pDest;
+    sub Stack::Swap;
+    pull _pSrc;
+    
+    lab String::StrCpy::Loop;
+        put _data <- _pSrc ; put _pSrc  = _pSrc  + 1;
+        put _data -> _pDest; put _pDest = _pDest + 1;
+        
+    jump String::StrCpy::Loop ~ _data != 0;
+    
+    return;
+    
     
     
 "(Str1::String*, Str2::String*) => (Match::Bool)
