@@ -259,4 +259,38 @@ lab Math::Mod;
     return;
 
 
+
+"(V::Int) => (X::Int)
+"X::Int^2 = V::Int
+"  x
+"+---+
+"| V | x
+"+---+
+"square root using newtonian iteration
+lab Math::Sqrt
+    sub Stack::Swap;
+    pull _v;
+    
+    "biggest  possible result of 16-bit sqrt is 256
+    "smallest possible result of 16-bit sqrt is 0
+    "therefore the initial guess must be their midpoint
+    put _x = 128;
+
+    put _i = 8;
+    lab Math::Sqrt::Iter;
+        "x = (v/x + x) / 2
+        push _v;
+        push _x;
+        sub Math::Div;
+        pull __;
+        put _x = (__ + _x) >> 1;
+    
+        put _i = _i - 1;
+    jump Math::Sqrt::Iter ~ _i > 0;
+    
+    push _x;
+    sub Stack::Swap;
+    return;
+
+
 lab Math::Skip;
