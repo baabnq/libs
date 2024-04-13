@@ -217,7 +217,7 @@ lab Math::Div;
 
     put _q = 0;
     put _r = 0;
-    put _i = 15;
+    put _i = 16;
     
     lab Math::Div::Loop;
         put _r = (_r << 1) | ((_n >> _i) & 1);
@@ -226,7 +226,7 @@ lab Math::Div;
             put _q = _q | (1 << _i);
         lab Math::Div::SkipSub;
         put _i = _i - 1;
-    jump Math::Div::Loop ~ _i + 1 > 0;
+    jump Math::Div::Loop ~ _i > 0;
 
     push _q;
     sub Stack::Swap;
@@ -243,7 +243,7 @@ lab Math::Mod;
 
     put _q = 0;
     put _r = 0;
-    put _i = 15;
+    put _i = 16;
     
     lab Math::Mod::Loop;
         put _r = (_r << 1) | ((_n >> _i) & 1);
@@ -252,7 +252,7 @@ lab Math::Mod;
             put _q = _q | (1 << _i);
         lab Math::Mod::SkipSub;
         put _i = _i - 1;
-    jump Math::Mod::Loop ~ _i + 1 > 0;
+    jump Math::Mod::Loop ~ _i > 0;
 
     push _r;
     sub Stack::Swap;
@@ -267,7 +267,7 @@ lab Math::Mod;
 "| V | x
 "+---+
 "square root using newtonian iteration
-lab Math::Sqrt
+lab Math::Sqrt;
     sub Stack::Swap;
     pull _v;
     
@@ -276,8 +276,10 @@ lab Math::Sqrt
     "therefore the initial guess must be their midpoint
     put _x = 128;
 
-    put _i = 8;
+    put _c = 10;
     lab Math::Sqrt::Iter;
+        jump Math::Sqrt::Zero ~ _x == 0;
+    
         "x = (v/x + x) / 2
         push _v;
         push _x;
@@ -285,8 +287,9 @@ lab Math::Sqrt
         pull __;
         put _x = (__ + _x) >> 1;
     
-        put _i = _i - 1;
-    jump Math::Sqrt::Iter ~ _i > 0;
+        put _c = _c - 1;
+    jump Math::Sqrt::Iter ~ _c > 0;
+    lab Math::Sqrt::Zero;
     
     push _x;
     sub Stack::Swap;
