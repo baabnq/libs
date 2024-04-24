@@ -217,7 +217,7 @@ lab Math::Div;
 
     put _q = 0;
     put _r = 0;
-    put _i = 16;
+    put _i = 15;
     
     lab Math::Div::Loop;
         put _r = (_r << 1) | ((_n >> _i) & 1);
@@ -226,7 +226,7 @@ lab Math::Div;
             put _q = _q | (1 << _i);
         lab Math::Div::SkipSub;
         put _i = _i - 1;
-    jump Math::Div::Loop ~ _i > 0;
+    jump Math::Div::Loop ~ _i != (0 - 1);
 
     push _q;
     sub Stack::Swap;
@@ -243,7 +243,7 @@ lab Math::Mod;
 
     put _q = 0;
     put _r = 0;
-    put _i = 16;
+    put _i = 15;
     
     lab Math::Mod::Loop;
         put _r = (_r << 1) | ((_n >> _i) & 1);
@@ -252,7 +252,7 @@ lab Math::Mod;
             put _q = _q | (1 << _i);
         lab Math::Mod::SkipSub;
         put _i = _i - 1;
-    jump Math::Mod::Loop ~ _i > 0;
+    jump Math::Mod::Loop ~ _i != (0 - 1);
 
     push _r;
     sub Stack::Swap;
@@ -262,35 +262,39 @@ lab Math::Mod;
 
 "(V::Int) => (X::Int)
 "X::Int^2 = V::Int
-"  x
-"+---+
-"| V | x
-"+---+
-"square root using newtonian iteration
+"simple binary search
 lab Math::Sqrt;
     sub Stack::Swap;
     pull _v;
     
-    "biggest  possible result of 16-bit sqrt is 256
-    "smallest possible result of 16-bit sqrt is 0
-    "therefore the initial guess must be their midpoint
-    put _x = 128;
+    put _x  = 0;
+    "*dynamic programming* (wow, that's cool)
+    put _x2 = 0; "x²
+    put _2xb = 0; "2*x*b
+    
+    "probe bit
+    put _b  = 1 << 7;
+    put _b2 = 1 << 14;
+    
+    put _i = 8;
+    lab Math::Sqrt::Loop;
+        
+        put _2xb = (_x << _i);
+        
+        put _g  = _x + _b;
+        put _g2 = _x2 + _2xb + _b2;
+    
+        jump Math::Sqrt::Skip ~ _g2 > _v;
+            put _x  = _g;
+            put _x2 = _g2;
+        lab Math::Sqrt::Skip;
+    
+        asm 'lDA (_b);  shs;      sAD (_b)';                
+        asm 'lDA (_b2); shs; shs; sAD (_b2)';
 
-    put _c = 10;
-    lab Math::Sqrt::Iter;
-        jump Math::Sqrt::Zero ~ _x == 0;
-    
-        "x = (v/x + x) / 2
-        push _v;
-        push _x;
-        sub Math::Div;
-        pull __;
-        put _x = (__ + _x) >> 1;
-    
-        put _c = _c - 1;
-    jump Math::Sqrt::Iter ~ _c > 0;
-    lab Math::Sqrt::Zero;
-    
+        put _i = _i - 1;
+    jump Math::Sqrt::Loop ~ _i > 0;
+
     push _x;
     sub Stack::Swap;
     return;

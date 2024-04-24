@@ -207,3 +207,34 @@ lab TestMath::Mod;
     jump fail ~ _v != 114;
     
     jump succ;
+
+
+lab TestMath::Sqrt;
+    push 0;
+    sub Math::Sqrt;
+    pull _v;
+    jump fail ~ _v != 0;
+
+    push 49;
+    sub Math::Sqrt;
+    pull _v;
+    jump fail ~ _v != 7;
+
+    push 1;
+    sub Math::Sqrt;
+    pull _v;
+    jump fail ~ _v != 1;
+
+    push 65025;
+    sub Math::Sqrt;
+    pull _v;
+    jump fail ~ _v != 255;
+
+    push 10000;
+    sub Math::Sqrt;
+    pull _v;
+    jump fail ~ _v != 100;
+            
+    jump succ;
+
+
