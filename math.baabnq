@@ -332,5 +332,45 @@ lab Math::Pow;
     sub Stack::Swap;
     return;
 
+"(V::Int) => (X::Int)
+"X::Int^3 = V::Int
+lab Math::Cbrt;
+    sub Stack::Swap;
+    pull _v;
+    
+    put _x  = 0;
+    put _x2 = 0;
+    put _x3 = 0;
+    
+    put _b  = 1 << 5;
+    put _b2 = 1 << 10;
+    put _b3 = 1 << 15;
+    
+    put _i = 5;
+    lab Math::Cbrt::Loop;
+        
+        put _g       = _x  + _b;
+        put _g2      = _x2 + _b2   + (_x << (_i + 1));
+        put _a2bb2a  = (_x2 << _i) + (_x << (_i + _i));
+        put _a2bb2a3 = _a2bb2a + _a2bb2a + _a2bb2a;
+        put _g3      = _x3 + _b3 + _a2bb2a3;
+        
+        jump Math::Cbrt::Skip ~ _g3 > _v;
+            put _x  = _g;
+            put _x2 = _g2;
+            put _x3 = _g3;        
+        lab Math::Cbrt::Skip;
+        
+        put _b  = _b  >> 1;
+        put _b2 = _b2 >> 2;
+        put _b3 = _b3 >> 3;
+        
+        put _i = _i - 1;
+    jump Math::Cbrt::Loop ~ _b > 0;
+    
+    push _x;
+    sub Stack::Swap;
+    return;
+
 
 lab Math::Skip;

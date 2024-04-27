@@ -276,3 +276,32 @@ lab TestMath::Pow;
     jump fail ~ _v != 27;
 
     jump succ;
+    
+
+lab TestMath::Cbrt;
+    push 0;
+    sub Math::Cbrt;
+    pull _v;
+    jump fail ~ _v != 0;
+
+    push 27;
+    sub Math::Cbrt;
+    pull _v;
+    jump fail ~ _v != 3;
+
+    push 1;
+    sub Math::Cbrt;
+    pull _v;
+    jump fail ~ _v != 1;
+
+    push 32767;
+    sub Math::Cbrt;
+    pull _v;
+    jump fail ~ _v != 31;
+
+    push 1000;
+    sub Math::Cbrt;
+    pull _v;
+    jump fail ~ _v != 10;
+            
+    jump succ;
