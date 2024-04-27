@@ -262,7 +262,7 @@ lab Math::Mod;
 
 "(V::Int) => (X::Int)
 "X::Int^2 = V::Int
-"simple binary search
+"dynamic binary search
 lab Math::Sqrt;
     sub Stack::Swap;
     pull _v;
@@ -281,7 +281,7 @@ lab Math::Sqrt;
         
         put _2xb = (_x << _i);
         
-        put _g  = _x + _b;
+        put _g  = _x  +        _b;
         put _g2 = _x2 + _2xb + _b2;
     
         jump Math::Sqrt::Skip ~ _g2 > _v;
@@ -295,6 +295,39 @@ lab Math::Sqrt;
         put _i = _i - 1;
     jump Math::Sqrt::Loop ~ _i > 0;
 
+    push _x;
+    sub Stack::Swap;
+    return;
+
+
+"(Base::Int, Exp::Int) => (Val::Int)
+"Base::Int ^ Exp::Int = Val::Int
+lab Math::Pow;
+    sub Stack::Swap;
+    pull _e;
+    sub Stack::Swap;
+    pull _b;
+        
+    put _x = 1;
+    lab Math::Pow::Loop;
+        jump Math::Pow::Done ~ _e == 0;
+        
+        jump Math::Pow::Skip ~ _e & 1 == 0;
+            push _b;
+            push _x;
+            sub Math::Mul;
+            pull _x;
+        lab Math::Pow::Skip;
+        
+        push _b;
+        push _b;
+        sub Math::Mul;
+        pull _b;
+
+        put _e = _e >> 1;
+        jump Math::Pow::Loop;
+    lab Math::Pow::Done;
+    
     push _x;
     sub Stack::Swap;
     return;

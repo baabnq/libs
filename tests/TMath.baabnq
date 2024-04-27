@@ -238,3 +238,41 @@ lab TestMath::Sqrt;
     jump succ;
 
 
+lab TestMath::Pow;
+    push 10;
+    push 2;
+    sub Math::Pow;
+    pull _v;
+    jump fail ~ _v != 100;
+
+    push 10;
+    push 3;
+    sub Math::Pow;
+    pull _v;
+    jump fail ~ _v != 1000;
+
+    push 10;
+    push 4;
+    sub Math::Pow;
+    pull _v;
+    jump fail ~ _v != 10000;
+
+    push 1;
+    push 0;
+    sub Math::Pow;
+    pull _v;
+    jump fail ~ _v != 1;
+
+    push 12345;
+    push 1;
+    sub Math::Pow;
+    pull _v;
+    jump fail ~ _v != 12345;
+
+    push 3;
+    push 3;
+    sub Math::Pow;
+    pull _v;
+    jump fail ~ _v != 27;
+
+    jump succ;
