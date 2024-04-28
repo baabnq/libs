@@ -155,7 +155,7 @@ lab Floats::ShiftGreat;
     put _fpValue <- _tempPtr;
     push _fpValue;    
     sub Stack::Swap;
-    return;    
+    return;
 
 "(Ptr::Float16*, Man::Byte, Exp::Byte)
 lab Floats::NormalizeAndSet;
@@ -165,7 +165,8 @@ lab Floats::NormalizeAndSet;
     pull _mantissa;
     sub Stack::Swap;
     pull _fpPtr;
-   
+    
+          
     jump Floats::NormalizeAndSet::CheckPosNaN;
     lab Floats::NormalizeAndSet::CheckFallBack;
     jump Floats::NormalizeAndSet::Man0 ~ _mantissa == 0;
@@ -176,7 +177,7 @@ lab Floats::NormalizeAndSet;
         put _exponent = (_exponent - 1) & 255;
     jump Floats::NormalizeAndSet::NormLoop;
     lab Floats::NormalizeAndSet::NormExit;
-
+    
     push _fpPtr;
     sub Stack::Dup;
 
@@ -231,14 +232,13 @@ lab Floats::Value2Fp;
 
     put _output = 0;
     put _exponent = 0;
-    
+        
     lab Floats::Value2Fp::Loop;
         jump Floats::Value2Fp::Exit ~ (_value >> _MANTISSA_SIZE) == 0;
         put _value    = _value >> 1;
         put _exponent = _exponent + 1;
     jump Floats::Value2Fp::Loop;
     lab Floats::Value2Fp::Exit;
-
 
     static 1 _fpPtr;
     put 0 -> _fpPtr;
@@ -538,36 +538,82 @@ lab Floats::Div;
     
 
 "(Val::Float16) => (Val::Float16)
+"square root approximation using the babylonian method
 lab Floats::Sqrt;
-    "square root approximation using archimedes
+lab Floats::SqrtSafe;
+lab Floats::SqrtBab;
     sub Stack::Swap;
-    pull _input;
+    pull _v;
     
     push 1;
     sub Floats::Value2Fp;
     
     "10 iterations 
-    put _index = 0;
+    put _i = 0;
     lab Floats::Sqrt::Loop;
         sub Stack::Dup; "make copy of val
-        push _input;
+        push _v;
         sub Stack::Swap;
         sub Floats::Div;
         sub Floats::Add; "add result of div with val stored previously
         
         push 1; "divide by two
-        sub Floats::ShiftSmall;        
-
-        "sub Stack::Dup;
-        "sub Floats::Fp2Value;
-        "pull _temp; print _temp;
-
-
-        put _index = _index + 1;
-    jump Floats::Sqrt::Loop ~ _index < 10;
+        sub Floats::ShiftSmall;
+        
+        put _i = _i + 1;
+    jump Floats::Sqrt::Loop ~ _i < 10;
 
     sub Stack::Swap;
     return;
+    
+"(Val::Float16) => (Val::Float16)
+"square root approximation using binary search
+lab Floats::SqrtFast;
+lab Floats::SqrtApprox;
+lab Floats::SqrtBin;
+    sub Stack::Swap;
+    pull _v;
+    
+    "extract mant and exp
+    push _v; sub Floats::GetExponent; pull _E;
+    push _v; sub Floats::GetMantissa; pull _M;
+    push _v;
+    
+    "sqrt(M * 2^E) = sqrt(M) * sqrt(2^E)
+    " = sqrt(M) * 2^(E/2)
+
+    "(E/2)
+    push _E;
+    sub Floats::Inv8 ~ _E & (1 << 7) != 0;
+    pull __; 
+    
+    "this is kinda hard to explain, but since the exponent is shifted to the right,
+    "the lsb is deleted, which might lead to an error if its set.
+    "thus the mantissa needs to be adjusted to the possible lsb error by
+    "multiplying it be 2, if the lsb of the exponent is set
+    put _M = _M << (__ & 1);
+    
+    push __ >> 1;
+    sub Floats::Inv8 ~ _E & (1 << 7) != 0;
+    pull _E;    
+
+
+    "sqrt(M)
+     push _M; sub Math::Sqrt; pull _M;
+
+    pull _v;
+    put _v -> _tempPtr;
+    push _tempPtr;
+    push _M;
+    push _E;
+    sub Floats::NormalizeAndSet;
+    
+    put _v <- _tempPtr;    
+    push _v;
+    sub Stack::Swap;
+    return;
+    
+    
 
 
 

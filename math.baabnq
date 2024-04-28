@@ -3,6 +3,8 @@ use 'libs/stack.baabnq';
 
 jump Math::Skip;
 
+"forward declaration
+put _i = 0;
 
 "(Value::Int) => (Value::Int + 1)
 lab Math::Inc;
@@ -213,8 +215,9 @@ lab Math::Div;
     pull _d;
     sub Stack::Swap;    
     pull _n;
-
-
+    
+    push _i;
+    
     put _q = 0;
     put _r = 0;
     put _i = 15;
@@ -228,6 +231,8 @@ lab Math::Div;
         put _i = _i - 1;
     jump Math::Div::Loop ~ _i != (0 - 1);
 
+    pull _i;
+
     push _q;
     sub Stack::Swap;
     return;
@@ -239,7 +244,8 @@ lab Math::Mod;
     pull _d;
     sub Stack::Swap;    
     pull _n;
-
+    
+    push _i;
 
     put _q = 0;
     put _r = 0;
@@ -253,6 +259,8 @@ lab Math::Mod;
         lab Math::Mod::SkipSub;
         put _i = _i - 1;
     jump Math::Mod::Loop ~ _i != (0 - 1);
+    
+    pull _i;
 
     push _r;
     sub Stack::Swap;
@@ -266,6 +274,8 @@ lab Math::Mod;
 lab Math::Sqrt;
     sub Stack::Swap;
     pull _v;
+    
+    push _i;
     
     put _x  = 0;
     "*dynamic programming* (wow, that's cool)
@@ -294,6 +304,8 @@ lab Math::Sqrt;
 
         put _i = _i - 1;
     jump Math::Sqrt::Loop ~ _i > 0;
+    
+    pull _i;
 
     push _x;
     sub Stack::Swap;
@@ -338,6 +350,8 @@ lab Math::Cbrt;
     sub Stack::Swap;
     pull _v;
     
+    push _i;
+    
     put _x  = 0;
     put _x2 = 0;
     put _x3 = 0;
@@ -367,6 +381,8 @@ lab Math::Cbrt;
         
         put _i = _i - 1;
     jump Math::Cbrt::Loop ~ _b > 0;
+    
+    pull _i;
     
     push _x;
     sub Stack::Swap;
