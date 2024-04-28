@@ -540,15 +540,20 @@ lab Floats::Div;
 "(Val::Float16) => (Val::Float16)
 "square root approximation using the babylonian method
 lab Floats::Sqrt;
-lab Floats::SqrtSafe;
 lab Floats::SqrtBab;
+    sub Stack::Swap;    
+    sub Stack::Dup;
+
+    "inital guess
+    sub Floats::SqrtApprox;
+
     sub Stack::Swap;
     pull _v;
     
-    push 1;
-    sub Floats::Value2Fp;
-    
-    "10 iterations 
+    "zero case
+    jump Floats::Sqrt::Zero ~ _v == _FpZero;
+                
+    "3 iterations
     put _i = 0;
     lab Floats::Sqrt::Loop;
         sub Stack::Dup; "make copy of val
@@ -556,13 +561,15 @@ lab Floats::SqrtBab;
         sub Stack::Swap;
         sub Floats::Div;
         sub Floats::Add; "add result of div with val stored previously
-        
+                 
         push 1; "divide by two
         sub Floats::ShiftSmall;
         
         put _i = _i + 1;
-    jump Floats::Sqrt::Loop ~ _i < 10;
+    jump Floats::Sqrt::Loop ~ _i < 3;
 
+    lab Floats::Sqrt::Zero;
+    
     sub Stack::Swap;
     return;
     
