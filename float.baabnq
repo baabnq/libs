@@ -112,12 +112,10 @@ lab Floats::SetSign;
     return;
 
 
-"there's no point in offset being a float, FIX IT !!!
-"(Value::Float16, Offset::Float16) => (Shift::Float16)
-"Shift::Float16 = Value::Float16 >> Offset::Float16
+"(Value::Float16, Offset::Int) => (Shift::Float16)
+"Shift::Float16 = Value::Float16 >> Offset::Int
 lab Floats::ShiftSmall;
     sub Stack::Swap;
-    sub Floats::Fp2Value;
     pull _offset;
     sub Stack::Swap;
     sub Stack::Dup; "keep reference to fpValue for SetExponent call
@@ -137,11 +135,10 @@ lab Floats::ShiftSmall;
     sub Stack::Swap;
     return;    
 
-"(Value::Float16, Offset::Float16) => (Shift::Float16)
-"Shift::Float16 = Value::Float16 << Offset::Float16
+"(Value::Float16, Offset::Int) => (Shift::Float16)
+"Shift::Float16 = Value::Float16 << Offset::Int
 lab Floats::ShiftGreat;
     sub Stack::Swap;
-    sub Floats::Fp2Value;
     pull _offset;
     sub Stack::Swap;
     sub Stack::Dup; "keep reference to fpValue for SetExponent call
@@ -558,7 +555,7 @@ lab Floats::Sqrt;
         sub Floats::Div;
         sub Floats::Add; "add result of div with val stored previously
         
-        push 31872; "divide by two (1 = 0f31872)
+        push 1; "divide by two
         sub Floats::ShiftSmall;        
 
         "sub Stack::Dup;

@@ -174,14 +174,14 @@ lab TestFloats::ShiftSmall;
 
     "test zero-shift
     push 378;  "some random value, in this case (float16)1000
-    push 16384;
+    push 0;
     sub Floats::ShiftSmall;
     pull _v;
     jump fail ~ _v != 378;
 
     "test n-shift for zero
     push 16384;
-    push 32288; "(float16)10
+    push 10;
     sub Floats::ShiftSmall;
     sub Floats::Fp2Value;
     pull _v;
@@ -191,7 +191,6 @@ lab TestFloats::ShiftSmall;
     push 64;
     sub Floats::Value2Fp;
     push 2;
-    sub Floats::Value2Fp;
     sub Floats::ShiftSmall;
     sub Floats::Fp2Value;
     pull _v;
@@ -204,14 +203,14 @@ lab TestFloats::ShiftGreat;
 
     "test zero-shift
     push 378;  "some random value, in this case (float16)1000
-    push 16384;
+    push 0;
     sub Floats::ShiftGreat;
     pull _v;
     jump fail ~ _v != 378;
 
     "test n-shift for zero
     push 16384;
-    push 32288; "(float16)10
+    push 10;
     sub Floats::ShiftGreat;
     sub Floats::Fp2Value;
     pull _v;
@@ -221,7 +220,6 @@ lab TestFloats::ShiftGreat;
     push 64;
     sub Floats::Value2Fp;
     push 2;
-    sub Floats::Value2Fp;
     sub Floats::ShiftGreat;
     sub Floats::Fp2Value;
     pull _v;
