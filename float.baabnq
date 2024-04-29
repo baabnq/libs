@@ -1,6 +1,6 @@
 "floating point lib
 "using the bfloat16 format https://en.wikipedia.org/wiki/Bfloat16_floating-point_format
-"a float is represented by a sigle 16-bit number
+"a float is represented by a single 16-bit number
 
 " format:
 "     msb [(1 bit sign) (8 bit exponent) (7 bit mantissa)] lsb
@@ -627,49 +627,35 @@ lab Floats::SqrtBin;
 "(Val1::Byte, Val2::Byte) => (Val::Bool)
 "Val::Bool = Val1::Byte > Val2::Byte
 lab Floats::LocalTCC8;
-    sub Stack::Swap;
-    pull _Floats::LocalTCC8::Val2;
-    sub Stack::Swap;
-    pull _Floats::LocalTCC8::Val1;
 
-    put _Floats::LocalTCC8::Sign1 = (_Floats::LocalTCC8::Val1 & 255) >> 7;
-    put _Floats::LocalTCC8::Sign2 = (_Floats::LocalTCC8::Val2 & 255) >> 7;
+    "cursed stack magic
+    asm '
+    jmS Stack::Swap; pla; sAD -val2;
+    jmS Stack::Swap; pla; sAD -val1;
 
-    "if the sign of the inputs are not the same, just compare the two
-    jump Floats::LocalTCC8::QuickSign ~ _Floats::LocalTCC8::Sign1 != _Floats::LocalTCC8::Sign2;
+    lDA (_val1); pha;    
+    lDA (_val2); pha;
+    
+    lDA -val1; sAD (_val1);  
+    lDA -val2; sAD (_val2);
+    
+    ';
 
-    "handle negativ
-    jump Floats::LocalTCC8::Neg ~ _Floats::LocalTCC8::Sign1 == 1;
 
-    "normal check
-    put _Floats::LocalTCC8::Output = 1;
-    jump Floats::LocalTCC8::Exit ~ _Floats::LocalTCC8::Val1 > _Floats::LocalTCC8::Val2; 
-        put _Floats::LocalTCC8::Output = 0;
-    lab Floats::LocalTCC8::Exit;
+    "take absolute of both values
+    push _val1; sub Floats::Inv8 ~ _val1 & 255 > 0; pull _val1;
+    push _val2; sub Floats::Inv8 ~ _val2 & 255 > 0; pull _val2;
 
-    push _Floats::LocalTCC8::Output;
+    jump Floats::LocalTCC8::True ~ _val1 > _val2;
+    jump Floats::LocalTCC8::False;
+    
+    lab Floats::LocalTCC8::True;  push 1; jump Floats::LocalTCC8::Done;
+    lab Floats::LocalTCC8::False; push 0; lab  Floats::LocalTCC8::Done;
+        
+    
+    sub Stack::Swap; pull _val2;
+    sub Stack::Swap; pull _val1;
     sub Stack::Swap;
     return;
-
-    lab Floats::LocalTCC8::Neg;
-        put _Floats::LocalTCC8::Output = 1;
-        jump Floats::LocalTCC8::Neg::Exit ~ _Floats::LocalTCC8::Val1 > _Floats::LocalTCC8::Val2; 
-            put _Floats::LocalTCC8::Output = 0;
-        lab Floats::LocalTCC8::Neg::Exit;
-
-        push _Floats::LocalTCC8::Output;
-        sub Stack::Swap;
-        return;
-
-
-    lab Floats::LocalTCC8::QuickSign;
-        put _Floats::LocalTCC8::Output = 1;
-        jump Floats::LocalTCC8::QuickSign::Exit ~ _Floats::LocalTCC8::Sign1 < _Floats::LocalTCC8::Sign2; 
-            put _Floats::LocalTCC8::Output = 0;
-        lab Floats::LocalTCC8::QuickSign::Exit;
-        push _Floats::LocalTCC8::Output;
-        sub Stack::Swap;
-        return;
-
 	
 lab Floats::Skip; 
