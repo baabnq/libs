@@ -279,7 +279,7 @@ lab Math::Sqrt;
     
     put _x  = 0;
     "*dynamic programming* (wow, that's cool)
-    put _x2 = 0; "x²
+    put _x2 = 0; "x^2
     put _2xb = 0; "2*x*b
     
     "probe bit
