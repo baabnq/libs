@@ -87,7 +87,7 @@ lab Floats::SetExponent;
     return;
 
 "(Value::Int) => (Inv::Int)
-lab Floats::Inv16;
+lab Floats::LocalInv16;
     sub Stack::Swap;
     pull _value;
     push (_value ^ (0 - 1)) + 1;
@@ -95,7 +95,7 @@ lab Floats::Inv16;
     return;
 
 "(Value::Byte) => (Inv::Byte)
-lab Floats::Inv8;
+lab Floats::LocalInv8;
     sub Stack::Swap;
     pull _value;
     push ((_value ^ (0 - 1)) + 1) & 255;
@@ -215,7 +215,7 @@ lab Floats::TwoC2Fp;
     pull _value;
     put _sign = (_value >> 15) & 1;
 
-    "sub Floats::Inv16 ~ _sign == 1;
+    "sub Floats::LocalInv16 ~ _sign == 1;
     pull _output;
     push (_output ^ (0 - _sign)) + _sign;  
     sub Floats::Value2Fp;
@@ -269,14 +269,14 @@ lab Floats::Fp2Value;
     
     jump Floats::Fp2Value::ExpNeg ~ (_exponent & (1 << 7)) != 0;
         push (_mantissa << _exponent);
-        sub Floats::Inv16 ~ _fpValue & _SIGN_MASK != 0;
+        sub Floats::LocalInv16 ~ _fpValue & _SIGN_MASK != 0;
         sub Stack::Swap;
         return;
 
     lab Floats::Fp2Value::ExpNeg;
         "two'c conversion (255, because 8 bit)
         push (_mantissa >> (((_exponent ^ (0 - 1)) + 1) & 255));
-        sub Floats::Inv16 ~ _fpValue & _SIGN_MASK != 0;
+        sub Floats::LocalInv16 ~ _fpValue & _SIGN_MASK != 0;
         sub Stack::Swap;
         return;
 
@@ -336,11 +336,11 @@ lab Floats::Add;
     
     "apply the sign
     push _valLowMantissa;
-    sub Floats::Inv16 ~ (_valLow & _SIGN_MASK) != 0;
+    sub Floats::LocalInv16 ~ (_valLow & _SIGN_MASK) != 0;
     pull _valLowMantissa;
 
     push _valBigMantissa;
-    sub Floats::Inv16 ~ (_valBig & _SIGN_MASK) != 0;
+    sub Floats::LocalInv16 ~ (_valBig & _SIGN_MASK) != 0;
     pull _valBigMantissa;
 
     "do the addition
@@ -591,7 +591,7 @@ lab Floats::SqrtBin;
 
     "(E/2)
     push _E;
-    sub Floats::Inv8 ~ _E & (1 << 7) != 0;
+    sub Floats::LocalInv8 ~ _E & (1 << 7) != 0;
     pull __; 
     
     "this is kinda hard to explain, but since the exponent is shifted to the right,
@@ -601,7 +601,7 @@ lab Floats::SqrtBin;
     put _M = _M << (__ & 1);
     
     push __ >> 1;
-    sub Floats::Inv8 ~ _E & (1 << 7) != 0;
+    sub Floats::LocalInv8 ~ _E & (1 << 7) != 0;
     pull _E;    
 
 
@@ -643,8 +643,8 @@ lab Floats::LocalTCC8;
 
 
     "take absolute of both values
-    push _val1; sub Floats::Inv8 ~ _val1 & 255 > 0; pull _val1;
-    push _val2; sub Floats::Inv8 ~ _val2 & 255 > 0; pull _val2;
+    push _val1; sub Floats::LocalInv8 ~ _val1 & 255 > 0; pull _val1;
+    push _val2; sub Floats::LocalInv8 ~ _val2 & 255 > 0; pull _val2;
 
     jump Floats::LocalTCC8::True ~ _val1 > _val2;
     jump Floats::LocalTCC8::False;

@@ -122,31 +122,31 @@ lab TestFloats::SetExponent;
     jump succ;
 
 
-lab TestFloats::Inv16;
+lab TestFloats::LocalInv16;
     sub fInit;
 
     push 0; "zero should be zero
-    sub Floats::Inv16;
+    sub Floats::LocalInv16;
     pull _v;
     jump fail ~ _v != 0;
 
     push 255;
-    sub Floats::Inv16;
+    sub Floats::LocalInv16;
     pull _v;
     jump fail ~ _v != ((255 << 8) | 1);
 
     jump succ;
 
-lab TestFloats::Inv8;
+lab TestFloats::LocalInv8;
     sub fInit;
 
     push 0; "zero should be zero
-    sub Floats::Inv8;
+    sub Floats::LocalInv8;
     pull _v;
     jump fail ~ _v != 0;
 
     push 255;
-    sub Floats::Inv8;
+    sub Floats::LocalInv8;
     pull _v;
     jump fail ~ _v != (0 | 1);
 
