@@ -623,7 +623,7 @@ lab Floats::SqrtBin;
 "(Val::Float16) => (Val::Float16)
 lab Floats::NaturalLog;
 lab Floats::Ln;
-        
+
 
 
 
@@ -631,26 +631,40 @@ lab Floats::Ln;
 lab Floats::LnApprox;
 lab Floats::LnFast;
     sub Stack::Swap;
+    
+    "ln(N) = ln(2^log2(N)) = ln(2) * log2(N)
+    "log2(N) is trivial to compute using the exponent for a floating point number
+        
+    "if you don't understand the reasoning, keep this logarithm rule in mind:
+    "    ln(a^b) = ln(a) * b
+    
+    sub Floats::Log2Approx;
+    push 31793; "^= 0.691406 ~ ln(2)
+    sub Floats::Mul;
+                         
+    sub Stack::Swap;
+    return;
+
+
+
+"(Val::Float16) => (Val::Float16)
+lab Floats::Log2Approx;
+lab Floats::Log2Fast;
+    sub Stack::Swap;
     pull _v;
     
     jump Floats::Ln::Undef ~ _v & _SIGN_MASK > 0;
     jump Floats::Ln::Zero  ~ _v == _FpZero;
     
+    "the trick is that ln(N) ~ E, where E is the exponent of the number N
+    "because N = M * 2^E, for floating point numbers
     push _v; sub Floats::GetExponent; pull _E;    
     
     "normalized form assumes a bias of -7,
     "which is accounted for by adding +7
-    put _log2 = (_E + 7) & 255;
-    
-    "this approximation completely ignores the mantissa
-    "ln(M*2^E) = ln(M) + ln(2) * E
-    "ln(2) ~ 0.69314... 
-
-    push _log2;
+    push (_E + 7) & 255;    
     sub Floats::Value2Fp;
-    push 31793; "^= 0.691406 ~ ln(2)
-    sub Floats::Mul;
-                         
+
     sub Stack::Swap;
     return;
 
