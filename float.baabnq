@@ -619,7 +619,50 @@ lab Floats::SqrtBin;
     push _v;
     sub Stack::Swap;
     return;
+   
+"(Val::Float16) => (Val::Float16)
+lab Floats::NaturalLog;
+lab Floats::Ln;
+        
+
+
+
+"(Val::Float16) => (Val::Float16)
+lab Floats::LnApprox;
+lab Floats::LnFast;
+    sub Stack::Swap;
+    pull _v;
     
+    jump Floats::Ln::Undef ~ _v & _SIGN_MASK > 0;
+    jump Floats::Ln::Zero  ~ _v == _FpZero;
+    
+    push _v; sub Floats::GetExponent; pull _E;    
+    
+    "normalized form assumes a bias of -7,
+    "which is accounted for by adding +7
+    put _log2 = (_E + 7) & 255;
+    
+    "this approximation completely ignores the mantissa
+    "ln(M*2^E) = ln(M) + ln(2) * E
+    "ln(2) ~ 0.69314... 
+
+    push _log2;
+    sub Floats::Value2Fp;
+    push 31793; "^= 0.691406 ~ ln(2)
+    sub Floats::Mul;
+                         
+    sub Stack::Swap;
+    return;
+
+    lab Floats::Ln::Undef;
+        push _posNaN;
+        sub Stack::Swap;
+        return;
+    
+    lab Floats::Ln::Zero;
+        push _FpZero;
+        sub Stack::Swap;
+        return;
     
 
 
