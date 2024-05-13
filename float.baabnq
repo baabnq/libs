@@ -646,26 +646,21 @@ lab Floats::Ln;
 
         
     "ln(M) ~ M * (-0.24 * M + 1.41) - 1.17
-    "push _M;
-    "push 64373; "-0.239258 ~ -0.24
-    "sub Floats::Mul;
-    "push 31924; " 1.406250 ~ 1.41
-    "sub Floats::Add;
-    "push _M;
-    "sub Floats::Mul;
-    "push 64661; "-1.164062 ~ -1.17
-    "sub Floats::Add;                
+    push _M;
+    push 64373; "-0.239258 ~ -0.24
+    sub Floats::Mul;
+    push 31924; " 1.406250 ~ 1.41
+    sub Floats::Add;
+    push _M;
+    sub Floats::Mul;
+    push 64661; "-1.164062 ~ -1.17
+    sub Floats::Add;                
     
 
     "ln(2) * E
-    "push _v;
-    "sub Floats::LnApprox;
-
-    print _M;
+    push _v;
+    sub Floats::LnApprox;
             
-    "push _M;
-    push 32712;
-    push 31872;
     sub Floats::Add;
     
     
@@ -686,7 +681,11 @@ lab Floats::LnFast;
     "    ln(a^b) = ln(a) * b
     
     sub Floats::Log2Approx;
+    sub Stack::Dup;
+    pull _log2;
+    sub Floats::LocalInv8 ~ _log2 & (1 << 7) > 0;
     sub Floats::Value2Fp;
+    sub Floats::SetSign ~ _log2 & (1 << 7) > 0;
     push 31793; "^= 0.691406 ~ ln(2)
     sub Floats::Mul;
                          
