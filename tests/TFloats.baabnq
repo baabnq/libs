@@ -356,6 +356,13 @@ lab TestFloats::Add;
     sub Floats::Add;
     pull _v;
     jump fail ~ _v != 393; "1096
+    
+    push 32712; "100
+    push 31872; "1
+    sub Floats::Add;
+    pull _v;
+    jump fail ~ _v != 32714; "101
+    
 
     "B (100 + 1000 = 1100 ~> 1096)
     push 32712; "100

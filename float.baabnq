@@ -14,6 +14,8 @@ put _upper16 = 65280;
 put _posNaN  = 16256;
 put _FpZero  = 16384;
 
+put _Floats::Zero = 16384;
+
 put _MANTISSA_SIZE = 8;
 put _EXPONENT_SIZE = 8;
 put _SIGN_OFFSET   = 15;
@@ -302,6 +304,7 @@ lab Floats::Add;
     push _val1Exp;
     sub Floats::LocalTCC8;
     pull _Temp;
+    
 
     jump Floats::Add::SkipValComp1 ~ _Temp == 0;
         put _valBig = _val2;
@@ -623,9 +626,51 @@ lab Floats::SqrtBin;
 "(Val::Float16) => (Val::Float16)
 lab Floats::NaturalLog;
 lab Floats::Ln;
+    sub Stack::Swap;
+    pull _v;
+
+
+    "ln(N)
+    "assume that N = M*2^E, where M in [1; 2), E is Real
+    " = ln(M*2^E)
+    " = ln(M) + ln(2^E)
+    " = ln(M) + ln(2) * E
     
+    "denormalize and float M
+    push _v;
+    sub Floats::GetMantissa;    
+    sub Floats::Value2Fp;
+    push 7;
+    sub Floats::ShiftSmall;
+    pull _M;
+
+        
+    "ln(M) ~ M * (-0.24 * M + 1.41) - 1.17
+    "push _M;
+    "push 64373; "-0.239258 ~ -0.24
+    "sub Floats::Mul;
+    "push 31924; " 1.406250 ~ 1.41
+    "sub Floats::Add;
+    "push _M;
+    "sub Floats::Mul;
+    "push 64661; "-1.164062 ~ -1.17
+    "sub Floats::Add;                
     
 
+    "ln(2) * E
+    "push _v;
+    "sub Floats::LnApprox;
+
+    print _M;
+            
+    "push _M;
+    push 32712;
+    push 31872;
+    sub Floats::Add;
+    
+    
+    sub Stack::Swap;
+    return;
 
 
 
@@ -677,7 +722,6 @@ lab Floats::Log2Fast;
     
 
 
-
 "(Val1::Byte, Val2::Byte) => (Val::Bool)
 "Val::Bool = Val1::Byte > Val2::Byte
 lab Floats::LocalTCC8;
@@ -695,12 +739,7 @@ lab Floats::LocalTCC8;
     
     ';
 
-
-    "take absolute of both values
-    push _val1; sub Floats::LocalInv8 ~ _val1 & 255 > 0; pull _val1;
-    push _val2; sub Floats::LocalInv8 ~ _val2 & 255 > 0; pull _val2;
-
-    jump Floats::LocalTCC8::True ~ _val1 > _val2;
+    jump Floats::LocalTCC8::True ~ _val1 - _val2 & (1 << 7) == 0;
     jump Floats::LocalTCC8::False;
     
     lab Floats::LocalTCC8::True;  push 1; jump Floats::LocalTCC8::Done;
