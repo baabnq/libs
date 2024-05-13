@@ -623,6 +623,8 @@ lab Floats::SqrtBin;
 "(Val::Float16) => (Val::Float16)
 lab Floats::NaturalLog;
 lab Floats::Ln;
+    
+    
 
 
 
@@ -639,6 +641,7 @@ lab Floats::LnFast;
     "    ln(a^b) = ln(a) * b
     
     sub Floats::Log2Approx;
+    sub Floats::Value2Fp;
     push 31793; "^= 0.691406 ~ ln(2)
     sub Floats::Mul;
                          
@@ -647,14 +650,14 @@ lab Floats::LnFast;
 
 
 
-"(Val::Float16) => (Val::Float16)
+"(Val::Float16) => (Val::Int)
 lab Floats::Log2Approx;
 lab Floats::Log2Fast;
     sub Stack::Swap;
     pull _v;
     
-    jump Floats::Ln::Undef ~ _v & _SIGN_MASK > 0;
-    jump Floats::Ln::Zero  ~ _v == _FpZero;
+    jump Floats::Ln::Zero ~ _v & _SIGN_MASK > 0;
+    jump Floats::Ln::Zero ~ _v == _FpZero;
     
     "the trick is that ln(N) ~ E, where E is the exponent of the number N
     "because N = M * 2^E, for floating point numbers
@@ -662,19 +665,13 @@ lab Floats::Log2Fast;
     
     "normalized form assumes a bias of -7,
     "which is accounted for by adding +7
-    push (_E + 7) & 255;    
-    sub Floats::Value2Fp;
+    push (_E + 7) & 255;
 
     sub Stack::Swap;
     return;
 
-    lab Floats::Ln::Undef;
-        push _posNaN;
-        sub Stack::Swap;
-        return;
-    
     lab Floats::Ln::Zero;
-        push _FpZero;
+        push 0;
         sub Stack::Swap;
         return;
     
