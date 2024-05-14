@@ -10,18 +10,16 @@
 use 'libs/math.baabnq';
 use 'libs/stack.baabnq';
 
-put _upper16 = 65280;
-put _posNaN  = 16256;
-put _FpZero  = 16384;
+put _Floats::Zero    = 16384;
+put _Floats::PosNaN  = 16256;
 
-put _Floats::Zero = 16384;
-
-put _MANTISSA_SIZE = 8;
-put _EXPONENT_SIZE = 8;
-put _SIGN_OFFSET   = 15;
-put _MANTISSA_MASK = 127;
-put _EXPONENT_MASK = 255;
-put _SIGN_MASK     = 32768;
+put _UPPER16         = 65280;
+put _MANTISSA_SIZE   = 8;
+put _EXPONENT_SIZE   = 8;
+put _SIGN_OFFSET     = 15;
+put _MANTISSA_MASK   = 127;
+put _EXPONENT_MASK   = 255;
+put _SIGN_MASK       = 32768;
 put _MIN_SIGNED_CHAR = 128;
 
 static 1 _tempPtr;
@@ -203,9 +201,9 @@ lab Floats::NormalizeAndSet;
         return;
 
     lab Floats::NormalizeAndSet::CheckPosNaN;
-        jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _upper16 == 0;
-        jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _upper16 == _upper16;
-        put _posNaN -> _fpPtr;
+        jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _UPPER16 == 0;
+        jump Floats::NormalizeAndSet::CheckFallBack ~ _exponent & _UPPER16 == _UPPER16;
+        put _Floats::PosNaN -> _fpPtr;
         return;
 
 
@@ -389,8 +387,8 @@ lab Floats::Mul;
     pull _val1;
 
     "check for zero
-    jump Floats::Mul::Zero ~ _val1 == _FpZero;
-    jump Floats::Mul::Zero ~ _val2 == _FpZero;
+    jump Floats::Mul::Zero ~ _val1 == _Floats::Zero;
+    jump Floats::Mul::Zero ~ _val2 == _Floats::Zero;
 
 
     push _val1;
@@ -433,9 +431,9 @@ lab Floats::Mul;
     return;
 
     lab Floats::Mul::Zero;
-    push _FpZero;
-    sub Stack::Swap;
-    return;
+        push _Floats::Zero;
+        sub Stack::Swap;
+        return;
     
 
 "(Val1::Float16, Val2::Float16) => (Val::Bool)
@@ -554,7 +552,7 @@ lab Floats::SqrtBab;
     pull _v;
     
     "zero case
-    jump Floats::Sqrt::Zero ~ _v == _FpZero;
+    jump Floats::Sqrt::Zero ~ _v == _Floats::Zero;
                 
     "3 iterations
     put _i = 0;
@@ -629,7 +627,6 @@ lab Floats::Ln;
     sub Stack::Swap;
     pull _v;
 
-
     "ln(N)
     "assume that N = M*2^E, where M in [1; 2), E is Real
     " = ln(M*2^E)
@@ -644,7 +641,6 @@ lab Floats::Ln;
     sub Floats::ShiftSmall;
     pull _M;
 
-        
     "ln(M) ~ M * (-0.24 * M + 1.41) - 1.17
     push _M;
     push 64373; "-0.239258 ~ -0.24
@@ -662,7 +658,6 @@ lab Floats::Ln;
     sub Floats::LnApprox;
             
     sub Floats::Add;
-    
     
     sub Stack::Swap;
     return;
@@ -701,7 +696,7 @@ lab Floats::Log2Fast;
     pull _v;
     
     jump Floats::Ln::Zero ~ _v & _SIGN_MASK > 0;
-    jump Floats::Ln::Zero ~ _v == _FpZero;
+    jump Floats::Ln::Zero ~ _v == _Floats::Zero;
     
     "the trick is that ln(N) ~ E, where E is the exponent of the number N
     "because N = M * 2^E, for floating point numbers

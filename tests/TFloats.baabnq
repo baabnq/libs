@@ -1,12 +1,13 @@
 
 use 'libs/tests/common.baabnq';
 
-put _upper16 = 0;
-put _posNaN = 0;
-put _FpZero = 0;
+put _Floats::Zero   = 0;
+put _Floats::PosNaN = 0;
+
+put _UPPER16       = 0;
 put _MANTISSA_SIZE = 0;
 put _EXPONENT_SIZE = 0;
-put _SIGN_SIZE = 0;
+put _SIGN_SIZE     = 0;
 put _MANTISSA_MASK = 0;
 put _EXPONENT_MASK = 0;
 put _SIGN_MASK = 0;
@@ -25,9 +26,9 @@ lab TestFloats::Const;
     sub fInit;
 
     "shared consts
-    jump fail ~ _upper16 != 65280;
-    jump fail ~ _posNaN != 16256;
-    jump fail ~ _FpZero != 16384;
+    jump fail ~ _UPPER16 != 65280;
+    jump fail ~ _Floats::PosNaN != 16256;
+    jump fail ~ _Floats::Zero != 16384;
 
     "system consts
     jump fail ~ _MANTISSA_SIZE != 8;
