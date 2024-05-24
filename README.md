@@ -23,12 +23,12 @@ Integers are always 16-bit unsigned words that may also act as pointers into mem
 A chunk is a continuous part of heap memory, allocated and managed by the virtual machine. The Baabnq compiler extends them by making chunks always behave like pascal strings, storing the length before the regular start of the chunk. Therefore, they are usually not null-terminated, unless they store a string. Chunks can be directly allocated in Baabnq like this:
 ```new <size of chunk> _ptr;```
 Chunks may also be statically (compile-time) allocated:
-```static '<string>' _ptr```
+```static <size of chunk> _ptr;```
 This makes the chunk immutable.
 #### Strings
 Strings are null-terminated chunks. Like chunks, they can also be heap allocated directly in baabnq: 
 ```new '<string>' _ptr;```
-```static '<string>' _ptr```
+```static '<string>' _ptr;```
 ### Extended Data Structures (implemented only by libraries)
 #### Linked lists
 Linked lists are implemented through nodes, where each node has a constant length of 2 words:
