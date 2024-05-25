@@ -22,7 +22,7 @@ lab String::Print;
 
 "takes number, converts it to string
 "THIS WILL ALLOCATE MEMORY
-"(Num::Int) -> (Str::String*)
+"(Num::Int) => (Str::String*)
 lab String::Int2Str;
     sub Stack::Swap;
     pull _Num;
