@@ -52,7 +52,51 @@ lab TestChunk::Sum;
     
     jump succ;
 
+"only case based because the average routine is based on already tested subroutines
+lab TestChunk::Avg;
+    "sanity check
+    new 2 _p;
+    put 10 -> _p + 0;
+    put 20 -> _p + 1;    
+    push _p;
+    sub Chunk::Avg;
+    pull __;
+    free _p;
+    jump fail ~ __ != 15; 
 
+    new 3 _p;
+    put 10 -> _p + 0;
+    put 20 -> _p + 1;
+    put 30 -> _p + 2;
+    push _p;
+    sub Chunk::Avg;
+    pull __;
+    free _p;
+    jump fail ~ __ != 20;
+
+    new 10 _p;
+    push _p;
+    push 0;
+    push 10;
+    sub Chunk::Range;
+    push _p;
+    sub Chunk::Avg;
+    pull __;
+    free _p;
+    jump fail ~ __ != 4; "4.5
+
+
+    new 'hello world' _p;
+    push _p;
+    sub Chunk::Avg;
+    pull __;
+    free _p;
+    jump fail ~ __ != 93; 
+    "turns out the average of hello world is 93
+    "who would have thought
+    
+    jump succ;
+        
 
 lab TestChunk::Sort;    
     put _size = 64; "has to be power of two
