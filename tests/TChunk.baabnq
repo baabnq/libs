@@ -4,10 +4,58 @@ use 'libs/chunk.baabnq';
 use 'libs/rand.baabnq';
 use 'libs/no.baabnq';
 
-lab TestChunk::Sort;
-    put _Rand::X = 1; "initialize rand.baabnq
+
+lab TestChunk::Len;
+    put _i = 0;
     
-    put _size = 32; "has to be power of two
+    lab Local::TestChunk::Len::Loop;
+        new _i _p;
+        
+        push _p;
+        sub Chunk::Len;
+        pull __;
+        jump fail ~ __ != _i;
+        
+        free _p;
+        
+        put _i = _i + 10;
+    jump Local::TestChunk::Len::Loop ~ _i < 10000;
+    
+    jump succ;
+    
+    
+lab TestChunk::Sum;
+    put _size = 200;
+    new _size _p;
+    
+    put _total = 0;
+    
+    put _i = 0;
+    put _j = _size - 1;
+    lab Local::TestChunk::Sum::Loop;
+        sub Rand::Xorshift;
+        pull _k;
+        put _k -> _p + _j;
+        put _total = _total + _k;
+
+        push _p;
+        sub Chunk::Sum;
+        pull __;
+                
+        jump fail ~ __ != _total;
+    
+        put _i = _i + 1;
+        put _j = _j - 1;
+    jump Local::TestChunk::Sum::Loop ~ _i < _size; 
+    
+    free _p;
+    
+    jump succ;
+
+
+
+lab TestChunk::Sort;    
+    put _size = 64; "has to be power of two
     
     put _l = 0;
     new _size _p;
@@ -25,7 +73,7 @@ lab TestChunk::Sort;
         put _i = 0;
         lab Local::TestChunk::Sort::Scramble;
             push _i;
-            sub do;
+            sub Local::TestChunk::Sort::OneScramble;
             pull _i;
             put _i = _i + 1;
         jump Local::TestChunk::Sort::Scramble ~ _i < _size;
@@ -51,7 +99,7 @@ lab TestChunk::Sort;
     
     jump succ;
     
-    lab do;
+    lab Local::TestChunk::Sort::OneScramble;
         sub Rand::Xorshift;
         sub Rand::Xorshift;
         pull _i;

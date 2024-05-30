@@ -3,10 +3,17 @@ use 'libs/stack.baabnq';
 "init systemvars
 put _Rand::X = 1;
 
+
 jump Rand::Skip;
 
+lab Rand::Init;
+    put _Rand::X = 1;
+    return;
+    
 
 lab Rand::Xorshift;
+
+sub Rand::Init ~ _Rand::X == 0;
 
 put _Rand::X = _Rand::X ^ (_Rand::X << 7);
 put _Rand::X = _Rand::X ^ (_Rand::X >> 9);

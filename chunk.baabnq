@@ -23,6 +23,8 @@ lab Chunk::Sum;
     sub Stack::Swap;
     pull _x;
     
+    push _i;
+    
     put _i <- _x - 1;
     put _sum = 0;
     lab Chunk::Sum::Loop;
@@ -30,6 +32,8 @@ lab Chunk::Sum;
         put _data <- _x + _i;
         put _sum = _sum + _data;
     jump Chunk::Sum::Loop ~ _i > 0;
+    
+    pull _i;
     
     push _sum;
     sub Stack::Swap;
@@ -67,13 +71,6 @@ lab Chunk::LocalQuickRadix;
     put _j = _lst;
     
     lab Chunk::LocalQuickRadix::Loop;
-        "print _bit;
-        "putchr 32;
-        "print _i;
-        "putchr 32;
-        "print _j;
-        "putchr 10;
-
         put __ <- _x + _i; put _bitI = __ & _bit;
         put __ <- _x + _j; put _bitJ = __ & _bit;
     
