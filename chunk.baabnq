@@ -10,7 +10,7 @@ lab Chunk::Len;
 
     put _len <- _x - 1;
     
-    push _len;
+    push _len - 1;
     sub Stack::Swap;
     return;
 
@@ -51,6 +51,81 @@ lab Chunk::Avg;
     sub Stack::Swap;
     return;
 
+
+"(X::Int*, Fst::Int, Lst::Int, Bit::Int)
+lab Chunk::LocalQuickRadix;
+    sub Stack::Swap; pull _bit;
+    sub Stack::Swap; pull _lst;
+    sub Stack::Swap; pull _fst;
+    sub Stack::Swap; pull _x;
+    
+    sub No::Return ~ _bit == 0;
+    sub No::Return ~ _fst == _lst;
+    sub No::Return ~ _fst >  _lst;
+        
+    put _i = _fst;
+    put _j = _lst;
+    
+    lab Chunk::LocalQuickRadix::Loop;
+        "print _bit;
+        "putchr 32;
+        "print _i;
+        "putchr 32;
+        "print _j;
+        "putchr 10;
+
+        put __ <- _x + _i; put _bitI = __ & _bit;
+        put __ <- _x + _j; put _bitJ = __ & _bit;
+    
+        jump Chunk::LocalQuickRadix::SwapSkip ~ _bitI == 0;
+        jump Chunk::LocalQuickRadix::SwapSkip ~ _bitJ != 0;
+            put _a <- _x + _i;
+            put _b <- _x + _j;
+            put _b -> _x + _i;
+            put _a -> _x + _j;
+                        
+        lab Chunk::LocalQuickRadix::SwapSkip;
+
+        push _i; sub Math::Inc ~ _bitI == 0; pull _i;
+        push _j; sub Math::Dec ~ _bitJ != 0; pull _j;
+            
+    jump Chunk::LocalQuickRadix::Loop ~ _i < _j;
+    jump Chunk::LocalQuickRadix::Loop ~ _i == _j;
+    
+    put _bitNext = _bit >> 1;
+    
+    "frame 2
+    push _x;
+    push _j + 1;
+    push _lst;
+    push _bitNext;
+    "frame 1
+    push _x;
+    push _fst;
+    push _i - 1;
+    push _bitNext;
+    "call for 1
+    sub Chunk::LocalQuickRadix;
+    "call for 2
+    sub Chunk::LocalQuickRadix;
+                
+    return;
+
+
+"(X::Int*, N::Int)
+lab Chunk::Sort;
+lab Chunk::QuickRadix;
+    sub Stack::Swap; pull _n;
+    sub Stack::Swap; pull _x;
+    
+    push _x;
+    push 0;
+    push _n - 1;
+    push (1 << 15);
+
+    sub Chunk::LocalQuickRadix;
+
+    return;
 
 "(Elem::A, X::A*) => (Index::Int)
 "index :: a -> [a] -> Maybe Int
@@ -105,6 +180,134 @@ lab Chunk::Count;
     sub Stack::Swap;
     return;
 
+"(X::Int*)
+"reverse :: [a] -> [a]
+"reverse [] = []
+"reverse (x:xs) = (reverse xs) ++ [x]
+lab Chunk::Reverse;
+    sub Stack::Swap;
+    pull _start;
+
+    put _len <- _x - 1;    
+    put _end = _start + _len - 1;
+    
+    lab Chunk::Reverse::Loop;
+        put _a <- _start;
+        put _b <- _end;
+        put _b -> _start;
+        put _a -> _end;
+        
+        put _start = _start + 1;
+        put _end   = _end   + 1;        
+    jump Chunk::Reverse::Loop ~ _start < _end;
+    return;
+
+"(X::Int*) => (Y::Int*)
+lab Chunk::Copy;
+    sub Stack::Swap;
+    pull _x;
+    
+    put _len <- _x - 1;
+    put _len = _len - 1;
+
+    new _len _y;
+    put _i = 0;
+    
+    lab Chunk::Copy::Loop;
+        put _data <- _x + _i;
+        put _data -> _y + _i;
+        
+        put _i = _i + 1;
+    jump Chunk::Copy::Loop ~ _i < _len;
+    
+    push _y;
+    sub Stack::Swap;
+    return;
+
+"(X::Int*, Start::Int, End::Int) => (X::Int*)
+"range :: Int -> Int -> [Int]
+"range x x = []
+"range s e = [s] ++ range (s+1) e
+lab Chunk::Range;
+    sub Stack::Swap; pull _end;
+    sub Stack::Swap; pull _start;
+    sub Stack::Swap; pull _x;
+
+    lab Chunk::Range::Loop;
+        put _start -> _x + _start;
+        put _start = _start + 1;
+    jump Chunk::Range::Loop ~ _start < _end;
+    
+    return;
+
+
+"(X::Int*) => (Min::Int)
+"min :: [Int] -> Int
+"min [] = maxBound :: Int
+"min (x:xs) = if m < x then m else x
+"   where m = min xs
+lab Chunk::Min;
+    sub Stack::Swap;
+    pull _x;
+    
+    put _len <- _x - 1;
+    put _min = 0 - 1;
+    put _i = 0;
+    lab Chunk::Min::Loop;
+        put _data <- _x + _i;
+        jump Chunk::Min::Skip ~ _data < _min;
+            put _min = _data;
+        lab Chunk::Min::Skip;
+        put _i = _i + 1;
+    jump Chunk::Min::Loop ~ _i < _len;
+
+    push _min;
+    sub Stack::Swap;
+    return;
+
+"(X::Int*) => (Max::Int)
+"max :: [Int] -> Int
+"max [] = maxBound :: Int
+"max (x:xs) = if m > x then m else x
+"   where m = min xs
+lab Chunk::Max;
+    sub Stack::Swap;
+    pull _x;
+    
+    put _len <- _x - 1;
+    put _max = 0;
+    put _i = 0;
+    lab Chunk::Min::Loop;
+        put _data <- _x + _i;
+        jump Chunk::Min::Skip ~ _data > _max;
+            put _max = _data;
+        lab Chunk::Min::Skip;
+        put _i = _i + 1;
+    jump Chunk::Min::Loop ~ _i < _len;
+
+    push _max;
+    sub Stack::Swap;
+    return;
+
+
+
+
+"(X::Int*) => IO
+lab Chunk::Print;
+    sub Stack::Swap;
+    pull _x;
+    
+    put _len <- _x - 1;
+    put _len = _len - 1;
+    
+    put _i = 0;
+    lab Chunk::Print::Loop;
+        put _data <- _x + _i;
+        print _data;
+        put _i = _i + 1;
+    jump Chunk::Print::Loop ~ _i < _len;
+
+    return;
 
 
 
