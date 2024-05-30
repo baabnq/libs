@@ -1,0 +1,70 @@
+
+use 'libs/tests/common.baabnq';
+use 'libs/chunk.baabnq';
+use 'libs/rand.baabnq';
+use 'libs/no.baabnq';
+
+lab TestChunk::Sort;
+    put _Rand::X = 1; "initialize rand.baabnq
+    
+    put _size = 32; "has to be power of two
+    
+    put _l = 0;
+    new _size _p;
+    push _p;
+    push 0;
+    push _size;
+    sub Chunk::Range;
+    "more edge cases
+    put 10     -> _p + 20;
+    put 10000  -> _p + 30;
+    put 69     -> _p + 31;
+       
+    lab Local::TestChunk::Sort::Loop;
+                
+        put _i = 0;
+        lab Local::TestChunk::Sort::Scramble;
+            push _i;
+            sub do;
+            pull _i;
+            put _i = _i + 1;
+        jump Local::TestChunk::Sort::Scramble ~ _i < _size;
+
+
+        push _p;
+        push _size;
+        sub Chunk::Sort;
+
+        
+        put _i = 0;
+        lab Local::TestChunk::Sort::Check;
+            put _a <- _p + _i;
+            put _b <- _p + _i + 1;
+            jump fail ~ _a > _b;
+        
+            put _i = _i + 1;
+        jump Local::TestChunk::Sort::Check ~ _i < _size - 1;
+        
+        put _l = _l + 1;
+    jump Local::TestChunk::Sort::Loop ~ _l < 50;
+    free _p;
+    
+    jump succ;
+    
+    lab do;
+        sub Rand::Xorshift;
+        sub Rand::Xorshift;
+        pull _i;
+        pull _j;
+        put _i = _i & (_size - 1);
+        put _j = _j & (_size - 1);
+        put _a <- _p + _i;
+        put _b <- _p + _j;
+        put _b -> _p + _i;
+        put _a -> _p + _j;
+    return;
+
+
+lab TestChunk::Range;
+
+
