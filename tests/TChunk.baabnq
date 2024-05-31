@@ -267,5 +267,39 @@ lab TestChunk::Reverse;
     
     free _p;    
     jump succ;
+    
+    
+    
+lab TestChunk::Copy;
+    put _size = 1000;
+    new _size _p;
+    
+    put _i = 0;
+    lab Local::TestChunk::Copy::RandomLoop;
+        sub Rand::Xorshift;
+        pull __;
+        put __ -> _p + _i;
+        put _i = _i + 1;
+    jump Local::TestChunk::Copy::RandomLoop ~ _i < _size;
+        
+    push _p;
+    sub Chunk::Copy;
+    pull _q;
+    
+    put __ <- _q - 1;
+    jump fail ~ __ != _size + 1;
+        
+    put _i = 0;
+    lab Local::TestChunk::Copy::CheckLoop;
+        put _a <- _p + _i;
+        put _b <- _q + _i;
+        jump fail ~ _a != _b;
+        put _i = _i + 1;
+    jump Local::TestChunk::Copy::CheckLoop ~ _i < _size;
+    
+    free _p;
+    free _q;        
+    jump succ;
+    
 
 
