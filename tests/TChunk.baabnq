@@ -4,10 +4,30 @@ use 'libs/chunk.baabnq';
 use 'libs/rand.baabnq';
 use 'libs/no.baabnq';
 
-
 lab TestChunk::Range;
+    put _size = 1000;
+    put _offset = 10000;
+    new _size _p;
 
+    push _p;
+    push _offset;
+    push _offset + _size;
+    sub Chunk::Range;
+    
+    "middle  of the range should be half   of the size, plus the offset
+    "quarter of the range should be fourth of the size, plus the offset
+    "et cetera ad infinitum (sed non in hoc casu, quia non est mathematica)
+    put _i = 1;
+    lab Local::TestChunk::Range;
+        put _samplePoint = _size >> _i;
+        put __ <- _p + _samplePoint;
+        jump fail ~ __ != _offset + _samplePoint;
+        
+        put _i = _i + 1;
+    jump Local::TestChunk::Range ~ _samplePoint > 0;
+    free _p;
 
+    jump succ;
 
 
 lab TestChunk::Len;
