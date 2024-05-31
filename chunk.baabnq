@@ -124,7 +124,7 @@ lab Chunk::QuickRadix;
 
     return;
 
-"(Elem::A, X::A*) => (Index::Int)
+"(X::A*, Elem::A) => (Index::Int)
 "index :: a -> [a] -> Maybe Int
 "index x [] = Nothing
 "index x (y:ys)
@@ -134,9 +134,9 @@ lab Chunk::QuickRadix;
 "                    Just x  -> Just (x+1)
 lab Chunk::Index;
     sub Stack::Swap;
-    pull _x;
-    sub Stack::Swap;
     pull _elem;
+    sub Stack::Swap;
+    pull _x;
     
     push _i;
     
@@ -157,15 +157,15 @@ lab Chunk::Index;
     return;
 
 
-"(Elem::A, X::A*) => (Index::Int)
+"(X::A*, Elem::A) => (Index::Int)
 "count :: a -> [a] -> Int
 "count x [] = 0
 "count x (y:ys) = (count x ys) + (if x == y then 1 else 0)
 lab Chunk::Count;
     sub Stack::Swap;
-    pull _x;
-    sub Stack::Swap;
     pull _elem;
+    sub Stack::Swap;
+    pull _x;
     
     put _i <- _x - 1;
     put _count = 0;
@@ -173,11 +173,11 @@ lab Chunk::Count;
         put _i = _i - 1;
         put _data <- _x + _i;
         jump Chunk::Count::Skip ~ _data != _elem;
-            put _count = _count + 1;
+            put _count = _count + 1;            
         lab Chunk::Count::Skip;
     jump Chunk::Count::Loop ~ _i > 0;
     
-    push _index;
+    push _count;
     sub Stack::Swap;
     return;
 

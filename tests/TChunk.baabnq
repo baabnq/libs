@@ -112,8 +112,8 @@ lab TestChunk::Index;
     
     put _i = 1;
     lab Local::TestChunk::Index::Loop;
-        push _i;
         push _p;
+        push _i;
         sub Chunk::Index;
         pull __;
         jump fail ~ __ != _i + _size;
@@ -122,6 +122,29 @@ lab TestChunk::Index;
        
     free _p;
     jump succ;
+
+
+lab TestChunk::Count;
+    new 'hello world' _p;    
+    push _p;
+    push 108; "l ^= 108
+    sub Chunk::Count;
+    pull __;
+    jump fail ~ __ != 3;
+    free _p;
+
+    new 'the quick brown fox jumps over the lazy dog' _p;
+    push _p;
+    push 32; "space
+    sub Chunk::Count;
+    pull __;
+    jump fail ~ __ != 8;
+    free _p;
+            
+    jump succ;
+    
+
+
 
 lab TestChunk::Sort;    
     put _size = 64; "has to be power of two
