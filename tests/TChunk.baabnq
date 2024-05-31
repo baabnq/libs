@@ -5,6 +5,11 @@ use 'libs/rand.baabnq';
 use 'libs/no.baabnq';
 
 
+lab TestChunk::Range;
+
+
+
+
 lab TestChunk::Len;
     put _i = 0;
     
@@ -204,7 +209,5 @@ lab TestChunk::Sort;
         put _a -> _p + _j;
     return;
 
-
-lab TestChunk::Range;
 
 

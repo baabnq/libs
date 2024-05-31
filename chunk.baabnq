@@ -233,12 +233,13 @@ lab Chunk::Range;
     sub Stack::Swap; pull _end;
     sub Stack::Swap; pull _start;
     sub Stack::Swap; pull _x;
-
+    
     lab Chunk::Range::Loop;
-        put _start -> _x + _start;
+        put _start -> _x;
+        put _x = _x + 1;
         put _start = _start + 1;
     jump Chunk::Range::Loop ~ _start < _end;
-    
+        
     return;
 
 
