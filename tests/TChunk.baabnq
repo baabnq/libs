@@ -212,8 +212,8 @@ lab TestChunk::Sort;
         
         put _l = _l + 1;
     jump Local::TestChunk::Sort::Loop ~ _l < 50;
-    free _p;
-    
+
+    free _p;    
     jump succ;
     
     lab Local::TestChunk::Sort::OneScramble;
@@ -229,5 +229,43 @@ lab TestChunk::Sort;
         put _a -> _p + _j;
     return;
 
+
+lab TestChunk::Reverse;
+    put _size = 100;
+    new _size _p;
+    
+
+    push _p;
+    push 0;
+    push _size;
+    sub Chunk::Range;    
+    
+
+    push _p;
+    sub Chunk::Reverse;
+    
+    put _i = 0;
+    lab Local::TestChunk::Reverse::CheckReverse;
+        put _a <- _p + _i;
+        put _b <- _p + _i + 1;
+        jump fail ~ _a < _b;
+        jump fail ~ _a == _b;
+        put _i = _i + 1;
+    jump Local::TestChunk::Reverse::CheckReverse ~ _i < _size - 1;
+    
+    push _p;
+    sub Chunk::Reverse;
+        
+    put _i = 0;
+    lab Local::TestChunk::Reverse::CheckDoubleReverse;
+        put _a <- _p + _i;
+        put _b <- _p + _i + 1;
+        jump fail ~ _a > _b;
+        jump fail ~ _a == _b;
+        put _i = _i + 1;
+    jump Local::TestChunk::Reverse::CheckDoubleReverse ~ _i < _size - 1;
+    
+    free _p;    
+    jump succ;
 
 

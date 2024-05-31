@@ -38,7 +38,8 @@ lab Chunk::Sum;
     push _sum;
     sub Stack::Swap;
     return;
-    
+
+
 "(X::Int*) => (Avg::Int)
 "avg :: [Int] -> Int
 "avg x = sum x / len x
@@ -189,8 +190,8 @@ lab Chunk::Reverse;
     sub Stack::Swap;
     pull _start;
 
-    put _len <- _x - 1;    
-    put _end = _start + _len - 1;
+    put _len <- _start - 1;    
+    put _end = _start + _len - 2;
     
     lab Chunk::Reverse::Loop;
         put _a <- _start;
@@ -199,7 +200,7 @@ lab Chunk::Reverse;
         put _a -> _end;
         
         put _start = _start + 1;
-        put _end   = _end   + 1;        
+        put _end   = _end   - 1;        
     jump Chunk::Reverse::Loop ~ _start < _end;
     return;
 
