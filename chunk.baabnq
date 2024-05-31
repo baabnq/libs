@@ -258,11 +258,11 @@ lab Chunk::Min;
     put _i = 0;
     lab Chunk::Min::Loop;
         put _data <- _x + _i;
-        jump Chunk::Min::Skip ~ _data < _min;
+        jump Chunk::Min::Skip ~ _data > _min;
             put _min = _data;
         lab Chunk::Min::Skip;
         put _i = _i + 1;
-    jump Chunk::Min::Loop ~ _i < _len;
+    jump Chunk::Min::Loop ~ _i < _len - 1;
 
     push _min;
     sub Stack::Swap;
@@ -280,13 +280,13 @@ lab Chunk::Max;
     put _len <- _x - 1;
     put _max = 0;
     put _i = 0;
-    lab Chunk::Min::Loop;
+    lab Chunk::Max::Loop;
         put _data <- _x + _i;
-        jump Chunk::Min::Skip ~ _data > _max;
+        jump Chunk::Max::Skip ~ _data < _max;
             put _max = _data;
-        lab Chunk::Min::Skip;
+        lab Chunk::Max::Skip;
         put _i = _i + 1;
-    jump Chunk::Min::Loop ~ _i < _len;
+    jump Chunk::Max::Loop ~ _i < _len - 1;
 
     push _max;
     sub Stack::Swap;
@@ -303,12 +303,16 @@ lab Chunk::Print;
     put _len <- _x - 1;
     put _len = _len - 1;
     
+    push _i;
+    
     put _i = 0;
     lab Chunk::Print::Loop;
         put _data <- _x + _i;
         print _data;
         put _i = _i + 1;
     jump Chunk::Print::Loop ~ _i < _len;
+    
+    pull _i;
 
     return;
 

@@ -302,4 +302,23 @@ lab TestChunk::Copy;
     jump succ;
     
 
+"one unit test for both, they're basically the same
+lab TestChunk::MinMax;
+    new 'zzz hello world, the quick brown fox jumps over the lazy dog aaa' _p;
+    "remove terminator
+    put __ <- _p - 1;
+    put 50 -> _p + __ - 2;
+            
+    push _p;
+    sub Chunk::Min;
+    pull __;
+    jump fail ~ __ != 32;
+    
+    push _p;
+    sub Chunk::Max;
+    pull __;
+    jump fail ~ __ != 122;
+
+    free _p;
+    jump succ;
 
