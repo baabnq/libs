@@ -138,6 +138,8 @@ lab Chunk::Index;
     sub Stack::Swap;
     pull _elem;
     
+    push _i;
+    
     put _i <- _x - 1;
     put _index = 0 - 1;
     lab Chunk::Index::Loop;
@@ -147,6 +149,8 @@ lab Chunk::Index;
             put _index = _i;
         lab Chunk::Index::Skip;
     jump Chunk::Index::Loop ~ _i > 0;
+    
+    pull _i;
     
     push _index;
     sub Stack::Swap;

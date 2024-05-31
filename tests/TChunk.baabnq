@@ -97,6 +97,31 @@ lab TestChunk::Avg;
     
     jump succ;
         
+        
+        
+lab TestChunk::Index;
+    put _size = 100;
+    "allocate a chunk double the size of _size,
+    "then fill the upper half using range, while the lower range stays empty
+    "this will cause an offset of _size which can be tested for
+    new (_size << 1) _p;
+    push _p + _size;
+    push 0;
+    push _size;
+    sub Chunk::Range;
+    
+    put _i = 1;
+    lab Local::TestChunk::Index::Loop;
+        push _i;
+        push _p;
+        sub Chunk::Index;
+        pull __;
+        jump fail ~ __ != _i + _size;
+        put _i = _i + 1;
+    jump Local::TestChunk::Index::Loop ~ _i < _size; 
+       
+    free _p;
+    jump succ;
 
 lab TestChunk::Sort;    
     put _size = 64; "has to be power of two
