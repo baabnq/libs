@@ -225,6 +225,29 @@ lab Chunk::Copy;
     push _y;
     sub Stack::Swap;
     return;
+    
+"(X::Int*, Start::Int, End::Int) => (Y::Int*)
+lab Chunk::Slice;
+    sub Stack::Swap; pull _end;
+    sub Stack::Swap; pull _start;
+    sub Stack::Swap; pull _x;
+    
+    put _len = _end - _start;
+    new _len _y;
+    
+    put _i = 0;
+    lab Chunk::Slice::Loop;
+        put _data <- _x + _i + _start;
+        put _data -> _y + _i;
+        
+        put _i = _i + 1;
+    jump Chunk::Slice::Loop ~ _i < _len;
+    
+    push _y;
+    sub Stack::Swap;
+    return;
+    
+    
 
 "(X::Int*, Start::Int, End::Int) => (X::Int*)
 "range :: Int -> Int -> [Int]

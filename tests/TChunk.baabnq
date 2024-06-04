@@ -301,6 +301,32 @@ lab TestChunk::Copy;
     free _q;        
     jump succ;
     
+    
+lab TestChunk::Slice;
+    new 'concatenation' _p;
+    
+    put _size = 3;
+    
+    push _p;
+    push 3;
+    push 3 + _size;
+    sub Chunk::Slice;
+    pull __;
+
+    free _p;
+    new 'cat' _p; "YAAAAY, CAT!!!!
+
+    put _i = 0;
+    lab Local::TestChunk::Slice::Loop;
+        put _a <- __ + _i;
+        put _b <- _p + _i;
+        put _i = _i + 1;
+        jump fail ~ _a != _b;
+    jump Local::TestChunk::Slice::Loop ~ _i < _size;
+    
+    free _p;
+    jump succ;
+    
 
 "one unit test for both, they're basically the same
 lab TestChunk::MinMax;
