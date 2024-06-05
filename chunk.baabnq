@@ -207,25 +207,17 @@ lab Chunk::Reverse;
 "(X::Int*) => (Y::Int*)
 lab Chunk::Copy;
     sub Stack::Swap;
-    pull _x;
     
-    put _len <- _x - 1;
-    put _len = _len - 1;
+    sub Stack::Dup;
+    sub Chunk::Len;
+    push 0;
+    sub Stack::Swap;
+    
+    sub Chunk::Slice;
 
-    new _len _y;
-    put _i = 0;
-    
-    lab Chunk::Copy::Loop;
-        put _data <- _x + _i;
-        put _data -> _y + _i;
-        
-        put _i = _i + 1;
-    jump Chunk::Copy::Loop ~ _i < _len;
-    
-    push _y;
     sub Stack::Swap;
     return;
-    
+            
 "(X::Int*, Start::Int, End::Int) => (Y::Int*)
 lab Chunk::Slice;
     sub Stack::Swap; pull _end;
