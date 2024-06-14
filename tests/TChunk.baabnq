@@ -385,3 +385,29 @@ lab TestChunk::Concat;
     jump Local::TestChunk::Concat::Loop ~ _i < 15;
     
     jump succ;        
+
+
+
+lab TestChunk::In;
+    put _size = 100;
+    new _size _p;
+    
+    push _p;
+    push 0;
+    push _size;
+    sub Chunk::Range;
+    
+    push _p;
+    push _size << 1;
+    sub Chunk::In;
+    pull __;
+    jump fail ~ __ != 0;
+    
+    push _p;
+    push _size >> 1;
+    sub Chunk::In;
+    pull __;
+    jump fail ~ __ == 0;
+    
+    jump succ;
+

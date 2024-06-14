@@ -261,7 +261,7 @@ lab Chunk::Range;
 
 "(X::Int*) => (Min::Int)
 "min :: [Int] -> Int
-"min [] = maxBound :: Int
+"min [] = minBound :: Int
 "min (x:xs) = if m < x then m else x
 "   where m = min xs
 lab Chunk::Min;
@@ -339,6 +339,38 @@ lab Chunk::Concat;
     push _x;
     sub Stack::Swap;
     return;
+    
+
+"(X::Int*, V::Int) => (Bool)
+"contains []     _ = False
+"contains (x:xs) v = x == v || contains xs v   
+lab Chunk::Contains;
+lab Chunk::In;
+    sub Stack::Swap; pull _v;
+    sub Stack::Swap; pull _x;
+    
+    put _len <- _x - 1;
+    put _ptr = _x + _len;
+    lab Chunk::Contains::Loop;
+        put _ptr = _ptr - 1;
+        put __ <- _ptr;
+        jump Chunk::Contains::Found ~ __ == _v;
+    jump Chunk::Contains::Loop ~ _ptr > _x;
+    
+        push 0;
+        sub Stack::Swap;
+        return;
+    
+    lab Chunk::Contains::Found;
+        push 1;
+        sub Stack::Swap;
+        return;
+
+    
+    
+    
+    
+
 
 
 "(X::Int*) => IO

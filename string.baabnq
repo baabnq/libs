@@ -208,7 +208,7 @@ lab String::StrChr;
         put _StrPtr = _StrPtr + 1;
                 
         jump String::ScanChar::Found    ~ _Data == _Char;
-        jump String::ScanChar::IterLoop ~ _Data != 0;
+    jump String::ScanChar::IterLoop ~ _Data != 0;
         
         push 0;
         sub Stack::Swap;
