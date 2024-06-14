@@ -310,6 +310,37 @@ lab Chunk::Max;
 
 
 
+"(A::Int*, B::Int*) => (X::Int*)
+"concat []     x = x
+"concat (a:ax) b = a : concat ax b
+lab Chunk::Concat;
+    sub Stack::Swap; pull _b;
+    sub Stack::Swap; pull _a;
+    
+    put _lenA <- _a - 1; put _lenA = _lenA - 1;
+    put _lenB <- _b - 1; put _lenB = _lenB - 1;
+        
+    put _endA = _a + _lenA;
+    put _endB = _b + _lenB;
+            
+    new (_lenA + _lenB) _x;
+    put _p = _x;
+    
+    lab Chunk::Concat::LoopA;
+        put __ <- _a; put _a = _a + 1;
+        put __ -> _p; put _p = _p + 1;
+    jump Chunk::Concat::LoopA ~ _a < _endA;
+        
+    lab Chunk::Concat::LoopB;
+        put __ <- _b; put _b = _b + 1;
+        put __ -> _p; put _p = _p + 1;
+    jump Chunk::Concat::LoopB ~ _b < _endB;
+
+    push _x;
+    sub Stack::Swap;
+    return;
+
+
 "(X::Int*) => IO
 lab Chunk::Print;
     sub Stack::Swap;

@@ -348,3 +348,40 @@ lab TestChunk::MinMax;
     free _p;
     jump succ;
 
+
+lab TestChunk::Concat;
+    new 10 _p1;
+    new 5  _p2;
+    
+    push _p1;
+    push 0;
+    push 10;
+    sub Chunk::Range;
+    push _p2;
+    push 10;
+    push 15;
+    sub Chunk::Range;
+    
+    push _p1;
+    push _p2;
+    sub Chunk::Concat;
+    pull __;
+            
+    free _p1;
+    free _p2;
+    
+    new 15 _p;
+    push _p;
+    push 0;
+    push 15;
+    sub Chunk::Range;
+    
+    put _i = 0;
+    lab Local::TestChunk::Concat::Loop;
+        put _a <- __ + _i;
+        put _b <- _p + _i;
+        put _i = _i + 1;
+        jump fail ~ _a != _b;
+    jump Local::TestChunk::Concat::Loop ~ _i < 15;
+    
+    jump succ;        

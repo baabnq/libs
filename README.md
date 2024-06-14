@@ -38,6 +38,7 @@ Floats (in routine signatures: Float16) are floating-point values, based on the 
 | -------- | -------- | ----------- |
 | sign     | exponent |   mantissa  |
 
-The only difference between bfloat16 and this implementation is that the exponent does not have bias but instead uses two's complement. This, however, does not affect the external usage or function of the library.
+The only difference between bfloat16 and this implementation is that the exponent does not have bias, but instead uses two's complement. 
+This, however, does not affect the external usage or function of the library.
 
 
