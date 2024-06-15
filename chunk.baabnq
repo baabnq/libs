@@ -366,6 +366,41 @@ lab Chunk::In;
         sub Stack::Swap;
         return;
 
+
+"(A::Int*, B::Int*) => (Match::Bool)
+"compare [] [] = True
+"compare []  _ = False
+"compare _  [] = False
+"compare (x:xs) (y:ys) = x == y && compare xs ys
+lab Chunk::Compare;
+lab Chunk::Cmp;
+    sub Stack::Swap; pull _y;
+    sub Stack::Swap; pull _x;
+    
+    put _lenX <- _x - 1;
+    put _lenY <- _y - 1;
+        
+    "check length
+    jump Chunk::Compare::False ~ _lenX != _lenY;
+
+    "check content
+    put _len = _lenX - 1;
+    lab Chunk::Compare::Loop;
+        put _len = _len - 1;
+        put _a <- _x + _len;
+        put _b <- _y + _len;
+        jump Chunk::Compare::False ~ _a != _b;
+    jump Chunk::Compare::Loop ~ _len > 0;
+    
+        push 1;
+        sub Stack::Swap;
+        return;
+
+    lab Chunk::Compare::False;
+        push 0;
+        sub Stack::Swap;
+        return;
+    
     
     
     
