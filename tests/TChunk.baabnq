@@ -467,3 +467,38 @@ lab TestChunk::Compare;
     free _p1;
     
     jump succ;
+    
+    
+    
+lab TestChunk::Hash;
+    "hash('hello world') ^= 51393
+    new 'hello world' _p;
+    "remove terminator
+    put __     <- _p - 1;
+    put __ - 1 -> _p - 1;
+
+    push _p;
+    sub Chunk::Hash;
+    pull __;
+    jump fail ~ __ != 51393;
+    
+    free _p;
+
+    "hash([0..9]) ^= 13938
+    new 10 _p;
+    push _p;
+    push 0;
+    push 10;
+    sub Chunk::Range;
+
+    push _p;
+    sub Chunk::Hash;
+    pull __;
+    jump fail ~ __ != 13938;
+    
+    free _p;
+
+    jump succ;
+    
+    
+    

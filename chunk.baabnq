@@ -403,7 +403,27 @@ lab Chunk::Cmp;
     
     
     
+"(X::Int*) => (Hash::Int)
+lab Chunk::DJB2;
+lab Chunk::Hash;
+    sub Stack::Swap;
+    pull _x;
     
+    put _i = 0;
+    put _len <- _x - 1;
+    put _len = _len - 1;
+    
+    put _hash = 5381;
+    
+    lab Chunk::Hash::Loop;
+        put __ <- _x + _i;
+        put _hash = ((_hash << 5) + _hash) + __;
+        put _i = _i + 1;
+    jump Chunk::Hash::Loop ~ _i < _len;
+    
+    push _hash;
+    sub Stack::Swap;
+    return;
     
 
 
