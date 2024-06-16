@@ -26,6 +26,7 @@ lab Chunk::Sum;
     push _i;
     
     put _i <- _x - 1;
+    put _i = _i - 1;
     put _sum = 0;
     lab Chunk::Sum::Loop;
         put _i = _i - 1;
@@ -311,6 +312,7 @@ lab Chunk::Max;
 
 
 "(A::Int*, B::Int*) => (X::Int*)
+"concat :: [a] -> [a] -> [a]
 "concat []     x = x
 "concat (a:ax) b = a : concat ax b
 lab Chunk::Concat;
@@ -342,6 +344,7 @@ lab Chunk::Concat;
     
 
 "(X::Int*, V::Int) => (Bool)
+"contains :: [a] -> a -> Bool
 "contains []     _ = False
 "contains (x:xs) v = x == v || contains xs v   
 lab Chunk::Contains;
@@ -368,6 +371,7 @@ lab Chunk::In;
 
 
 "(A::Int*, B::Int*) => (Match::Bool)
+"compare :: [a] -> [a] -> Bool
 "compare [] [] = True
 "compare []  _ = False
 "compare _  [] = False
@@ -409,6 +413,8 @@ lab Chunk::Hash;
     sub Stack::Swap;
     pull _x;
     
+    push _i;
+    
     put _i = 0;
     put _len <- _x - 1;
     put _len = _len - 1;
@@ -421,10 +427,70 @@ lab Chunk::Hash;
         put _i = _i + 1;
     jump Chunk::Hash::Loop ~ _i < _len;
     
+    pull _i;
+    
     push _hash;
     sub Stack::Swap;
     return;
     
+    
+    
+    
+"(X::Int*)
+"clear [Int] -> [Int]
+"clear []     = []
+"clear (x:xs) = 0 : clear xs
+lab Chunk::Clear;
+    "this does some stack magic and fall-through.
+    "stack frame diagrams are placed between each statement
+    "to illustrate the process of manipulation.
+    
+    "| return address |
+    "|   (X::Int*)    |
+    "------------------
+    
+    push 0;
+    
+    "|   0 (V::Int)   |
+    "| return address |
+    "|   (X::Int*)    |
+    "------------------    
+        
+    sub Stack::Swap;
+
+    "| return address |
+    "|   0 (V::Int)   |
+    "|   (X::Int*)    |
+    "------------------    
+
+    "this matches the routine signature of Chunk::Fill,
+    "so the fall-through will proceed without error.
+
+    "it effectively calls Chunk::Fill like this:
+        "push _x;
+        "push 0;
+        "sub Chunk::Fill;
+
+"(X::Int*, V::Int)
+"fill [Int] -> Int -> [Int]
+"fill []     _ = []
+"fill (x:xs) v = v : fill xs v
+lab Chunk::Fill;
+    sub Stack::Swap; pull _v;
+    sub Stack::Swap; pull _x;
+    
+    push _i;
+    
+    put _len <- _x - 1;
+    put _len = _len - 1;
+    put _i = 0;
+    lab Chunk::Fill::Loop;
+        put _v -> _x + _i;
+        put _i = _i + 1;
+    jump Chunk::Fill::Loop ~ _i < _len;
+    
+    pull _i;
+    return;
 
 
 
@@ -435,7 +501,7 @@ lab Chunk::Print;
     
     put _len <- _x - 1;
     put _len = _len - 1;
-    
+        
     push _i;
     
     put _i = 0;

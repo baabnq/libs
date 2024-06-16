@@ -501,4 +501,48 @@ lab TestChunk::Hash;
     jump succ;
     
     
+"this is like TestChunk::MinMax,
+"fill and clear also basically do the same,
+"clear is just a special case
+lab TestChunk::FillClear;
+    "+1 for bounds check
+    new 8 + 1 _p;
+    put 100 -> _p + 8;
+    "dec len
+    put __     <- _p - 1;
+    put __ - 1 -> _p - 1;
+        
+    "fill
+    push _p;
+    push 7;
+    sub Chunk::Fill;
+            
+    push _p;
+    sub Chunk::Sum;
+    pull __;
+    "7 * 8 = 56
+    jump fail ~ __ != 56;
+    
+    "bounds check
+    put __ <- _p + 8;
+    jump fail ~ __ != 100;
+    
+    
+    "clear
+    "inc len
+    put __     <- _p - 1;
+    put __ + 1 -> _p - 1;
+        
+    push _p;
+    sub Chunk::Clear;
+    
+    push _p;
+    sub Chunk::Sum;
+    pull __;
+    "0 * 9 = 0
+    jump fail ~ __ != 0;
+    
+    free _p;
+    
+    jump succ;
     
