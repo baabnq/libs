@@ -420,6 +420,7 @@ lab TestChunk::Compare;
     new _size      _p0;
     new _size >> 1 _p1;
     
+    
     push _p0;
     push _p1;
     sub Chunk::Compare;
@@ -445,7 +446,7 @@ lab TestChunk::Compare;
     push 0;
     push _size;
     sub Chunk::Range;
-    
+        
     push _p0;
     push _p1;
     sub Chunk::Compare;

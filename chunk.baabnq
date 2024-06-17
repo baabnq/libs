@@ -6,11 +6,25 @@ jump Chunk::Skip;
 "(X::Int*) => (Len::Int)
 lab Chunk::Len;
     sub Stack::Swap;
-    pull _x;
-
-    put _len <- _x - 1;
     
-    push _len - 1;
+    "pull _x;
+    "put _len <- _x - 1;
+    "push _len - 1;
+    
+    "osokute to buggy af desunode asm o tsukau
+    "(romaji ni tsuite wa gomennasai)
+    
+    asm '
+    pla;
+    set 1;
+    sub;
+    sAD -x;
+    lPA -x;
+    sub;
+    pha;
+    ';
+    
+    
     sub Stack::Swap;
     return;
 
@@ -199,7 +213,7 @@ lab Chunk::Reverse;
     sub Stack::Swap;
     pull _start;
 
-    push _x;
+    push _start;
     sub Chunk::Len;
     pull _len;
 
@@ -401,22 +415,23 @@ lab Chunk::Cmp;
     sub Stack::Swap; pull _y;
     sub Stack::Swap; pull _x;
     
+    
     push _x; sub Chunk::Len; pull _lenX;
     push _y; sub Chunk::Len; pull _lenY;
             
+    push _i;
+
     "check length
     jump Chunk::Compare::False ~ _lenX != _lenY;
 
-    push _i;
-
     "check content
-    put _i = _lenX;
+    put _i = 0;
     lab Chunk::Compare::Loop;
-        put _i = _i - 1;
         put _a <- _x + _i;
         put _b <- _y + _i;
         jump Chunk::Compare::False ~ _a != _b;
-    jump Chunk::Compare::Loop ~ _i > 0;
+        put _i = _i + 1;
+    jump Chunk::Compare::Loop ~ _i < _lenX;
     
         pull _i;
         push 1;
