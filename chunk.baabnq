@@ -25,8 +25,10 @@ lab Chunk::Sum;
     
     push _i;
     
-    put _i <- _x - 1;
-    put _i = _i - 1;
+    push _x;
+    sub Chunk::Len;
+    pull _i;
+    
     put _sum = 0;
     lab Chunk::Sum::Loop;
         put _i = _i - 1;
@@ -142,7 +144,10 @@ lab Chunk::Index;
     
     push _i;
     
-    put _i <- _x - 1;
+    push _x;
+    sub Chunk::Len;
+    pull _i;
+    
     put _index = 0 - 1;
     lab Chunk::Index::Loop;
         put _i = _i - 1;
@@ -169,7 +174,10 @@ lab Chunk::Count;
     sub Stack::Swap;
     pull _x;
     
-    put _i <- _x - 1;
+    push _x;
+    sub Chunk::Len;
+    pull _i;
+    
     put _count = 0;
     lab Chunk::Count::Loop;
         put _i = _i - 1;
@@ -191,8 +199,11 @@ lab Chunk::Reverse;
     sub Stack::Swap;
     pull _start;
 
-    put _len <- _start - 1;    
-    put _end = _start + _len - 2;
+    push _x;
+    sub Chunk::Len;
+    pull _len;
+
+    put _end = _start + _len - 1;
     
     lab Chunk::Reverse::Loop;
         put _a <- _start;
@@ -268,8 +279,11 @@ lab Chunk::Range;
 lab Chunk::Min;
     sub Stack::Swap;
     pull _x;
-    
-    put _len <- _x - 1;
+
+    push _x;
+    sub Chunk::Len;
+    pull _len;
+            
     put _min = 0 - 1;
     put _i = 0;
     lab Chunk::Min::Loop;
@@ -278,7 +292,7 @@ lab Chunk::Min;
             put _min = _data;
         lab Chunk::Min::Skip;
         put _i = _i + 1;
-    jump Chunk::Min::Loop ~ _i < _len - 1;
+    jump Chunk::Min::Loop ~ _i < _len;
 
     push _min;
     sub Stack::Swap;
@@ -293,7 +307,10 @@ lab Chunk::Max;
     sub Stack::Swap;
     pull _x;
     
-    put _len <- _x - 1;
+    push _x;
+    sub Chunk::Len;
+    pull _len;
+
     put _max = 0;
     put _i = 0;
     lab Chunk::Max::Loop;
@@ -302,7 +319,7 @@ lab Chunk::Max;
             put _max = _data;
         lab Chunk::Max::Skip;
         put _i = _i + 1;
-    jump Chunk::Max::Loop ~ _i < _len - 1;
+    jump Chunk::Max::Loop ~ _i < _len;
 
     push _max;
     sub Stack::Swap;
@@ -319,9 +336,9 @@ lab Chunk::Concat;
     sub Stack::Swap; pull _b;
     sub Stack::Swap; pull _a;
     
-    put _lenA <- _a - 1; put _lenA = _lenA - 1;
-    put _lenB <- _b - 1; put _lenB = _lenB - 1;
-        
+    push _a; sub Chunk::Len; pull _lenA;
+    push _B; sub Chunk::Len; pull _lenB;
+            
     put _endA = _a + _lenA;
     put _endB = _b + _lenB;
             
@@ -352,7 +369,10 @@ lab Chunk::In;
     sub Stack::Swap; pull _v;
     sub Stack::Swap; pull _x;
     
-    put _len <- _x - 1;
+    push _x;
+    sub Chunk::Len;
+    pull _len;
+
     put _ptr = _x + _len;
     lab Chunk::Contains::Loop;
         put _ptr = _ptr - 1;
@@ -381,26 +401,30 @@ lab Chunk::Cmp;
     sub Stack::Swap; pull _y;
     sub Stack::Swap; pull _x;
     
-    put _lenX <- _x - 1;
-    put _lenY <- _y - 1;
-        
+    push _x; sub Chunk::Len; pull _lenX;
+    push _y; sub Chunk::Len; pull _lenY;
+            
     "check length
     jump Chunk::Compare::False ~ _lenX != _lenY;
 
+    push _i;
+
     "check content
-    put _len = _lenX - 1;
+    put _i = _lenX;
     lab Chunk::Compare::Loop;
-        put _len = _len - 1;
-        put _a <- _x + _len;
-        put _b <- _y + _len;
+        put _i = _i - 1;
+        put _a <- _x + _i;
+        put _b <- _y + _i;
         jump Chunk::Compare::False ~ _a != _b;
-    jump Chunk::Compare::Loop ~ _len > 0;
+    jump Chunk::Compare::Loop ~ _i > 0;
     
+        pull _i;
         push 1;
         sub Stack::Swap;
         return;
 
     lab Chunk::Compare::False;
+        pull _i;
         push 0;
         sub Stack::Swap;
         return;
@@ -415,12 +439,13 @@ lab Chunk::Hash;
     
     push _i;
     
-    put _i = 0;
-    put _len <- _x - 1;
-    put _len = _len - 1;
-    
+    push _x;
+    sub Chunk::Len;
+    pull _len;
+        
     put _hash = 5381;
     
+    put _i = 0;
     lab Chunk::Hash::Loop;
         put __ <- _x + _i;
         put _hash = ((_hash << 5) + _hash) + __;
@@ -481,8 +506,10 @@ lab Chunk::Fill;
     
     push _i;
     
-    put _len <- _x - 1;
-    put _len = _len - 1;
+    push _x;
+    sub Chunk::Len;
+    pull _len;
+    
     put _i = 0;
     lab Chunk::Fill::Loop;
         put _v -> _x + _i;
@@ -499,8 +526,9 @@ lab Chunk::Print;
     sub Stack::Swap;
     pull _x;
     
-    put _len <- _x - 1;
-    put _len = _len - 1;
+    push _x;
+    sub Chunk::Len;
+    pull _len;
         
     push _i;
     
