@@ -337,7 +337,7 @@ lab Chunk::Concat;
     sub Stack::Swap; pull _a;
     
     push _a; sub Chunk::Len; pull _lenA;
-    push _B; sub Chunk::Len; pull _lenB;
+    push _b; sub Chunk::Len; pull _lenB;
             
     put _endA = _a + _lenA;
     put _endB = _b + _lenB;
