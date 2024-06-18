@@ -127,15 +127,14 @@ lab Chunk::LocalQuickRadix;
     return;
 
 
-"(X::Int*, N::Int)
+"(X::Int*)
 lab Chunk::Sort;
 lab Chunk::QuickRadix;
-    sub Stack::Swap; pull _n;
     sub Stack::Swap; pull _x;
     
     push _x;
     push 0;
-    push _n - 1;
+    push _x; sub Chunk::Len; sub Math::Dec;
     push (1 << 15);
 
     sub Chunk::LocalQuickRadix;
