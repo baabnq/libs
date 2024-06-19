@@ -11,7 +11,7 @@ lab Chunk::Len;
     "put _len <- _x - 1;
     "push _len - 1;
     
-    "osokute to buggy af desunode asm o tsukau
+    "sore wa osokute warui node "asm" o tsukau
     "(romaji ni tsuite wa gomennasai)
     
     asm '
