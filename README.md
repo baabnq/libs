@@ -5,6 +5,7 @@ All libraries expect to be included like so: ```use 'libs/<library>.baabnq'```
 
 ### File Descriptions
 - **chunk.baabnq**: operations for heap chunks
+- **fast.baabnq**: low level / assembler routines optimized for speed
 - **float.baanq**: floating-point implementation based on bfloat16 and respective mathematical operations
 - **math.baabnq**: mathematical operations for integers
 - **no.baabnq**: panic, stack dumping, and other exception handling utilities
