@@ -6,17 +6,17 @@ jump String::Skip;
 lab String::PrintString;
 lab String::Print;
     sub Stack::Swap;
-    pull _StringPtr;
+    pull _pStr;
 
 
-    lab String::PrintString::PrintLoop;
-    put _Data <- _StringPtr;
-    jump String::PrintString::Exit ~ _Data == 0;
+    lab String::PrintString::Loop;
+        put _data <- _pStr;
+        put _pStr = _pStr + 1;
+        jump String::PrintString::Exit ~ _data == 0;
 
-    putchr _Data;
+        putchr _data;
 
-    put _StringPtr = _StringPtr + 1;
-    jump String::PrintString::PrintLoop;
+        jump String::PrintString::Loop;
     lab String::PrintString::Exit;
     return;
 
@@ -25,7 +25,7 @@ lab String::Print;
 "(Num::Int) => (Str::String*)
 lab String::Int2Str;
     sub Stack::Swap;
-    pull _Num;
+    pull _num;
 
     "16-bit int limit is 65535, so 5 digits plus terminator
     new 6 _pStr;
@@ -33,27 +33,27 @@ lab String::Int2Str;
     put _pWrite = _pStr;
 
     "keep track of trailing
-    put _IsContent = 0;
+    put _isContent = 0;
     
     "populate string from start to end
-    put _PlaceVal = 10000;
+    put _placeVal = 10000;
     put _Index = 0;
     lab String::Int2Str::Loop;
         put _Count = 0;
         lab String::Int2Str::DivLoop;
-            jump String::Int2Str::DivDone ~ _Num == 0;
-            jump String::Int2Str::DivDone ~ _Num < _PlaceVal;
+            jump String::Int2Str::DivDone ~ _num == 0;
+            jump String::Int2Str::DivDone ~ _num < _placeVal;
             put _Count = _Count + 1;
-            put _Num = _Num - _PlaceVal;
+            put _num = _num - _placeVal;
         jump String::Int2Str::DivLoop;
         lab String::Int2Str::DivDone;
 
         push _Index; "i love baabnq
 
-        push _PlaceVal;
+        push _placeVal;
         push 10;
         sub Math::Div;
-        pull _PlaceVal;
+        pull _placeVal;
 
         pull _Index;
 
@@ -120,12 +120,12 @@ lab String::MemCpy;
     put _index = 0;
 
     lab String::MemCpy::Loop;
-    jump String::MemCpy::Exit ~ _index == _size;
+        jump String::MemCpy::Exit ~ _index == _size;
         put _data <- _pSrc  + _index;
         put _data -> _pDest + _index;
 
         put _index = _index + 1;
-    jump String::MemCpy::Loop;
+        jump String::MemCpy::Loop;
     lab String::MemCpy::Exit;
     
     return;
@@ -160,7 +160,7 @@ lab String::MemSet;
         
         put _val -> _ptr;
         put _ptr =  _ptr + 1;
-    jump String::MemSet::Loop;
+        jump String::MemSet::Loop;
     lab String::MemSet::Exit;
     
     return;
@@ -185,7 +185,7 @@ lab String::StrCmp;
         
         put _pStr1 = _pStr1 + 1;
         put _pStr2 = _pStr2 + 1;
-    jump String::MemCmp::Loop;
+        jump String::MemCmp::Loop;
     lab String::MemCmp::Done;
     
     push _val1 - _val2;
@@ -207,7 +207,7 @@ lab String::StrChr;
         put _Data <- _StrPtr;
         put _StrPtr = _StrPtr + 1;
                 
-        jump String::ScanChar::Found    ~ _Data == _Char;
+        jump String::ScanChar::Found ~ _Data == _Char;
     jump String::ScanChar::IterLoop ~ _Data != 0;
         
         push 0;
@@ -255,8 +255,8 @@ lab String::Concat;
     return;
 
 
+
 "takes const char** and join strings into one DOES NOT DEALLOC
-"substr most contain size at -1, too lazy to implement properlly
 
 "(Container::Char**) => (Sequence::Char*)
 "join :: [[Char]] -> [Char]
@@ -302,7 +302,7 @@ lab String::Join;
         put _iOut = _iOut + _Size; "move _pOut over to free memory
         sub String::MemCpy;
 
-    jump String::Join::Copy;
+        jump String::Join::Copy;
     lab String::Join::CopyDone;
 
     push _pOut;
