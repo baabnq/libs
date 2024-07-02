@@ -1,5 +1,9 @@
+
 use 'libs/math.baabnq';
 use 'libs/stack.baabnq';
+use 'libs/fast.baabnq';
+
+
 jump String::Skip;
 
 "(Str::String*) => IO
@@ -31,48 +35,24 @@ lab String::Int2Str;
     new 6 _pStr;
     put 0 -> _pStr + 5;
     put _pWrite = _pStr;
-
-    "keep track of trailing
-    put _isContent = 0;
     
-    "populate string from start to end
-    put _placeVal = 10000;
-    put _Index = 0;
+    "populate in reverse
+    put _i = 5;
     lab String::Int2Str::Loop;
-        put _Count = 0;
-        lab String::Int2Str::DivLoop;
-            jump String::Int2Str::DivDone ~ _num == 0;
-            jump String::Int2Str::DivDone ~ _num < _placeVal;
-            put _Count = _Count + 1;
-            put _num = _num - _placeVal;
-        jump String::Int2Str::DivLoop;
-        lab String::Int2Str::DivDone;
+        push _num;
+        sub Fast::DivMod10;
+        pull _num;
+        pull _digit;
 
-        push _Index; "i love baabnq
+        jump String::Int2Str::DigitVaild ~ _num | _digit > 0; "digit is invaild when part of trailing zeros
+        jump String::Int2Str::DigitVaild ~            _i > 4; "the first digit is always vaild
+            put _digit = 0 - 48 + 32;
+        lab String::Int2Str::DigitVaild;                
+                
+        put _i = _i - 1;
+        put _digit + 48 -> _pStr + _i;
 
-        push _placeVal;
-        push 10;
-        sub Math::Div;
-        pull _placeVal;
-
-        pull _Index;
-
-        "check trailing, _IsContent is 0 while _Count is 0, that's why we or
-        put _IsContent = _IsContent | _Count;
-
-        "skip trailing 0s
-        jump String::Int2Str::SkipWrite ~ _IsContent == 0;
-            put _Count + 48 -> _pWrite;
-            put _pWrite = _pWrite + 1;
-        lab String::Int2Str::SkipWrite;
-
-        put _Index = _Index + 1;
-    jump String::Int2Str::Loop ~ _Index < 5;
-
-    "special case
-    jump String::Int2Str::SkipSpe ~ _IsContent != 0;
-        put 48 -> _pStr;
-    lab String::Int2Str::SkipSpe;
+    jump String::Int2Str::Loop ~ _i > 0;
 
     push _pStr;
     sub Stack::Swap;
