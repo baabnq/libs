@@ -54,29 +54,44 @@ lab TestString::StrLen;
 
 
 
-lab TestString::MemChr;    
-    new 'abcd' _p;
-    put _v <- _p + 1;
+lab TestString::StrChr;
+
+    new 'jzwcpmtnoixaykrfgelvhusdqb' _p;
+    put _i = 0;
+    lab Local::TestString::StrChr;
+        put _v <- _p + _i;
+        push _p;
+        push _v;
+        sub String::StrChr;
+        pull __; jump fail ~ __ == 1;
+        put _i = _i + 1;
+    jump Local::TestString::StrChr ~ _i < 26;
+    
+    free _p;
+        
+
+
+    new 'hello world!' _p;
     push _p;
-    push _v;
-    sub String::MemChr;
-    pull _v; jump fail ~ _v != 1;
+    push 33; "!
+    sub String::StrChr;
+    pull __; jump fail ~ __ != _p + 11;
     free _p;
 
     new 'qwerty \n \b \r   .,#12345{}() BC' _p;
     push _p;
     push 65; "A
-    sub String::MemChr;
-    pull _v; jump fail ~ _v != 0;
+    sub String::StrChr;
+    pull __; jump fail ~ __ != 0;
     free _p;
 
     new '' _p;
     push _p;
     push 65; "A
-    sub String::MemChr;
-    pull _v; jump fail ~ _v != 0;
+    sub String::StrChr;
+    pull __; jump fail ~ __ != 0;
     free _p;
-    
+        
     jump succ;
 
     

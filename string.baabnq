@@ -143,7 +143,6 @@ lab String::MemSet;
     
 "(Str1::String*, Str2::String*) => (Match::Bool)
 "Match::Bool = Str1::String* == Str2::String*
-lab String::MemCmp;
 lab String::StrCmp;
     sub Stack::Swap;
     pull _pStr2;
@@ -166,33 +165,37 @@ lab String::StrCmp;
     sub Stack::Swap;
     return;       
 
+lab String::MemCmp;
+    return;
 
 "(Str::String*, Elem::Char) => (Match::Bool)
 "Match::Bool = Elem::Char in Str::String*
 lab String::ScanChar;
-lab String::MemChr;
 lab String::StrChr;
     sub Stack::Swap;
-    pull _Char;
+    pull _char;
     sub Stack::Swap;
-    pull _StrPtr;
+    pull _ptr;
 
     lab String::ScanChar::IterLoop;
-        put _Data <- _StrPtr;
-        put _StrPtr = _StrPtr + 1;
-                
-        jump String::ScanChar::Found ~ _Data == _Char;
-    jump String::ScanChar::IterLoop ~ _Data != 0;
+        put _data <- _ptr;
+        put _ptr = _ptr + 1;
+
+        jump String::ScanChar::Found ~ _data == _char;
+    jump String::ScanChar::IterLoop ~ _data != 0;
         
         push 0;
         sub Stack::Swap;
         return;
 
     lab String::ScanChar::Found;
-        push 1;
+        push _ptr - 1;
         sub Stack::Swap;
         return;
 
+
+lab String::MemChr;
+    return;
 
 "THIS WILL ALLOC AND NOT DEALLOC
 "(Str1::String*, Str2::String*) => (Res::String*)
