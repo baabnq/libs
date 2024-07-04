@@ -68,23 +68,17 @@ lab String::Int2Str;
 "len (x:xs) = ( len xs ) + 1
 "( ergo, length without terminator )
 lab String::StrLen;
-    pull _ReturnAddr;
-    pull _StringPtr;
+    sub Stack::Swap;
+    pull _pStr;
 
+    put _len = 0 - 1;
+    lab String::StrLen::Loop;
+        put _len = _len + 1;
+        put __ <- _pStr + _len;
+    jump String::StrLen::Loop ~ __ != 0;
 
-    put _SizeBuffer = 0;
-    lab String::StrLen::CountLoop;
-    put _Data <- _SizeBuffer + _StringPtr;
-
-    jump String::StrLen::Exit ~ _Data == 0;
-
-    put _SizeBuffer = _SizeBuffer + 1;
-    jump String::StrLen::CountLoop;
-    lab String::StrLen::Exit;
-
-
-    push _SizeBuffer;
-    push _ReturnAddr;
+    push _len;
+    sub Stack::Swap;
     return;
     
 

@@ -1,0 +1,83 @@
+
+use 'libs/tests/common.baabnq';
+use 'libs/string.baabnq';
+use 'libs/rand.baabnq';
+
+
+
+
+
+
+lab TestString::StrLen;
+    new 'hello world!' _p;
+    push _p;
+    sub String::StrLen;
+    pull __;
+    jump fail ~ __ != 12;
+    free _p;
+    
+    put _i = 100;
+    lab Local::TestString::StrLen::Loop;
+        push _i;
+        sub Rand::Xorshift;
+        pull __;
+        put __ = (__ & 2047);
+        push __;
+        
+        new __ + 1 _p;
+        push _p;
+        push 1;
+        push __;
+        sub String::MemSet;
+        put 0 -> _p + __;
+        
+                        
+        push _p;
+        sub Stack::Dup;
+        sub String::StrLen;
+        pull _len;
+        pull _p;
+                
+
+        pull __;
+        pull _i;
+        jump fail ~ __ != _len;
+                
+        free _p;
+
+        put _i = _i - 1;
+    jump Local::TestString::StrLen::Loop ~ _i > 0;
+        
+    jump succ;
+
+
+
+
+
+lab TestString::MemChr;    
+    new 'abcd' _p;
+    put _v <- _p + 1;
+    push _p;
+    push _v;
+    sub String::MemChr;
+    pull _v; jump fail ~ _v != 1;
+    free _p;
+
+    new 'qwerty \n \b \r   .,#12345{}() BC' _p;
+    push _p;
+    push 65; "A
+    sub String::MemChr;
+    pull _v; jump fail ~ _v != 0;
+    free _p;
+
+    new '' _p;
+    push _p;
+    push 65; "A
+    sub String::MemChr;
+    pull _v; jump fail ~ _v != 0;
+    free _p;
+    
+    jump succ;
+
+    
+
