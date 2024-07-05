@@ -2,7 +2,7 @@
 use 'libs/tests/common.baabnq';
 use 'libs/string.baabnq';
 use 'libs/rand.baabnq';
-
+use 'libs/chunk.baabnq';
 
 
 
@@ -51,6 +51,55 @@ lab TestString::StrLen;
     jump succ;
 
 
+
+
+"kinda important
+lab TestString::MemCpy;
+    
+    put _i = 10;
+    lab Local::TestString::Loop;
+        push _i;
+    
+        sub Rand::Xorshift;
+        pull _len;
+        put _len = _len & 511;
+        new _len _pOriginal;
+        
+        put _j = 0;
+        lab Local::TestString::Loop::Populate;
+            sub Rand::Xorshift;
+            pull __;
+            put __ -> _pOriginal + _j;
+            put _j = _j + 1;
+        jump Local::TestString::Loop::Populate ~ _j < _len;
+        
+        new _len _pCopy;
+        
+        push _pOriginal;
+        push _pCopy;
+        push _len;
+        sub String::MemCpy;
+        
+        push _pOriginal;
+        sub Chunk::Hash;
+        
+        push _pCopy;
+        sub Chunk::Hash;
+        
+        pull _t1;
+        pull _t2;
+        
+        pull _i;
+        
+        jump fail ~ _t1 != _t2;
+                
+        free _pOriginal;
+        free _pCopy;
+        put _i = _i - 1;    
+    jump Local::TestString::Loop ~ _i > 0;
+    
+    jump succ;
+    
 
 
 
