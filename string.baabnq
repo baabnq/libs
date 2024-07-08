@@ -27,6 +27,8 @@ lab String::Print;
 "takes number, converts it to string
 "THIS WILL ALLOCATE MEMORY
 "(Num::Int) => (Str::String*)
+"int2str :: Int -> String
+"int2str = show
 lab String::Int2Str;
     sub Stack::Swap;
     pull _num;
@@ -141,8 +143,8 @@ lab String::MemSet;
     
     
     
-"(Str1::String*, Str2::String*) => (Match::Bool)
-"Match::Bool = Str1::String* == Str2::String*
+"(Str1::String*, Str2::String*) => (Distance::Int)
+"Strcmp ← ⊢⊂:0▽≠0.-°⊟⬚@ ⊟ (in uiua, haskell impl. signat. was too long)
 lab String::StrCmp;
     sub Stack::Swap;
     pull _pStr2;
@@ -154,6 +156,7 @@ lab String::StrCmp;
         put _val2 <- _pStr2;
         
         jump String::MemCmp::Done ~ _val1 == 0;
+        jump String::MemCmp::Done ~ _val2 == 0;
         jump String::MemCmp::Done ~ _val1 != _val2;
         
         put _pStr1 = _pStr1 + 1;
@@ -169,7 +172,9 @@ lab String::MemCmp;
     return;
 
 "(Str::String*, Elem::Char) => (Match::Bool)
-"Match::Bool = Elem::Char in Str::String*
+"elem :: String -> Char -> Bool
+"elem []     _ = False
+"elem (x:xs) y = x == y || elem xs y
 lab String::ScanChar;
 lab String::StrChr;
     sub Stack::Swap;
@@ -199,7 +204,9 @@ lab String::MemChr;
 
 "THIS WILL ALLOC AND NOT DEALLOC
 "(Str1::String*, Str2::String*) => (Res::String*)
-"Res::String* = Str1::String* ++ Str2::String*
+"concat :: String -> String -> String
+"concat ""     y = y
+"concat (x:xs) y = x : concat xs y
 lab String::Concat;
     sub Stack::Swap;
     pull _pStr2;

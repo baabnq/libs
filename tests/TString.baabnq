@@ -7,6 +7,38 @@ use 'libs/chunk.baabnq';
 
 
 
+lab TestString::Int2Str;
+    
+    push 12345;
+    sub String::Int2Str;    
+    new '12345' _pReference;
+    push _pReference;
+    sub String::StrCmp;
+    pull __;
+    jump fail ~ __ != 0;
+    free _pReference;
+    
+    push 100;
+    sub String::Int2Str;
+    new '  100' _pReference;
+    push _pReference;
+    sub String::StrCmp;
+    pull __;
+    jump fail ~ __ != 0;
+    free _pReference;
+
+    push 0;
+    sub String::Int2Str;
+    new '    0' _pReference;
+    push _pReference;
+    sub String::StrCmp;
+    pull __;
+    jump fail ~ __ != 0;
+    free _pReference;
+
+    jump succ;
+
+
 
 lab TestString::StrLen;
     new 'hello world!' _p;
