@@ -144,32 +144,55 @@ lab String::MemSet;
     
     
 "(Str1::String*, Str2::String*) => (Distance::Int)
-"Strcmp ← ⊢⊂:0▽≠0.-°⊟⬚@ ⊟ (in uiua, haskell impl. signat. was too long)
+"Strcmp ← ⬚0(⊢▽≠0.⬚@ -) (in uiua, haskell impl. signat. was too long)
 lab String::StrCmp;
     sub Stack::Swap;
     pull _pStr2;
     sub Stack::Swap;
     pull _pStr1;
     
-    lab String::MemCmp::Loop;
+    lab String::StrCmp::Loop;
         put _val1 <- _pStr1;
         put _val2 <- _pStr2;
         
-        jump String::MemCmp::Done ~ _val1 == 0;
-        jump String::MemCmp::Done ~ _val2 == 0;
-        jump String::MemCmp::Done ~ _val1 != _val2;
+        jump String::StrCmp::Done ~ _val1 == 0;
+        jump String::StrCmp::Done ~ _val2 == 0;
+        jump String::StrCmp::Done ~ _val1 != _val2;
         
         put _pStr1 = _pStr1 + 1;
         put _pStr2 = _pStr2 + 1;
-        jump String::MemCmp::Loop;
-    lab String::MemCmp::Done;
+        jump String::StrCmp::Loop;
+    lab String::StrCmp::Done;
     
     push _val1 - _val2;
     sub Stack::Swap;
     return;       
 
+
+"(A::Int*, B::Int*, Count::Int) => (Distance::Int)
+"Memcpy ← ⬚0(⊢▽≠0.↙:⬚@ -)
 lab String::MemCmp;
-    return;
+    sub Stack::Swap; pull _count;
+    sub Stack::Swap; pull _pB;
+    sub Stack::Swap; pull _pA;
+    
+    lab String::MemCmp::Loop;
+        put _a <- _pA;
+        put _b <- _pB;
+        
+        jump String::MemCmp::Done ~ _count == 0;
+        jump String::MemCmp::Done ~ _a != _b;
+        
+        put _count = _count - 1;
+        
+        put _pA = _pA + 1;
+        put _pB = _pB + 1;
+        jump String::MemCmp::Loop;
+    lab String::MemCmp::Done;
+    
+    push _a - _b;
+    sub Stack::Swap;
+    return;       
 
 "(Str::String*, Elem::Char) => (Match::Bool)
 "elem :: String -> Char -> Bool
