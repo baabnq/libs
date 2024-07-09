@@ -144,7 +144,7 @@ lab String::MemSet;
     
     
 "(Str1::String*, Str2::String*) => (Distance::Int)
-"Strcmp ← ⬚0(⊢▽≠0.⬚@ -) (in uiua, haskell impl. signat. was too long)
+"StrCmp ← ⬚0(⊢▽≠0.⬚@ -) (in uiua, haskell impl. signat. was too long)
 lab String::StrCmp;
     sub Stack::Swap;
     pull _pStr2;
@@ -170,7 +170,7 @@ lab String::StrCmp;
 
 
 "(A::Int*, B::Int*, Count::Int) => (Distance::Int)
-"Memcpy ← ⬚0(⊢▽≠0.↙:⬚@ -)
+"MemCmp ← ⬚0(⊢▽≠0.↙:⬚@ -)
 lab String::MemCmp;
     sub Stack::Swap; pull _count;
     sub Stack::Swap; pull _pB;
@@ -222,8 +222,30 @@ lab String::StrChr;
         return;
 
 
+"(Str::String*, Elem::Char, Count::Int) => (Match::Bool)
+"MemChr ← (/↥↙:=)
 lab String::MemChr;
-    return;
+    sub Stack::Swap; pull _count;
+    sub Stack::Swap; pull _char;
+    sub Stack::Swap; pull _ptr;
+
+    lab String::MemChr::IterLoop;
+        put _data <- _ptr;
+        put _ptr = _ptr + 1;
+        
+        put _count = _count - 1;
+        
+        jump String::MemChr::Found ~ _data == _char;
+    jump String::MemChr::IterLoop ~ _count > 0;
+
+        push 0;
+        sub Stack::Swap;
+        return;
+
+    lab String::MemChr::Found;
+        push _ptr - 1;
+        sub Stack::Swap;
+        return;
 
 "THIS WILL ALLOC AND NOT DEALLOC
 "(Str1::String*, Str2::String*) => (Res::String*)
