@@ -4,6 +4,29 @@ jump Fast::Skip;
 
 
 
+"(X::Int) => (10X::Int)
+"mul10 :: Int -> Int
+"mul10 = (*10)
+lab Fast::Mul10;
+    asm '
+    jmS Stack::Swap;
+    pla;
+    shg;
+    sAD -t;
+    lDR -t;
+    shg;
+    shg;
+    add;
+    pha;
+    jmS Stack::Swap;
+    ';
+    return;  
+    
+
+
+
+
+
 "based on: Hacker's Delight, Second Edition, Chapter 10, INTEGER DIVISION BY CONSTANTS
 
 "(X::Int) => (Q::Int, R::Int)
@@ -53,6 +76,7 @@ lab Fast::DivMod10;
     lDR -q1;
     sub;
 
+    "q = q + (r > 9)
     "put _q =  _q + ((_r + 6) >> 4);
     set 6;
     add;

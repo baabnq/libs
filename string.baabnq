@@ -61,7 +61,32 @@ lab String::Int2Str;
     
     return;
 
+
+"(Str::String*) => (Num::Int)
+"StrToInt ← (⋕▽↧<@9,>@0.)
+lab String::Str2Int;
+    sub Stack::Swap;
+    pull _pStr;
     
+    "accumulator on stack
+    push 0;
+    
+    lab String::Str2Int::Loop;
+        put _char <- _pStr;
+        put _pStr = _pStr + 1;
+
+        "acc = (acc * 10) + (char - 48)
+        jump String::Str2Int::InvaildChar ~ _char < (0 + 48);
+        jump String::Str2Int::InvaildChar ~ _char > (9 + 48);
+            sub Fast::Mul10;
+            push _char - 48;
+            sub Math::Add;
+        lab String::Str2Int::InvaildChar;
+
+    jump String::Str2Int::Loop ~ _char > 0;
+                
+    sub Stack::Swap;
+    return;
 
 
 "(Str::String*) => (Len::Int)
@@ -141,8 +166,8 @@ lab String::MemSet;
     
     return;
     
-    
-    
+
+        
 "(Str1::String*, Str2::String*) => (Distance::Int)
 "StrCmp ← ⬚0(⊢▽≠0.⬚@ -) (in uiua, haskell impl. signat. was too long)
 lab String::StrCmp;
