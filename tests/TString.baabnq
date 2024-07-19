@@ -40,6 +40,40 @@ lab TestString::Int2Str;
 
 
 
+lab TestString::Str2Int;
+    "Str2Int and Int2Str are inversely symmetric
+    
+    push (0 - 1);
+    lab Local::TestString::Str2Int::Loop;
+        sub Stack::Dup;
+        
+        sub String::Int2Str; "generate
+        sub String::Str2Int; "parse
+        
+        pull __;
+        pull _i;
+
+        jump fail ~ _i != __;
+        jump Local::TestString::Str2Int::Done ~ _i == 0;
+
+        push _i >> 1;
+        jump Local::TestString::Str2Int::Loop;
+    lab Local::TestString::Str2Int::Done;
+    
+    
+    "edge case with non-numerics
+    new ' 0 0 0  2a1h e l l o3world9 _!?%()?§$&/ ' _p;
+    push _p;
+    sub String::Str2Int;
+    pull __;
+    jump fail ~ __ != 2139;
+    
+    jump succ;
+    
+    
+
+
+
 lab TestString::StrLen;
     new 'hello world!' _p;
     push _p;
