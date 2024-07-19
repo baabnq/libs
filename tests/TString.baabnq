@@ -195,6 +195,38 @@ lab TestString::StrCpy;
     jump succ;
     
     
+"also kinda important
+lab TestString::MemSet;
+    
+    put _len = 127;
+    new _len _p;
+    
+    put _testI = 100;
+    lab Local::TestString::MemSet::Loop;        
+        sub Rand::Xorshift; pull _testValue;
+        sub Rand::Xorshift; pull __; 
+        
+        "test length must not be zero
+        put _testLen = (__ & _len) | 1;
+
+        push _p;
+        push _testValue;
+        push _testLen;        
+        sub String::MemSet;
+        
+        put _i = _testLen;
+        lab Local::TestString::MemSet::Verify;
+            put _i = _i - 1;
+            put __ <- _p + _i;
+            
+            jump fail ~ __ != _testValue;
+            
+        jump Local::TestString::MemSet::Verify ~ _i > 0;
+        
+        put _testI = _testI - 1;
+    jump Local::TestString::MemSet::Loop ~ _testI > 0;
+            
+    jump succ;    
 
 
 lab TestString::StrChr;
