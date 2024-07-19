@@ -48,12 +48,14 @@ lab TestString::Str2Int;
         sub Stack::Dup;
         
         sub String::Int2Str; "generate
-        sub String::Str2Int; "parse
+        sub Stack::Dup;
+        sub String::Str2Int;
         
-        pull __;
+        pull _t;
+        pull __; free __;        
         pull _i;
 
-        jump fail ~ _i != __;
+        jump fail ~ _i != _t;
         jump Local::TestString::Str2Int::Done ~ _i == 0;
 
         push _i >> 1;
@@ -67,6 +69,7 @@ lab TestString::Str2Int;
     sub String::Str2Int;
     pull __;
     jump fail ~ __ != 2139;
+    free _p;
     
     jump succ;
     
@@ -166,7 +169,32 @@ lab TestString::MemCpy;
     
     jump succ;
     
+    
+    
+lab TestString::StrCpy;
 
+    new 'hello world' _pOriginal;
+    put _len <- _pOriginal - 1;
+    new _len _pCopy;
+
+
+    push _pOriginal;
+    push _pCopy;
+    sub String::StrCpy;
+    
+    lab Local::TestString::StrCpy::Loop;
+        put _a <- _pOriginal; put _pOriginal = _pOriginal + 1;
+        put _b <- _pCopy;     put _pCopy     = _pCopy     + 1;
+        
+        jump fail ~ _a != _b;
+        
+    jump Local::TestString::StrCpy::Loop ~ _a != 0;
+    
+    free _pOriginal;
+    free _pCopy;    
+    jump succ;
+    
+    
 
 
 lab TestString::StrChr;
