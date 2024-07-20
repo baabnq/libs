@@ -261,6 +261,49 @@ lab TestString::StrCmp;
     jump succ;
 
 
+lab TestString::MemCmp;
+
+    new 'foobar, hello world' _p1;
+    new 'foobar, hbye world' _p2;
+
+    put _len <- _p1 - 1;
+            
+    push _p1;
+    push _p1;
+    push _len;
+    sub String::MemCmp;
+    pull __;
+    jump fail ~ __ != 0;
+    
+    push _p1;
+    push _p2;
+    push _len;
+    sub String::MemCmp;
+    pull __;
+    jump fail ~ __ != 3;
+    "'e' - 'b' = 3
+
+    push _p2;
+    push _p2;
+    push _len;
+    sub String::MemCmp;
+    pull __;
+    jump fail ~ __ != 0;
+
+    push _p1;
+    push _p2;
+    push 5;
+    sub String::MemCmp;
+    pull __;
+    jump fail ~ __ != 0;
+    
+    free _p1;
+    free _p2;
+    
+    jump succ;
+    
+
+
 
 
 lab TestString::StrChr;
