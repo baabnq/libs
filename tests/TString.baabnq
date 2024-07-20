@@ -229,6 +229,40 @@ lab TestString::MemSet;
     jump succ;    
 
 
+
+
+lab TestString::StrCmp;
+    
+    new 'hello world' _p1;
+    new 'hbye world' _p2;
+    
+    push _p1;
+    push _p1;
+    sub String::StrCmp;
+    pull __;
+    jump fail ~ __ != 0;
+    
+    push _p1;
+    push _p2;
+    sub String::StrCmp;
+    pull __;
+    jump fail ~ __ != 3;
+    "'e' - 'b' = 3
+
+    push _p2;
+    push _p2;
+    sub String::StrCmp;
+    pull __;
+    jump fail ~ __ != 0;
+    
+    free _p1;
+    free _p2;
+    
+    jump succ;
+
+
+
+
 lab TestString::StrChr;
 
     new 'jzwcpmtnoixaykrfgelvhusdqb' _p;
