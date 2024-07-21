@@ -1,10 +1,11 @@
 use 'libs/tests/common.baabnq';
 
-use 'libs/tests/TMath.baabnq';
 use 'libs/tests/TStack.baabnq';
+use 'libs/tests/TRand.baabnq';
+use 'libs/tests/TMath.baabnq';
 use 'libs/tests/TFloats.baabnq';
 use 'libs/tests/TTwoc.baabnq';
-use 'libs/tests/TRand.baabnq';
 use 'libs/tests/TChunk.baabnq';
+use 'libs/tests/TString.baabnq';
 
 jump fail;

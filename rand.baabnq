@@ -12,16 +12,15 @@ lab Rand::Init;
     
 
 lab Rand::Xorshift;
+    sub Rand::Init ~ _Rand::X == 0;
 
-sub Rand::Init ~ _Rand::X == 0;
+    put _Rand::X = _Rand::X ^ (_Rand::X << 7);
+    put _Rand::X = _Rand::X ^ (_Rand::X >> 9);
+    put _Rand::X = _Rand::X ^ (_Rand::X << 8);
 
-put _Rand::X = _Rand::X ^ (_Rand::X << 7);
-put _Rand::X = _Rand::X ^ (_Rand::X >> 9);
-put _Rand::X = _Rand::X ^ (_Rand::X << 8);
-
-push _Rand::X;
-sub Stack::Swap;
-return;
+    push _Rand::X;
+    sub Stack::Swap;
+    return;
 
 
 lab Rand::Skip;
