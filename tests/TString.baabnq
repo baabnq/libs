@@ -318,10 +318,7 @@ lab TestString::StrChr;
         pull __; jump fail ~ __ == 1;
         put _i = _i + 1;
     jump Local::TestString::StrChr ~ _i < 26;
-    
     free _p;
-        
-
 
     new 'hello world!' _p;
     push _p;
@@ -346,5 +343,120 @@ lab TestString::StrChr;
         
     jump succ;
 
+    
+lab TestString::MemChr;
+
+    new 'jzwcpmtnoixaykrfgelvhusdqb' _p;
+    put _len <- _p - 1;
+    put _i = 0;
+    lab Local::TestString::StrChr;
+        put _v <- _p + _i;
+        push _p;
+        push _v;
+        push _len;
+        sub String::MemChr;
+        pull __; jump fail ~ __ == 1;
+        put _i = _i + 1;
+    jump Local::TestString::StrChr ~ _i < 26;
+    free _p;
+
+    new 'hello world!' _p;
+    put _len <- _p - 1;
+    push _p;
+    push 33; "!
+    push _len;
+    sub String::MemChr;
+    pull __; jump fail ~ __ != _p + 11;
+    free _p;
+
+    new 'qwerty \n \b \r   .,#12345{}() BC' _p;
+    put _len <- _p - 1;
+    push _p;
+    push 65; "A
+    push _len;
+    sub String::MemChr;
+    pull __; jump fail ~ __ != 0;
+    free _p;
+
+    new 'foobarA ' _p;
+    push _p;
+    push 65; "A
+    push 5;
+    sub String::MemChr;
+    pull __; jump fail ~ __ != 0;
+    free _p;
+        
+    jump succ;
+
+    
+lab TestString::Concat;
+    
+    new 'hello ' _p1;
+    new 'world!' _p2;
+    new 'hello world!' _p;
+
+    push _p1;
+    push _p2;
+    sub String::Concat;
+    push _p;
+    sub String::StrCmp;
+    pull __;
+    jump fail ~ __ != 0;    
+    
+    free _p;
+    free _p1;
+    free _p2;
+        
+    jump succ;
+    
+    
+    
+lab TestString::Join;
+
+    new 'hello' _p0;
+    new ' ' _p1;
+    new 'world' _p2;
+    new '!' _p3;
+    new 'foo' _p4;
+    new '' _p5;
+    new 'bar' _p6;
+    
+    new 'hello world!foobar' _p;
+    
+    new 7 _pCollect;
+    put _p0 -> _pCollect + 0;
+    put _p1 -> _pCollect + 1;
+    put _p2 -> _pCollect + 2;
+    put _p3 -> _pCollect + 3;
+    put _p4 -> _pCollect + 4;
+    put _p5 -> _pCollect + 5;
+    put _p6 -> _pCollect + 6;
+
+    push _pCollect;
+    sub String::Join;
+            
+    push _p;
+    sub String::StrCmp;
+    pull __;
+    jump fail ~ __ != 0;
+    
+    free _pCollect;
+    free _p;
+    free _p0;
+    free _p1;
+    free _p2;
+    free _p3;
+    free _p4;
+    free _p5;
+    free _p6;
+
+    jump succ;    
+    
+    
+    
+    
+    
+    
+    
     
 

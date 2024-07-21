@@ -319,20 +319,20 @@ lab String::Concat;
 lab String::Join;
     sub Stack::Swap;
     pull _pStrs;
-
+    
+    put _Len <- _pStrs - 1;
+    
     "calculate final len
     put _Count = 0;
     put _Index = 0;
     lab String::Join::Count;
         put _pSub <- _pStrs + _Index;
-        jump String::Join::CountDone ~ _pSub == 0;
         push _pSub; 
         sub String::StrLen; 
         pull _Size;
         put _Count = _Count + _Size;
         put _Index = _Index + 1;
-    jump String::Join::Count;
-    lab String::Join::CountDone;
+    jump String::Join::Count ~ _Index < _Len;
 
     "alloc
     new _Count + 1 _pOut;
@@ -344,7 +344,6 @@ lab String::Join;
     lab String::Join::Copy;
         put _pSub <- _pStrs + _iStrs;
         put _iStrs = _iStrs + 1;
-        jump String::Join::CopyDone ~ _pSub == 0;
 
         push _pSub; 
         sub String::StrLen; 
@@ -356,8 +355,7 @@ lab String::Join;
         put _iOut = _iOut + _Size; "move _pOut over to free memory
         sub String::MemCpy;
 
-        jump String::Join::Copy;
-    lab String::Join::CopyDone;
+    jump String::Join::Copy ~ _iStrs < _Len;
 
     push _pOut;
     sub Stack::Swap;
