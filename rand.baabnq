@@ -10,8 +10,9 @@ lab Rand::Init;
     put _Rand::X = 1;
     return;
     
-
+lab Rand::Rand;
 lab Rand::Xorshift;
+
     sub Rand::Init ~ _Rand::X == 0;
 
     put _Rand::X = _Rand::X ^ (_Rand::X << 7);
@@ -21,6 +22,31 @@ lab Rand::Xorshift;
     push _Rand::X;
     sub Stack::Swap;
     return;
+    
+"linear congruential generator
+lab Rand::LCG;
+    "x = 2053 * x + 13849
+    asm '
+        lDA (_Rand::X);
+        shg;
+        shg;
+        sAD -t;
+        shg; shg; shg; shg;
+        shg; shg; shg; shg;
+        shg;
+        lDR -t;
+        add;
+        lDR (_Rand::X);
+        add;
+        set 13849;
+        add;
+        sAD (_Rand::X);
+    ';
+                       
+    push _Rand::X;
+    sub Stack::Swap;
+    return;
+    
 
 
 lab Rand::Skip;
