@@ -1,15 +1,119 @@
 use 'libs/stack.baabnq';
 
 "init systemvars
-put _Rand::X = 1;
-
+sub Rand::Init;
 
 jump Rand::Skip;
 
+
+
+
+"initializes internal state of prngs
 lab Rand::Init;
+    "generic state
     put _Rand::X = 1;
+
+    "Isaac state
+    static 256 _Rand::Isaac::state;
+    put _Rand::Isaac::a = 0;
+    put _Rand::Isaac::b = 0;
+    put _Rand::Isaac::c = 0;
+    put _Rand::Isaac::i = 0;
+            
+    "Isaac init
+    put _phi = 40503; "((1 - φ) * (1 << 16))
+    
+    "local synonym, only for init
+    put _mm = _Rand::Isaac::state;
+    
+    put _a = _phi;
+    put _b = _phi;
+    put _c = _phi;
+    put _d = _phi;
+    put _e = _phi;
+    put _f = _phi;
+    put _g = _phi;
+    put _h = _phi;
+    
+    sub Rand::Init::Mix;
+    sub Rand::Init::Mix;
+    sub Rand::Init::Mix;
+    sub Rand::Init::Mix;
+    
+    put _i = 0;
+    lab Rand::Init::IsaacFillLoop;
+        put _ptr = _mm + _i;
+                
+        sub Rand::Init::Mix;
+        
+        put _a -> _ptr + 0;
+        put _b -> _ptr + 1;
+        put _c -> _ptr + 2;
+        put _d -> _ptr + 3;
+        put _e -> _ptr + 4;
+        put _f -> _ptr + 5;
+        put _g -> _ptr + 6;
+        put _h -> _ptr + 7;
+
+        put _i = _i + 8;
+    jump Rand::Init::IsaacFillLoop ~ _i < 256;
+        
+    
+    put _i = 0;
+    lab Rand::Init::IsaacScramble;
+        put _ptr = _mm + _i;
+                
+        put __ <- _ptr + 0; put _a = _a + __;
+        put __ <- _ptr + 1; put _b = _b + __;
+        put __ <- _ptr + 2; put _c = _c + __;
+        put __ <- _ptr + 3; put _d = _d + __;
+        put __ <- _ptr + 4; put _e = _e + __;
+        put __ <- _ptr + 5; put _f = _f + __;
+        put __ <- _ptr + 6; put _g = _g + __;
+        put __ <- _ptr + 7; put _h = _h + __;
+        
+        sub Rand::Init::Mix;
+        
+        put _a -> _ptr + 0;
+        put _b -> _ptr + 1;
+        put _c -> _ptr + 2;
+        put _d -> _ptr + 3;
+        put _e -> _ptr + 4;
+        put _f -> _ptr + 5;
+        put _g -> _ptr + 6;
+        put _h -> _ptr + 7;        
+    
+        put _i = _i + 8;
+    jump Rand::Init::IsaacScramble ~ _i < 256;
+
+        
     return;
     
+    lab Rand::Init::Mix;
+       "a^=b<<11; d+=a; b+=c;
+       "b^=c>>2;  e+=b; c+=d;
+       "c^=d<<8;  f+=c; d+=e;
+       "d^=e>>16; g+=d; e+=f;
+       
+       "e^=f<<10; h+=e; f+=g;
+       "f^=g>>4;  a+=f; g+=h;
+       "g^=h<<8;  b+=g; h+=a;
+       "h^=a>>9;  c+=h; a+=b;
+
+        put _a = _a ^ (_b << 11); put _d = _d + _a; put _b = _b + _c;
+        put _b = _b ^ (_c >> 2) ; put _e = _e + _b; put _c = _c + _d;
+        put _c = _c ^ (_d << 8) ; put _f = _f + _c; put _d = _d + _e;
+                                  put _g = _g + _d; put _e = _e + _f;
+        put _e = _e ^ (_f << 10); put _h = _h + _e; put _f = _f + _g;
+        put _f = _f ^ (_g >> 4) ; put _a = _a + _f; put _g = _g + _h;
+        put _g = _g ^ (_h << 8) ; put _b = _b + _g; put _h = _h + _a;
+        put _h = _h ^ (_a >> 9) ; put _c = _c + _h; put _a = _a + _b;
+        
+        return;
+    
+    
+    
+"default generator
 lab Rand::Rand;
 lab Rand::Xorshift;
 
@@ -25,6 +129,7 @@ lab Rand::Xorshift;
     
 "linear congruential generator
 lab Rand::LCG;
+lab Rand::Fast;
     "x = 2053 * x + 13849
     asm '
         lDA (_Rand::X);
@@ -48,5 +153,56 @@ lab Rand::LCG;
     return;
     
 
+
+"https://burtleburtle.net/bob/rand/isaacafa.html
+"https://en.wikipedia.org/wiki/ISAAC_%28cipher%29
+
+"this implementation is slightly differs from the original, in that it yield one standart 16-bit integer
+"per call, instead of generating the full 256 word state. is does this by globally keeping track of the index
+"into the state, which would normally be kept locally by the for-loop.  
+
+"=> (X::Int)
+lab Rand::ISAAC256;
+lab Rand::Isaac;
+lab Rand::Crypto;
+
+    jump Rand::Isaac::SkipYieldReset ~ _Rand::Isaac::i < 256;
+        put _Rand::Isaac::i = 0;
+        put _Rand::Isaac::c = _Rand::Isaac::c + 1;
+        put _Rand::Isaac::b = _Rand::Isaac::b + _Rand::Isaac::c;    
+    lab Rand::Isaac::SkipYieldReset;
+    
+    put _x <- _mm + _Rand::Isaac::i;
+    put _x = _x & 3;
+    
+    jump Rand::Isaac::Case0 ~ _x == 0;
+    jump Rand::Isaac::Case1 ~ _x == 1;
+    jump Rand::Isaac::Case2 ~ _x == 2;
+    jump Rand::Isaac::Case3 ~ _x == 3;
+    
+    lab  Rand::Isaac::Case0; put _a = _a ^ (_a << 13); jump Rand::Isaac::Break;
+    lab  Rand::Isaac::Case1; put _a = _a ^ (_a >> 6) ; jump Rand::Isaac::Break;
+    lab  Rand::Isaac::Case2; put _a = _a ^ (_a << 2) ; jump Rand::Isaac::Break;
+    lab  Rand::Isaac::Case3; put _a = _a ^ (_a << 16); jump Rand::Isaac::Break;
+
+    lab Rand::Isaac::Break;
+    
+    
+    put __ <- _mm + ((_Rand::Isaac::i + 128) & 255);
+    put _Rand::Isaac::a = _Rand::Isaac::a + __;
+    
+    put _y <- _mm + ((_x >> 2) & 255);
+    put _y = _y + _Rand::Isaac::a + _Rand::Isaac::b;
+    put _y -> _mm + _Rand::Isaac::i;
+    
+    
+    put __ <- _mm + ((_y >> 10) & 255); put _Rand::Isaac::b = __ + _x;
+        
+    put _Rand::Isaac::i = _Rand::Isaac::i + 1;
+    
+    push _Rand::Isaac::b;
+    sub Stack::Swap;
+    return;
+    
 
 lab Rand::Skip;

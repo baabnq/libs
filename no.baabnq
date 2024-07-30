@@ -22,7 +22,7 @@ lab No::Return;
     "pull sub addr
     pull __;
 
-    "jump back to originl retaddr
+    "jump back to original retaddr
     return;
 
 
