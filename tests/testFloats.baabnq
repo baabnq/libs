@@ -576,7 +576,28 @@ lab TestFloats::Sqrt;
     jump succ;
         
         
-        
-        
 
+lab TestFloats::Ln;
+    sub fInit;
+    
+    push 31872; "=1.0
+    sub Floats::Ln;
+    
+    push 31011; "~0.01
+    sub Floats::Cmp;
+    pull __;
+    jump fail ~ __ != 0;
+    
+    push 32045; "~e
+    sub Floats::Ln;
+    push 64640; "=-1.0
+    sub Floats::Add;
+    pull __; push __ & (_SIGN_MASK ^ (0 - 1)); "absolute
+
+    push 31564; "~0.02
+    sub Floats::Cmp;
+    pull __;
+    jump fail ~ __ != 0;
+
+    jump succ;
 
