@@ -116,7 +116,7 @@ lab Rand::Good; "passes dieharder while being relatively simple
 "https://burtleburtle.net/bob/rand/isaacafa.html
 "https://en.wikipedia.org/wiki/ISAAC_%28cipher%29
 
-"this implementation is slightly differs from the original, in that it yield one standart 16-bit integer
+"this implementation slightly differs from the original, in that it yields one standart 16-bit integer
 "per call, instead of generating the full 256 word state. is does this by globally keeping track of the index
 "into the state, which would normally be kept locally by the for-loop.  
 

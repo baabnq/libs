@@ -540,6 +540,43 @@ lab TestFloats::Div;
     jump succ;
 
 
+lab TestFloats::Sqrt;
+    sub fInit;
+    
+    put _v = _Floats::Zero;
+    put _i = 100;
+    lab Local::TestFloats::Loop;
+        push _i - 1;
+        push _v;
+        
+        push _v;
+        push _v;
+        push _v;
+        sub Floats::Mul;
+        sub Floats::Sqrt;
+        sub Floats::SetSign;
+        sub Floats::Add;
 
+        push 31436; "~0.1
+        sub Floats::Cmp;
+        pull __;
+        
+        pull _v;
+        pull _i;
+        jump fail ~ __ != 0;
+        
+        
+        push _v;
+        push 31436; "~0.1
+        sub Floats::Add;
+        pull _v;
+        
+    jump Local::TestFloats::Loop ~ _i > 0;
+        
+    jump succ;
+        
+        
+        
+        
 
 
