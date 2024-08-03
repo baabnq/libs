@@ -575,10 +575,9 @@ lab Floats::SqrtBab;
     return;
     
 "(Val::Float16) => (Val::Float16)
-"square root approximation using binary search
+"square root approximation using exponent magic
 lab Floats::SqrtFast;
 lab Floats::SqrtApprox;
-lab Floats::SqrtBin;
     sub Stack::Swap;
     pull _v;
     
