@@ -1,0 +1,11 @@
+use 'libs/tests/common.baabnq';
+
+use 'libs/tests/testStack.baabnq';
+use 'libs/tests/testRand.baabnq';
+use 'libs/tests/testMath.baabnq';
+use 'libs/tests/testFloats.baabnq';
+use 'libs/tests/testTwoc.baabnq';
+use 'libs/tests/testChunk.baabnq';
+use 'libs/tests/testString.baabnq';
+
+jump fail;
