@@ -40,6 +40,7 @@ lab Rand::Init;
     
     
 "default generator
+" => (X::Int)
 lab Rand::Rand;
 lab Rand::Xorshift;
 
@@ -54,6 +55,7 @@ lab Rand::Xorshift;
     return;
     
 "linear congruential generator
+" => (X::Int)
 lab Rand::LCG;
 lab Rand::Fast;
     "x = 2053 * x + 13849
@@ -83,7 +85,7 @@ lab Rand::Fast;
 "https://en.wikipedia.org/wiki/Xorshift
 "http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 
-
+" => (X::Int)
 lab Rand::Xor64;
 lab Rand::Xorshift64;
 lab Rand::Good; "passes dieharder while being relatively simple
@@ -121,7 +123,7 @@ lab Rand::Good; "passes dieharder while being relatively simple
 "this implementation is tested on the dieharder suite, where it passes the first 3 tests
 "(it took me 1,5 hours to generate 1gb of data, because the S1AsmVM is slow as all hell)
 
-"=> (X::Int)
+" => (X::Int)
 lab Rand::ISAAC256;
 lab Rand::Isaac;
 lab Rand::Crypto;
