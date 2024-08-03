@@ -13,6 +13,14 @@ jump Rand::Skip;
 lab Rand::Init;
     "generic state
     put _Rand::X = 1;
+    
+    "xor64
+    static 4 _Rand::Xor64::State;
+    
+    put 1 -> _Rand::Xor64::State + 0;
+    put 1 -> _Rand::Xor64::State + 1;
+    put 1 -> _Rand::Xor64::State + 2;
+    put 1 -> _Rand::Xor64::State + 3;
 
     "Isaac state
     static 256 _Rand::Isaac::state;
@@ -70,6 +78,37 @@ lab Rand::Fast;
     sub Stack::Swap;
     return;
     
+    
+" "home-made" (lol, i just threw together a two xorshift implementation to make it 16-bit compatibile)
+"https://en.wikipedia.org/wiki/Xorshift
+"http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
+
+
+lab Rand::Xor64;
+lab Rand::Xorshift64;
+lab Rand::Good; "passes dieharder while being relatively simple
+
+    put _t <- _Rand::Xor64::State + 3;
+    put _s <- _Rand::Xor64::State + 0;
+    
+    put __ <- _Rand::Xor64::State + 2; put __ -> _Rand::Xor64::State + 3;
+    put __ <- _Rand::Xor64::State + 1; put __ -> _Rand::Xor64::State + 2;
+    put __ <- _Rand::Xor64::State + 0; put __ -> _Rand::Xor64::State + 1;
+
+    "identical to Rand::Rand
+    put _t = _t ^ (_t << 7);
+    put _t = _t ^ (_t >> 9);
+    put _t = _t ^ (_t << 8);
+    
+    put __ = _t ^ _s ^ (_s >> 3);
+    put __ -> _Rand::Xor64::State + 0;
+    
+    push __;
+    sub Stack::Swap;
+    return;
+
+
+
 
 
 "https://burtleburtle.net/bob/rand/isaacafa.html
