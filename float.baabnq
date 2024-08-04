@@ -694,8 +694,8 @@ lab Floats::Log2Fast;
     sub Stack::Swap;
     pull _v;
     
-    jump Floats::Ln::Zero ~ _v & _SIGN_MASK > 0;
-    jump Floats::Ln::Zero ~ _v == _Floats::Zero;
+    jump Floats::Log2Approx::Zero ~ _v & _SIGN_MASK > 0;
+    jump Floats::Log2Approx::Zero ~ _v == _Floats::Zero;
     
     "the trick is that ln(N) ~ E, where E is the exponent of the number N
     "because N = M * 2^E, for floating point numbers
@@ -708,7 +708,7 @@ lab Floats::Log2Fast;
     sub Stack::Swap;
     return;
 
-    lab Floats::Ln::Zero;
+    lab Floats::Log2Approx::Zero;
         push 0;
         sub Stack::Swap;
         return;
