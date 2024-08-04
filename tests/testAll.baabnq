@@ -7,5 +7,6 @@ use 'libs/tests/testFloats.baabnq';
 use 'libs/tests/testTwoc.baabnq';
 use 'libs/tests/testChunk.baabnq';
 use 'libs/tests/testString.baabnq';
+use 'libs/tests/testFast.baabnq';
 
 jump fail;
