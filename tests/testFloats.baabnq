@@ -601,3 +601,95 @@ lab TestFloats::Ln;
 
     jump succ;
 
+
+
+lab TestFloats::Log2Approx;
+    sub fInit;
+
+    push 31872; "=1.0
+    sub Floats::Log2Approx;
+    pull __;
+    jump fail ~ __ != 0;
+        
+    push 32000; "=2.0
+    sub Floats::Log2Approx;
+    pull __;
+    jump fail ~ __ != 1;
+
+    push 1152; "=65536.0
+    sub Floats::Log2Approx;
+    pull __;
+    jump fail ~ __ != 16;
+    
+    push 11977; "=1990607583170891482037791752192.0
+    sub Floats::Log2Approx;
+    pull __;
+    jump fail ~ __ != 100;
+    
+    push 15488; "=<inf>
+    sub Floats::Log2Approx;
+    pull __;
+    jump fail ~ __ != 128;
+
+    jump succ;
+
+
+
+lab TestFloats::LocalTCC8;
+    sub fInit;
+    
+    "pos, pos
+    push 10;
+    push 5;
+    sub Floats::LocalTCC8;
+    pull __;
+    jump fail ~ __ != 1;
+
+    push 5;
+    push 10;
+    sub Floats::LocalTCC8;
+    pull __;
+    jump fail ~ __ != 0;
+    
+    "neg, pos
+    push (10 ^ (0 - 1)) - 1;
+    push 5;
+    sub Floats::LocalTCC8;
+    pull __;
+    jump fail ~ __ != 0;
+
+    push (5 ^ (0 - 1)) - 1;
+    push 10;
+    sub Floats::LocalTCC8;
+    pull __;
+    jump fail ~ __ != 0;
+
+    "pos, neg
+    push 10;
+    push (5 ^ (0 - 1)) - 1;
+    sub Floats::LocalTCC8;
+    pull __;
+    jump fail ~ __ != 1;
+
+    push 5;
+    push (10 ^ (0 - 1)) - 1;
+    sub Floats::LocalTCC8;
+    pull __;
+    jump fail ~ __ != 1;
+
+    "neg, neg 
+    push (10 ^ (0 - 1)) - 1;
+    push (05 ^ (0 - 1)) - 1;
+    sub Floats::LocalTCC8;
+    pull __;
+    jump fail ~ __ != 0;
+
+    push (05 ^ (0 - 1)) - 1;
+    push (10 ^ (0 - 1)) - 1;
+    sub Floats::LocalTCC8;
+    pull __;
+    jump fail ~ __ != 1;
+
+    
+    jump succ;
+

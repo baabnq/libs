@@ -699,7 +699,7 @@ lab Floats::Log2Fast;
     
     "the trick is that ln(N) ~ E, where E is the exponent of the number N
     "because N = M * 2^E, for floating point numbers
-    push _v; sub Floats::GetExponent; pull _E;    
+    push _v; sub Floats::GetExponent; pull _E;
     
     "normalized form assumes a bias of -7,
     "which is accounted for by adding +7
