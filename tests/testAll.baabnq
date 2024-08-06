@@ -9,5 +9,6 @@ use 'libs/tests/testChunk.baabnq';
 use 'libs/tests/testString.baabnq';
 use 'libs/tests/testFast.baabnq';
 use 'libs/tests/testNo.baabnq';
+use 'libs/tests/testTrig.baabnq';
 
 jump fail;
