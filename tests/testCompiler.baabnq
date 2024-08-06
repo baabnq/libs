@@ -1,0 +1,59 @@
+use 'libs/tests/common.baabnq';
+
+
+
+lab TestCompiler::IntegerLimit;
+    "(1 << 16) will be statically optimized to zero by the compiler
+    jump fail ~ (1 << 16) != 0;
+    jump succ;
+    
+lab TestCompiler::IntegerOverflow;
+    jump fail ~ (65535 + 1) != 0;
+    jump succ;
+    
+lab TestCompiler::IntegerUnderflow;
+    jump fail ~ (0 - 1) != 65535;
+    jump succ;
+
+lab TestCompiler::HeapAlignment;
+    "heap origin is to be aligned to the start of the upper half of memory
+    new 1 __;
+    "heap origin is (__ - 1) because of chunk format
+    jump fail ~ (__ - 1) != (1 << 15);
+    jump succ;
+    
+lab TestCompiler::StaticMemoryLength;
+    static 5 __;
+    put __ <- __ - 1;
+    put __ = __ - 1; "subtract length
+    jump fail ~ __ != 5;
+    jump succ;
+    
+lab TestCompiler::StaticStringLength;
+    static 'hello' __;
+    put __ <- __ - 1;
+    put __ = __ - 1; "subtract length
+    put __ = __ - 1; "subtract terminator
+    jump fail ~ __ != 5;
+    jump succ;
+
+lab TestCompiler::DynamicMemoryLength;
+    new 5 __;
+    put __ <- __ - 1;
+    put __ = __ - 1; "subtract length
+    jump fail ~ __ != 5;
+    jump succ;
+    
+lab TestCompiler::DynamicStringLength;
+    new 'hello' __;
+    put __ <- __ - 1;
+    put __ = __ - 1; "subtract length
+    put __ = __ - 1; "subtract terminator
+    jump fail ~ __ != 5;
+    jump succ;
+
+        
+
+
+
+
