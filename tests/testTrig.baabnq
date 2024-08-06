@@ -1,0 +1,65 @@
+
+use 'libs/tests/common.baabnq';
+
+lab fInit;
+    use 'libs/trig.baabnq';
+
+
+    "ε := 0.01
+
+    put _epsi     = 31011; "ε
+    put _epsitau  = 31360; "ετ (τ = 2π)
+    put _epsitau2 = 30849; "(ετ)^2
+
+return;
+
+
+lab TestTrig::Sin;
+    sub fInit;
+    
+    put _pos = _Floats::Zero;
+    put _vel = _epsitau;
+        
+    
+    push  0;
+    lab Local::TestTrig::Sin::Loop;        
+        sub Stack::Dup;
+        sub Floats::Value2Fp;
+        push _epsi;
+        sub Floats::Mul;        
+        push 1;
+        sub Floats::ShiftGreat;
+        sub Trig::Sin;
+        
+        push _pos ^ _SIGN_MASK;
+
+        sub Floats::Add;
+        push 31564; "~0.2
+        sub Floats::Cmp;
+        pull __;
+        pull _i;
+        jump fail ~ __ != 0;
+        push _i;
+        
+
+        push _pos;
+        push _vel;
+        sub Floats::Add;
+        pull _pos;
+        
+        push _pos;
+        push _epsitau2 | _SIGN_MASK;
+        sub Floats::Mul;
+        push _vel;
+        sub Floats::Add;
+        pull _vel;
+
+        pull _i;
+        push _i + 1;        
+    jump Local::TestTrig::Sin::Loop ~ _i < 101;
+    pull __;
+    
+    
+    jump succ;
+
+
