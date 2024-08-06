@@ -321,7 +321,7 @@ lab String::Join;
     pull _pStrs;
     
     put _len <- _pStrs - 1;
-    push _len;
+    push _len - 1;
     
     "calculate final len
     put _count = 0;
@@ -339,7 +339,7 @@ lab String::Join;
 
     "alloc
     new _count + 1 _pOut;
-    put 0 -> _pOut + _count;    
+    put 0 -> _pOut + _count;
 
     "copy
     put _iStrs = 0;

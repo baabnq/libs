@@ -1,5 +1,7 @@
 use 'libs/tests/common.baabnq';
 
+use 'libs/tests/testCompiler.baabnq';
+
 use 'libs/tests/testStack.baabnq';
 use 'libs/tests/testRand.baabnq';
 use 'libs/tests/testMath.baabnq';
