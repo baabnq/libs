@@ -5,7 +5,7 @@ use 'libs/tests/common.baabnq';
 use 'libs/tests/testFloats.baabnq';
 
 
-lab tInit;
+lab Local::TestTrig::Init;
     use 'libs/trig.baabnq';
 
 
@@ -42,8 +42,8 @@ return;
 
 
 lab TestTrig::Sin;
-    sub fInit;
-    sub tInit;
+    sub Local::TestFloats::Init;
+    sub Local::TestTrig::Init;
     
     put _pos = _Floats::Zero;
     put _vel = _epsitau;

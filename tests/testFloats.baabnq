@@ -15,7 +15,7 @@ put _MIN_SIGNED_CHAR = 0;
 
 
 "library has to run, to define consts
-lab fInit;
+lab Local::TestFloats::Init;
 static 1 _pTst; "test ptr
 use 'libs/float.baabnq';
 return;
@@ -23,7 +23,7 @@ return;
 
 "check constants
 lab TestFloats::Const;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     "shared consts
     jump fail ~ _UPPER16 != 65280;
@@ -44,7 +44,7 @@ lab TestFloats::Const;
     jump succ;
 
 lab TestFloats::GetMantissa;
-    sub fInit;
+    sub Local::TestFloats::Init;
     
     "msb is implied to save space    
     push 0;
@@ -61,7 +61,7 @@ lab TestFloats::GetMantissa;
 
 
 lab TestFloats::GetExponent;
-    sub fInit;
+    sub Local::TestFloats::Init;
     
     "zero should be zero
     push 0 << 7; "<< 7 for symmetry
@@ -78,7 +78,7 @@ lab TestFloats::GetExponent;
     jump succ;
 
 lab TestFloats::SetMantissa;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     "!zero against zero
     put (0 - 1) -> _pTst;
@@ -101,7 +101,7 @@ lab TestFloats::SetMantissa;
 
 
 lab TestFloats::SetExponent;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     "!zero against zero
     put (0 - 1) -> _pTst;
@@ -124,7 +124,7 @@ lab TestFloats::SetExponent;
 
 
 lab TestFloats::LocalInv16;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     push 0; "zero should be zero
     sub Floats::LocalInv16;
@@ -139,7 +139,7 @@ lab TestFloats::LocalInv16;
     jump succ;
 
 lab TestFloats::LocalInv8;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     push 0; "zero should be zero
     sub Floats::LocalInv8;
@@ -155,7 +155,7 @@ lab TestFloats::LocalInv8;
 
 
 lab TestFloats::SetSign;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     push 0;
     sub Floats::SetSign;
@@ -171,7 +171,7 @@ lab TestFloats::SetSign;
 
 
 lab TestFloats::ShiftSmall;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     "test zero-shift
     push 378;  "some random value, in this case (float16)1000
@@ -200,7 +200,7 @@ lab TestFloats::ShiftSmall;
     jump succ;
 
 lab TestFloats::ShiftGreat;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     "test zero-shift
     push 378;  "some random value, in this case (float16)1000
@@ -230,7 +230,7 @@ lab TestFloats::ShiftGreat;
 
 
 lab TestFloats::NormalizeAndSet;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     "normal (ize, hahahah)
     push _pTst;
@@ -273,7 +273,7 @@ lab TestFloats::NormalizeAndSet;
     jump succ;
 
 lab TestFloats::TwoC2Fp;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     "pos
     push 32640;
@@ -298,7 +298,7 @@ lab TestFloats::TwoC2Fp;
 
 
 lab TestFloats::Value2Fp;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     "zero for sanity
     push 0;
@@ -324,7 +324,7 @@ lab TestFloats::Value2Fp;
     
 
 lab TestFloats::Fp2Value;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     "zero
     push 16384;
@@ -349,7 +349,7 @@ lab TestFloats::Fp2Value;
 
 
 lab TestFloats::Add;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     "A (1000 + 100 = 1100 ~> 1096)
     push 378;   "1000
@@ -400,7 +400,7 @@ lab TestFloats::Add;
 
 
 lab TestFloats::Mul;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     "(1000 * 100 = 100 000 ~> 99840)
     push 378;   "1000
@@ -444,7 +444,7 @@ lab TestFloats::Mul;
 
 
 lab TestFloats::Comp;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     "sign
     "(100 > -100 => True)
@@ -503,7 +503,7 @@ lab TestFloats::Comp;
 
 
 lab TestFloats::Div;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     "(1000 * 100 = 10)
     push 378;   "1000
@@ -541,7 +541,7 @@ lab TestFloats::Div;
 
 
 lab TestFloats::Sqrt;
-    sub fInit;
+    sub Local::TestFloats::Init;
     
     put _v = _Floats::Zero;
     put _i = 100;
@@ -578,7 +578,7 @@ lab TestFloats::Sqrt;
         
 
 lab TestFloats::Ln;
-    sub fInit;
+    sub Local::TestFloats::Init;
     
     push 31872; "=1.0
     sub Floats::Ln;
@@ -604,7 +604,7 @@ lab TestFloats::Ln;
 
 
 lab TestFloats::Log2Approx;
-    sub fInit;
+    sub Local::TestFloats::Init;
 
     push 31872; "=1.0
     sub Floats::Log2Approx;
@@ -636,7 +636,7 @@ lab TestFloats::Log2Approx;
 
 
 lab TestFloats::LocalTCC8;
-    sub fInit;
+    sub Local::TestFloats::Init;
     
     "pos, pos
     push 10;
