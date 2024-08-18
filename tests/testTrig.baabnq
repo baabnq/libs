@@ -18,6 +18,29 @@ lab tInit;
 return;
 
 
+
+"this test works by simulating a mass attached to a spring.
+
+"=== proof of relation between the mass-spring-system and the trigonometric sine function ===
+"a mass-spring system obeys the following equation (https://en.wikipedia.org/wiki/Hooke's_law):
+"    F_spring = s_spring * -D, where
+"        F_spring is the force exerted by the spring.
+"        s_spring is the offset position of the spring from the point of equilibrium.
+"        D is a constant determined by the stiffness of the spring.
+"substitute newton's second law of motion:
+"    m * a_s = s_s * -D
+"then divide by the mass:
+"    a_s = -s_s * (D/m)
+"and let us assume that (D/m) is equal to 1:
+"    a_s = -s_s
+"notice that a(t) = (d/dt)^2 s(t):
+"    s''(t) = -s(t)
+"further notice that (d/dt)^2 sin(x) = -sin(x)
+"and substitute s for sin:
+"    sin''(t) = -sin(t) ■
+
+
+
 lab TestTrig::Sin;
     sub fInit;
     sub tInit;
@@ -39,7 +62,7 @@ lab TestTrig::Sin;
         push _pos ^ _SIGN_MASK;
 
         sub Floats::Add;
-        push 31564; "~0.2
+        push 31564; "~0.2 (allowed error)
         sub Floats::Cmp;
         pull __;
         pull _i;
