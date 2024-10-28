@@ -32,6 +32,7 @@ jobs:
           cd kit
           chmod +x setupLinux.sh
           ./setupLinux.sh
+          rm libs/ -rf
           cd ..
           mv kit/* .
           rmdir kit/
