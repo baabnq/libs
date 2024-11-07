@@ -143,11 +143,11 @@ lab Chunk::QuickRadix;
     return;
 
 "(X::A*, Elem::A) => (Index::Int)
-"index :: a -> [a] -> Maybe Int
+"index :: Eq a => a -> [a] -> Maybe Int
 "index x [] = Nothing
 "index x (y:ys)
-"    | x == y = 0
-"    | otherwise = case (index x xs) of
+"    | x == y = Just 0
+"    | otherwise = case (index x ys) of
 "                    Nothing -> Nothing
 "                    Just x  -> Just (x+1)
 lab Chunk::Index;
