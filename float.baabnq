@@ -397,13 +397,22 @@ lab Floats::Mul;
     sub Floats::GetMantissa;
     sub Math::Mul;
 
-    push _val1;
-    sub Floats::GetExponent;
-    push _val2;
-    sub Floats::GetExponent;    
+    push _val1; sub Floats::GetExponent; pull _exp1;
+    push _val2; sub Floats::GetExponent; pull _exp2;
+
+    push _exp1; push _exp2;
     sub Math::Add;
     pull _outputExponent;
     pull _outputMantissa;
+
+
+    "prevent exponent underflow
+    jump Floats::Mul::SkipCapExponent ~ _exp1 & 128 == 0; "exp1 not neg
+    jump Floats::Mul::SkipCapExponent ~ _exp2 & 128 == 0; "exp2 not neg
+    jump Floats::Mul::SkipCapExponent ~ _outputExponent & 128 != 0; "sum still negative
+        put _outputExponent = 128;
+    lab Floats::Mul::SkipCapExponent;
+
 
     put _outputSign = (_val1 & _SIGN_MASK) ^ (_val2 & _SIGN_MASK);
 
