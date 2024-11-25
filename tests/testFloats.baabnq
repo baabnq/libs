@@ -1,23 +1,12 @@
 
 use 'libs/tests/common.baabnq';
-
-put _Floats::Zero   = 0;
-put _Floats::PosNaN = 0;
-
-put _UPPER16       = 0;
-put _MANTISSA_SIZE = 0;
-put _EXPONENT_SIZE = 0;
-put _SIGN_SIZE     = 0;
-put _MANTISSA_MASK = 0;
-put _EXPONENT_MASK = 0;
-put _SIGN_MASK = 0;
-put _MIN_SIGNED_CHAR = 0;
-
-
-"library has to run, to define consts
-lab Local::TestFloats::Init;
-static 1 _pTst; "test ptr
 use 'libs/float.baabnq';
+
+
+
+lab Local::TestFloats::Init;
+    sub Floats::ModuleInit;
+    static 1 _pTst;
 return;
 
 
