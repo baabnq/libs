@@ -2,14 +2,14 @@
 use 'libs/tests/common.baabnq';
 use 'libs/math.baabnq';
 use 'libs/twoc.baabnq';
-
-lab randInit;
 use 'libs/rand.baabnq';
+
+lab Local::TestRand::Init;
+    sub Rand::ModuleInit;
 return;
 
-
 lab TestRand::Const;
-    sub randInit;
+    sub Local::TestRand::Init;
 
     "check pseudo state
     jump fail ~ _Rand::X != 1;
@@ -17,7 +17,7 @@ lab TestRand::Const;
 
 
 lab TestRand::Xorshift;
-    sub randInit;
+    sub Local::TestRand::Init;
 
     "random numbers are compared against 4-bit distrubution
     "base on such, randomness is computed
