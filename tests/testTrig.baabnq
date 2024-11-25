@@ -1,13 +1,11 @@
 
 use 'libs/tests/common.baabnq';
-
-"for fInit
-use 'libs/tests/testFloats.baabnq';
+use 'libs/trig.baabnq';
+use 'libs/float.baabnq';
 
 
 lab Local::TestTrig::Init;
-    use 'libs/trig.baabnq';
-
+    sub Floats::ModuleInit;
 
     "ε := 0.01
 
@@ -42,7 +40,6 @@ return;
 
 
 lab TestTrig::Sin;
-    sub Local::TestFloats::Init;
     sub Local::TestTrig::Init;
     
     put _pos = _Floats::Zero;
