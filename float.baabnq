@@ -114,10 +114,20 @@ lab Floats::LocalInv8;
 "(Value::Float16) => (Neg::Float16)
 "Neg::Float16 = -abs(Value::Float16)
 lab Floats::SetSign;
-    pull _temp;
+    sub Stack::Swap;
     pull _value;
     push _value | _SIGN_MASK;
-    push _temp;
+    sub Stack::Swap;
+    return;
+
+
+"(Value::Float16) => (Neg::Float16)
+"Neg::Float16 = -(Value::Float16)
+lab Floats::Neg;
+    sub Stack::Swap;
+    pull _value;
+    push _value ^ _SIGN_MASK;
+    sub Stack::Swap;
     return;
 
 
