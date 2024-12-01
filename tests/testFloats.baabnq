@@ -159,6 +159,33 @@ lab TestFloats::SetSign;
     jump succ;
 
 
+lab TestFloats::Neg;
+    sub Local::TestFloats::Init;
+
+    push 1;
+    sub Floats::Neg;
+    pull _v;
+    jump fail ~ _v != _SIGN_MASK | 1;
+
+    push 0;
+    sub Floats::Neg;
+    pull _v;
+    jump fail ~ _v != _SIGN_MASK;
+
+    push _SIGN_MASK | 1;
+    sub Floats::Neg;
+    pull _v;
+    jump fail ~ _v != 1;
+
+    push _SIGN_MASK;
+    sub Floats::Neg;
+    pull _v;
+    jump fail ~ _v != 0;
+
+    jump succ;
+
+
+
 lab TestFloats::ShiftSmall;
     sub Local::TestFloats::Init;
 
