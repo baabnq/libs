@@ -315,12 +315,12 @@ lab Floats::Add;
     push _val2;
     sub Floats::GetExponent;
     pull _val2Exp;
-    
 
     push _val2Exp;
     push _val1Exp;
     sub Floats::LocalTCC8;
     pull _Temp;
+
     
 
     jump Floats::Add::SkipValComp1 ~ _Temp == 0;
@@ -331,7 +331,6 @@ lab Floats::Add;
         put _valBig = _val1;
         put _valLow = _val2;
     lab Floats::Add::SkipValComp2;
-
 
     "get exponents
     push _valBig;
@@ -760,6 +759,11 @@ lab Floats::LocalTCC8;
     
     ';
 
+    "comare sign
+    jump Floats::LocalTCC8::True  ~ (_val2 & (_val1 ^ (1 << 7))) & (1 << 7) != 0;
+    jump Floats::LocalTCC8::False ~ (_val1 & (_val2 ^ (1 << 7))) & (1 << 7) != 0;
+
+    "compare content
     jump Floats::LocalTCC8::True ~ _val1 - _val2 & (1 << 7) == 0;
     jump Floats::LocalTCC8::False;
     
