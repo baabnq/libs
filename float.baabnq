@@ -319,18 +319,13 @@ lab Floats::Add;
     push _val2Exp;
     push _val1Exp;
     sub Floats::LocalTCC8;
-    pull _Temp;
+    pull __;
 
-    
-
-    jump Floats::Add::SkipValComp1 ~ _Temp == 0;
-        put _valBig = _val2;
-        put _valLow = _val1;
-    lab Floats::Add::SkipValComp1;
-    jump Floats::Add::SkipValComp2 ~ _Temp == 1;
-        put _valBig = _val1;
-        put _valLow = _val2;
-    lab Floats::Add::SkipValComp2;
+    push _val1;
+    push _val2;
+    sub Stack::Swap ~ __ == 0;
+    pull _valBig;
+    pull _valLow;
 
     "get exponents
     push _valBig;
@@ -350,8 +345,8 @@ lab Floats::Add;
 
     push _valLow;
     sub Floats::GetMantissa;
-    pull _Temp;
-    put _valLowMantissa = _Temp >> _deltaExponent;
+    pull __;
+    put _valLowMantissa = __ >> _deltaExponent;
     
     "apply the sign
     push _valLowMantissa;
