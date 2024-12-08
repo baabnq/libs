@@ -706,6 +706,18 @@ lab TestFloats::LocalTCC8;
     pull __;
     jump fail ~ __ != 1;
 
+    "subnormal, pos
+    push 128;
+    push 10;
+    sub Floats::LocalTCC8;
+    pull __;
+    jump fail ~ __ != 0;
+
+    push 10;
+    push 128;
+    sub Floats::LocalTCC8;
+    pull __;
+    jump fail ~ __ != 1;
     
     jump succ;
 
