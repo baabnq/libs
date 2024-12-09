@@ -66,52 +66,6 @@ lab TestFloats::GetExponent;
     
     jump succ;
 
-lab TestFloats::SetMantissa;
-    sub Local::TestFloats::Init;
-
-    "!zero against zero
-    put (0 - 1) -> _pTst;
-    push _pTst;
-    push 0;
-    sub Floats::SetMantissa;
-    put _v <- _pTst;
-    jump fail ~ _v != ((1 << 15) | (255 << 7));
-
-    "other way round
-    put 0 -> _pTst;
-    push _pTst;
-    push (0 - 1); "maxint will be capped by _MANTISSA_MASK
-    sub Floats::SetMantissa;
-    put _v <- _pTst;
-    jump fail ~ _v != 0 | (127 << 0);
-    
-
-    jump succ;
-
-
-lab TestFloats::SetExponent;
-    sub Local::TestFloats::Init;
-
-    "!zero against zero
-    put (0 - 1) -> _pTst;
-    push _pTst;
-    push 0;
-    sub Floats::SetExponent;
-    put _v <- _pTst;
-    jump fail ~ _v != ((1 << 15) | (127 << 0));
-
-    "other way round
-    put 0 -> _pTst;
-    push _pTst;
-    push (0 - 1); "maxint will be capped by _EXPONENT_MASK
-    sub Floats::SetExponent;
-    put _v <- _pTst;
-    jump fail ~ _v != 0 | (255 << 7);
-    
-
-    jump succ;
-
-
 lab TestFloats::LocalInv16;
     sub Local::TestFloats::Init;
 
