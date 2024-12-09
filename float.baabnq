@@ -55,6 +55,17 @@ lab Floats::GetExponent;
 "the MANTISSA_SIZE is the virtual size of the mantissa
 "MANTISSA_SIZE - 1 bits are actually being stored
 
+
+"(Mantissa::Byte, Exponent::Byte, Sign::Bool) => (New::Float16)
+lab Floats::Render;
+    sub Stack::Swap; pull _sign;
+    sub Stack::Swap; pull _exp;
+    sub Stack::Swap; pull _man;
+
+    push (_man & _MANTISSA_MASK) | ((_exp & _EXPONENT_MASK) << (_MANTISSA_SIZE - 1)) | (_sign << _SIGN_OFFSET);
+    sub Stack::Swap;
+    return;
+
 "(Ptr::Float16*, NewMan::Byte)
 lab Floats::SetMantissa;
     sub Stack::Swap;
@@ -197,14 +208,13 @@ lab Floats::NormalizeAndSet;
     jump Floats::NormalizeAndSet::NormLoop;
     lab Floats::NormalizeAndSet::NormExit;
     
-    push _fpPtr;
-    sub Stack::Dup;
-
     push _mantissa;
-    sub Floats::SetMantissa;
     push _exponent;
-    sub Floats::SetExponent;
-    
+    push 0;
+    sub Floats::Render;
+    pull __;
+    put __ -> _fpPtr;
+
     return;
 
     lab Floats::NormalizeAndSet::Man0;
