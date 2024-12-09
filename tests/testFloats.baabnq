@@ -288,29 +288,6 @@ lab TestFloats::NormalizeAndSet;
 
     jump succ;
 
-lab TestFloats::TwoC2Fp;
-    sub Local::TestFloats::Init;
-
-    "pos
-    push 32640;
-    sub Floats::TwoC2Fp;
-    pull _v;
-    jump fail ~ _v != 1023;
-
-    "zero
-    push 0;
-    sub Floats::TwoC2Fp;
-    pull _v;
-    jump fail ~ _v != 16384;
-
-    "neg
-    push (32640 ^ 65535) - 1;
-    sub Floats::TwoC2Fp;
-    pull _v;
-    jump fail ~ _v != 1023 | (1 << 15);
-
-    jump succ;
-
 
 
 lab TestFloats::Value2Fp;

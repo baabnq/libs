@@ -237,24 +237,6 @@ lab Floats::NormalizeAndSet;
 
 
 "(Value::Int) => (Value::Float16)
-lab Floats::TwoC2Fp;
-    sub Stack::Swap;
-    sub Stack::Dup; 
-   
-    pull _value;
-    put _sign = (_value >> 15) & 1;
-
-    "sub Floats::LocalInv16 ~ _sign == 1;
-    pull _output;
-    push (_output ^ (0 - _sign)) + _sign;  
-    sub Floats::Value2Fp;
-
-    pull _output;
-    push _output | (_sign << 15);
-    sub Stack::Swap;
-    return;
-
-"(Value::Int) => (Value::Float16)
 lab Floats::Value2Fp;
     sub Stack::Swap;
     pull _value;
