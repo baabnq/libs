@@ -145,47 +145,36 @@ lab Floats::Neg;
 "(Value::Float16, Offset::Int) => (Shift::Float16)
 "Shift::Float16 = Value::Float16 >> Offset::Int
 lab Floats::ShiftSmall;
-    sub Stack::Swap;
-    pull _offset;
-    sub Stack::Swap;
-    sub Stack::Dup; "keep reference to fpValue for SetExponent call
+    sub Stack::Swap; pull _offset;
+    sub Stack::Swap; pull _value;
     
-    sub Floats::GetExponent;
-    pull _exponent;
+    push _value; sub Floats::GetMantissa; pull _mantissa;
+    push _value; sub Floats::GetExponent; pull _exponent;
+    put _sign = _value >> _SIGN_OFFSET;
 
-    "switch fpValue with *fpValue, for SetExponent call
-    pull _fpValue;
-    put  _fpValue -> _tempPtr;
-    push _tempPtr;
+    push _mantissa;
     push _exponent - _offset;
-    sub Floats::SetExponent;
-    
-    put _fpValue <- _tempPtr;
-    push _fpValue;    
+    push _sign;
+    sub Floats::Render;
     sub Stack::Swap;
     return;    
 
 "(Value::Float16, Offset::Int) => (Shift::Float16)
 "Shift::Float16 = Value::Float16 << Offset::Int
 lab Floats::ShiftGreat;
-    sub Stack::Swap;
-    pull _offset;
-    sub Stack::Swap;
-    sub Stack::Dup; "keep reference to fpValue for SetExponent call
+    sub Stack::Swap; pull _offset;
+    sub Stack::Swap; pull _value;
     
-    sub Floats::GetExponent;
-    pull _exponent;
+    push _value; sub Floats::GetMantissa; pull _mantissa;
+    push _value; sub Floats::GetExponent; pull _exponent;
+    put _sign = _value >> _SIGN_OFFSET;
 
-    pull _fpValue;
-    put  _fpValue -> _tempPtr;
-    push _tempPtr;
+    push _mantissa;
     push _exponent + _offset;
-    sub Floats::SetExponent;
-
-    put _fpValue <- _tempPtr;
-    push _fpValue;    
+    push _sign;
+    sub Floats::Render;
     sub Stack::Swap;
-    return;
+    return;    
 
 "(Mantissa::Byte, Exponent::Byte, Sign::Bool) => (New::Float16)
 lab Floats::NormalizeAndRender;
