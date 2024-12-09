@@ -66,46 +66,6 @@ lab Floats::Render;
     sub Stack::Swap;
     return;
 
-"(Ptr::Float16*, NewMan::Byte)
-lab Floats::SetMantissa;
-    sub Stack::Swap;
-    pull _newValue;
-    sub Stack::Swap;
-    pull _fpPtr;
-
-    "read fpValue
-    put _fpValue <- _fpPtr;
-
-    "clear mantissa
-    put _fpValue = _fpValue & (_MANTISSA_MASK ^ (0 - 1));
-
-    "set new value
-    put _fpValue = _fpValue | (_newValue & _MANTISSA_MASK);
-
-    "write back fpValue
-    put _fpValue -> _fpPtr;    
-    return;
-
-"(Ptr::Float16*, NewExp::Byte)
-lab Floats::SetExponent;
-    sub Stack::Swap;
-    pull _newValue;
-    sub Stack::Swap;
-    pull _fpPtr;
-
-    "read fpValue
-    put _fpValue <- _fpPtr;
-
-    "clear exponent
-    put _fpValue = _fpValue & ((_EXPONENT_MASK << (_MANTISSA_SIZE - 1)) ^ (0 - 1));
-
-    "set new value
-    put _fpValue = _fpValue | ((_newValue & _EXPONENT_MASK) << (_MANTISSA_SIZE - 1));
-
-    "write back fpValue
-    put _fpValue -> _fpPtr;
-    return;
-
 "(Value::Int) => (Inv::Int)
 lab Floats::LocalInv16;
     sub Stack::Swap;
