@@ -86,6 +86,15 @@ lab TestStack::DupSafe;
     jump succ;
 
 
+lab TestStack::Drop;
+    push 1;
+    push 2;
+    sub Stack::Drop;
+    pull __; jump fail ~ __ != 1;
+
+    jump succ;
+
+
 
 
 
