@@ -11,9 +11,7 @@ lab Chunk::Len;
     "pull _x;
     "put _len <- _x - 1;
     "push _len - 1;
-    
-    "sore wa osokute warui node "asm" o tsukau
-    "(romaji ni tsuite wa gomennasai)
+    "上記が遅いから「ASM」を使う
     
     asm '
     pla;
