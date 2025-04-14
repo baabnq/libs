@@ -265,7 +265,7 @@ lab Chunk::Slice;
     
     
 
-"(X::Int*, Start::Int, End::Int) => (X::Int*)
+"(X::Int*, Start::Int, End::Int)
 "range :: Int -> Int -> [Int]
 "range x x = []
 "range s e = [s] ++ range (s+1) e
