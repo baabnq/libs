@@ -29,9 +29,6 @@ lab Floats::ModuleInit;
     put _SIGN_MASK       = 32768;
     put _MIN_SIGNED_CHAR = 128;
 
-    static 1 _tempPtr;
-    put 0 -> _tempPtr;
-
     return;
 
 
